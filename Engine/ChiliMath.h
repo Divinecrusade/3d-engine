@@ -34,8 +34,12 @@ inline auto sq( const T& x )
 template<typename T>
 inline T wrap_angle( T theta )
 {
-	const T modded = fmod( theta,(T)2.0 * (T)PI_D );
-	return (modded > (T)PI_D) ?
-		(modded - (T)2.0 * (T)PI_D) :
-		modded;
+	if (fabs(theta) > 2 * PI_D)
+	{
+		return fmod(theta);
+	}
+	else
+	{
+		return theta;
+	}
 }

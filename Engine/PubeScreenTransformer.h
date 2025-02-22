@@ -16,6 +16,7 @@ public:
     {
         v.x = v.x * screen_half_width + screen_half_width;
         v.y = -v.y * screen_half_height + screen_half_height;
+        return v;
     }
 
     Vec3 GetTransformed(Vec3 const& v)

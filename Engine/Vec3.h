@@ -9,7 +9,7 @@ public:
 	_Vec3() {}
 	_Vec3(T x, T y, T z)
 		:
-		Vec2(x, y)
+		_Vec2<T>(x, y),
 		z(z)
 	{
 	}
@@ -113,8 +113,6 @@ public:
 		return !(*this == rhs);
 	}
 public:
-	T x;
-	T y;
 	T z;
 };
 

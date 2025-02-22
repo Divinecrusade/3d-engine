@@ -39,7 +39,31 @@ void Game::Go()
 
 void Game::UpdateModel()
 {
-
+	const float dt = 1.0f / 60.0f;
+	if( wnd.kbd.KeyIsPressed( 'Q' ) )
+	{
+		theta_x = wrap_angle( theta_x + dTheta * dt );
+	}
+	if( wnd.kbd.KeyIsPressed( 'W' ) )
+	{
+		theta_y = wrap_angle( theta_y + dTheta * dt );
+	}
+	if( wnd.kbd.KeyIsPressed( 'E' ) )
+	{
+		theta_z = wrap_angle( theta_z + dTheta * dt );
+	}
+	if( wnd.kbd.KeyIsPressed( 'A' ) )
+	{
+		theta_x = wrap_angle( theta_x - dTheta * dt );
+	}
+	if( wnd.kbd.KeyIsPressed( 'S' ) )
+	{
+		theta_y = wrap_angle( theta_y - dTheta * dt );
+	}
+	if( wnd.kbd.KeyIsPressed( 'D' ) )
+	{
+		theta_z = wrap_angle( theta_z - dTheta * dt );
+	}
 }
 
 void Game::ComposeFrame()

@@ -47,5 +47,11 @@ private:
 	/*  User Variables              */
 	PubeScreenTransformer pst{ static_cast<float>(gfx.ScreenWidth), static_cast<float>(gfx.ScreenHeight) };
 	Cube cb{ 1.f };
+	static constexpr float dTheta = PI;
+	float theta_x = 0.0f;
+	float theta_y = 0.0f;
+	float theta_z = 0.0f;
+	static constexpr float size = 100.0f;
+	static constexpr float size = 100.0f;
 	/********************************/
 };

@@ -64,14 +64,22 @@ void Game::UpdateModel()
 	{
 		theta_z = wrap_angle( theta_z - dTheta * dt );
 	}
+	if( wnd.kbd.KeyIsPressed( 'R' ) )
+	{
+		offset_z += 2.0f * dt;
+	}
+	if( wnd.kbd.KeyIsPressed( 'F' ) )
+	{
+		offset_z -= 2.0f * dt;
+	}
 }
 
 void Game::ComposeFrame()
 {
 	Vec3 x{ 0.5f, 0.f, 0.f };
 	Vec3 y{ 0.f, 0.5f, 0.f };
-	Vec3 z{ 0.1f, 0.f, 0.5f };
-	Vec3 start{ 0.f, 0.f, 1.f };
+	Vec3 z{ 0.f, 0.f, 0.5f };
+	Vec3 start{ 0.f, 0.f, offset_z };
 	auto vertices_to_draw{ cb.GetLines() };
 	auto const rot
 	{
@@ -82,10 +90,11 @@ void Game::ComposeFrame()
 
 	x *= rot;
 	y *= rot;
+	z *= rot;
 
-	x += { 0.f, 0.f, 1.f };
-	y += { 0.f, 0.f, 1.f };
-	z += { 0.f, 0.f, 1.f };
+	x += { 0.f, 0.f, offset_z };
+	y += { 0.f, 0.f, offset_z };
+	z += { 0.f, 0.f, offset_z };
 
 	pst.Transform(x);
 	pst.Transform(y);
@@ -95,7 +104,7 @@ void Game::ComposeFrame()
 	for (auto& vertex : vertices_to_draw.vertices)
 	{
 		vertex *= rot;
-		vertex += { 0.f, 0.f, 1.f };
+		vertex += { 0.0f, 0.0f, offset_z };
 		pst.Transform(vertex);
 	}
 	for (auto it{ vertices_to_draw.indices.begin() }; it != vertices_to_draw.indices.end(); it += 2)

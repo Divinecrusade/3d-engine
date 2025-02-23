@@ -14,8 +14,8 @@ public:
 
     Vec3& Transform(Vec3& v)
 	{
-        v.x = v.x * screen_half_width + screen_half_width;
-        v.y = -v.y * screen_half_height + screen_half_height;
+        v.x = v.x / v.z * screen_half_width + screen_half_width;
+        v.y = -v.y / v.z * screen_half_height + screen_half_height;
 		return v;
 	}
 

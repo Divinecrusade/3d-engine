@@ -20,7 +20,7 @@
 ******************************************************************************************/
 #include "MainWindow.h"
 #include "Game.h"
-#include "Mat2.h"
+#include "Mat3.h"
 
 Game::Game( MainWindow& wnd )
 	:
@@ -68,9 +68,33 @@ void Game::UpdateModel()
 
 void Game::ComposeFrame()
 {
+	Vec3 x{ 0.5f, 0.f, 0.f };
+	Vec3 y{ 0.f, 0.5f, 0.f };
+	Vec3 z{ 0.1f, 0.f, 0.5f };
+	Vec3 start{ 0.f, 0.f, 1.f };
 	auto vertices_to_draw{ cb.GetLines() };
+	auto const rot
+	{
+		Mat3::RotationX(theta_x) * 
+		Mat3::RotationY(theta_y) * 
+		Mat3::RotationZ(theta_z)
+	};
+
+	x *= rot;
+	y *= rot;
+
+	x += { 0.f, 0.f, 1.f };
+	y += { 0.f, 0.f, 1.f };
+	z += { 0.f, 0.f, 1.f };
+
+	pst.Transform(x);
+	pst.Transform(y);
+	pst.Transform(z);
+	pst.Transform(start);
+
 	for (auto& vertex : vertices_to_draw.vertices)
 	{
+		vertex *= rot;
 		vertex += { 0.f, 0.f, 1.f };
 		pst.Transform(vertex);
 	}
@@ -78,4 +102,8 @@ void Game::ComposeFrame()
 	{
 		gfx.DrawLine(vertices_to_draw.vertices[*it], vertices_to_draw.vertices[*(it + 1)], Colors::White);
 	}
+
+	gfx.DrawLine(start, x, Colors::Green);
+	gfx.DrawLine(start, y, Colors::Blue);
+	gfx.DrawLine(start, z, Colors::Red);
 }

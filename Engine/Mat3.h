@@ -64,6 +64,40 @@ public:
 		};
 		return s;
 	}
+	static _Mat3 RotationX(T angle)
+	{
+		auto const cosTheta{ cosf(angle) };
+		auto const sinTheta{ sinf(angle) };
+		return
+		{
+			(T)1, (T)0, (T)0,
+			(T)0, cosTheta, sinTheta,
+			(T)0, -sinTheta, cosTheta
+			
+		};
+	}
+	static _Mat3 RotationY(T angle)
+	{
+		auto const cosTheta{ cosf(angle) };
+		auto const sinTheta{ sinf(angle) };
+		return
+		{
+			cosTheta, (T)0, -sinTheta,
+			(T)0, (T)1, (T)0,
+			sinTheta, (T)0, cosTheta
+		};
+	}
+	static _Mat3 RotationZ(T angle)
+	{
+		auto const cosTheta{ cosf(angle) };
+		auto const sinTheta{ sinf(angle) };
+		return 
+		{
+			cosTheta, sinTheta, (T)0,
+			-sinTheta, cosTheta, (T)0,
+			(T)0, (T)0, (T)1
+		};
+	}
 public:
 	// [ row ][ col ]
 	T elements[3][3];

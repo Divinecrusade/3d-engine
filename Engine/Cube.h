@@ -27,7 +27,7 @@ public:
         return IndexedLineList
         {
             model,
-            { 0U,1U, 0U,2U, 0U,4U, 1U,3U, 1U,5U, 2U,3U, 2U,6U, 4U,5U, 3U,7U, 7U,6U, 7U,5U }
+            { 0U,1U, 0U,2U, 0U,4U, 1U,3U, 1U,5U, 2U,3U, 2U,6U, 4U,6U, 4U,5U, 3U,7U, 7U,6U, 7U,5U }
 		};
 	}
 

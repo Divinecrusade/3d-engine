@@ -36,7 +36,7 @@ inline T wrap_angle( T theta )
 {
 	if (fabs(theta) > 2 * PI_D)
 	{
-		return fmod(theta);
+		return fmod(theta, (T)2 * (T)PI_D);
 	}
 	else
 	{

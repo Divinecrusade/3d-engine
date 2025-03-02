@@ -26,6 +26,7 @@
 #include <string>
 #include <array>
 #include <functional>
+#include <cmath>
 
 // Ignore the intellisense error "cannot open source file" for .shh files.
 // They will be created during the build sequence before the preprocessor runs.
@@ -378,6 +379,76 @@ void Graphics::DrawLine( float x1,float y1,float x2,float y2,Color c )
 		if( int( x2 ) > lastIntX )
 		{
 			PutPixel( int( x2 ),int( y2 ),c );
+		}
+	}
+}
+
+void Graphics::DrawTriangle(Vec2 p0, Vec2 p1, Vec2 p2, Color c)
+{
+	if (p0.y < p1.y) std::swap(p0, p1);
+	if (p2.y < p1.y) std::swap(p2, p1);
+	if (p0.y > p2.y) std::swap(p0, p2);
+
+	if (std::fabs(p0.y - p1.y) < 1e-7f)
+	{
+		if (p0.x > p1.x) std::swap(p0, p1);
+		DrawFlatTopTriangle(p2, p0, p1, c);
+	}
+	else if (std::fabs(p0.y - p2.y) < 1e-7f)
+	{
+		if (p0.x > p2.x) std::swap(p0, p2);
+		DrawFlatBottomTriangle(p1, p0, p2, c);
+	}
+	else
+	{
+		float const alpha{ (p0.y - p1.y) / (p2.y - p1.y) };
+		Vec2 const pi{ p1.x * (1.f - alpha) + p2.x * alpha, p0.y };
+
+		if (pi.x < p0.x)
+		{
+			DrawFlatBottomTriangle(p1, pi, p0, c);
+			DrawFlatTopTriangle(p2, pi, p0, c);
+		}
+		else
+		{
+			DrawFlatBottomTriangle(p1, p0, pi, c);
+			DrawFlatTopTriangle(p2, p0, pi, c);
+		}
+	}
+}
+
+void Graphics::DrawFlatTopTriangle(Vec2 const& p0, Vec2 const& p1, Vec2 const& p2, Color c)
+{
+	assert(p0.y > p1.y && p0.y > p2.y);
+	assert(p1.x <= p2.x);
+	float const slope_left{ (p0.x - p1.x) / (p0.y - p1.y) };
+	float const slope_right{ (p0.x - p2.x) / (p0.y - p2.y) };
+
+	for (float y{ std::ceilf(p1.y - 0.5f) }; y < std::ceilf(p0.y - 0.5f); ++y)
+	{
+		int const left_x{ static_cast<int>(std::ceilf(slope_left * (y - p1.y + 0.5f) + p1.x - 0.5f)) };
+		int const right_x{ static_cast<int>(std::ceilf(slope_right * (y - p2.y + 0.5f) + p2.x - 0.5f)) };
+		for (int x{ left_x }; x < right_x; ++x)
+		{
+			PutPixel(x, static_cast<int>(y), c);
+		}
+	}
+}
+
+void Graphics::DrawFlatBottomTriangle(Vec2 const& p0, Vec2 const& p1, Vec2 const& p2, Color c)
+{
+	assert(p0.y < p1.y && p0.y < p2.y);
+	assert(p1.x <= p2.x);
+	float const slope_left{ (p1.x - p0.x) / (p1.y - p0.y) };
+	float const slope_right{ (p2.x - p0.x) / (p2.y - p0.y) };
+
+	for (float y{ std::ceilf(p0.y - 0.5f) }; y < std::ceilf(p1.y - 0.5f); ++y)
+	{
+		int const left_x{ static_cast<int>(std::ceilf(slope_left * (y - p0.y + 0.5f) + p0.x - 0.5f)) };
+		int const right_x{ static_cast<int>(std::ceilf(slope_right * (y - p0.y + 0.5f) + p0.x - 0.5f)) };
+		for (int x{ left_x }; x < right_x; ++x)
+		{
+			PutPixel(x, static_cast<int>(y), c);
 		}
 	}
 }

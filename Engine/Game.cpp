@@ -76,11 +76,11 @@ void Game::UpdateModel()
 
 void Game::ComposeFrame()
 {
-	Vec3 x{ 0.5f, 0.f, 0.f };
-	Vec3 y{ 0.f, 0.5f, 0.f };
-	Vec3 z{ 0.f, 0.f, 0.5f };
+	//Vec3 x{ 0.5f, 0.f, 0.f };
+	//Vec3 y{ 0.f, 0.5f, 0.f };
+	//Vec3 z{ 0.f, 0.f, 0.5f };
 	Vec3 start{ 0.f, 0.f, offset_z };
-	auto vertices_to_draw{ cb.GetLines() };
+	auto vertices_to_draw{ cb.GetTriangles() };
 	auto const rot
 	{
 		Mat3::RotationX(theta_x) * 
@@ -88,18 +88,18 @@ void Game::ComposeFrame()
 		Mat3::RotationZ(theta_z)
 	};
 
-	x *= rot;
-	y *= rot;
-	z *= rot;
+	//x *= rot;
+	//y *= rot;
+	//z *= rot;
 
-	x += { 0.f, 0.f, offset_z };
-	y += { 0.f, 0.f, offset_z };
-	z += { 0.f, 0.f, offset_z };
+	//x += { 0.f, 0.f, offset_z };
+	//y += { 0.f, 0.f, offset_z };
+	//z += { 0.f, 0.f, offset_z };
 
-	pst.Transform(x);
-	pst.Transform(y);
-	pst.Transform(z);
-	pst.Transform(start);
+	//pst.Transform(x);
+	//pst.Transform(y);
+	//pst.Transform(z);
+	//pst.Transform(start);
 
 	for (auto& vertex : vertices_to_draw.vertices)
 	{
@@ -107,12 +107,27 @@ void Game::ComposeFrame()
 		vertex += { 0.0f, 0.0f, offset_z };
 		pst.Transform(vertex);
 	}
-	for (auto it{ vertices_to_draw.indices.begin() }; it != vertices_to_draw.indices.end(); it += 2)
+	Color c_pull[]
 	{
-		gfx.DrawLine(vertices_to_draw.vertices[*it], vertices_to_draw.vertices[*(it + 1)], Colors::White);
+		Colors::White,
+		Colors::Yellow,
+		Colors::Red,
+		Colors::Green,
+		Colors::Blue,
+		Colors::MakeRGB(255, 255, 0),
+		Colors::MakeRGB(0, 255, 255),
+		Colors::MakeRGB(255, 0, 255),
+		Colors::MakeRGB(127, 127, 0),
+		Colors::MakeRGB(127, 127, 127),
+		Colors::MakeRGB(127, 0, 127),
+		Colors::MakeRGB(0, 0, 127)
+	};
+	for (auto it{ vertices_to_draw.indices.begin() }; it != vertices_to_draw.indices.end(); it += 3)
+	{
+		gfx.DrawTriangle(vertices_to_draw.vertices[*it], vertices_to_draw.vertices[*(it + 1)], vertices_to_draw.vertices[*(it + 2)], c_pull[std::distance(vertices_to_draw.indices.begin(), it) / 3]);
 	}
 
-	gfx.DrawLine(start, x, Colors::Green);
-	gfx.DrawLine(start, y, Colors::Blue);
-	gfx.DrawLine(start, z, Colors::Red);
+	//gfx.DrawLine(start, x, Colors::Green);
+	//gfx.DrawLine(start, y, Colors::Blue);
+	//gfx.DrawLine(start, z, Colors::Red);
 }

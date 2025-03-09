@@ -79,14 +79,8 @@ void Game::ComposeFrame()
 	//Vec3 x{ 0.5f, 0.f, 0.f };
 	//Vec3 y{ 0.f, 0.5f, 0.f };
 	//Vec3 z{ 0.f, 0.f, 0.5f };
-	Vec3 start{ 0.f, 0.f, offset_z };
+	//Vec3 start{ 0.f, 0.f, offset_z };
 	auto vertices_to_draw{ cb.GetTriangles() };
-	auto const rot
-	{
-		Mat3::RotationX(theta_x) * 
-		Mat3::RotationY(theta_y) * 
-		Mat3::RotationZ(theta_z)
-	};
 
 	//x *= rot;
 	//y *= rot;
@@ -101,13 +95,47 @@ void Game::ComposeFrame()
 	//pst.Transform(z);
 	//pst.Transform(start);
 
+	auto const rot
+	{
+		Mat3::RotationX(theta_x) *
+		Mat3::RotationY(theta_y) *
+		Mat3::RotationZ(theta_z)
+	};
+
+	Vec3 const camera_offset{ 0.0f, 0.0f, offset_z };
 	for (auto& vertex : vertices_to_draw.vertices)
 	{
 		vertex *= rot;
-		vertex += { 0.0f, 0.0f, offset_z };
+		vertex += camera_offset;
+	}
+
+	for (std::size_t i{ 0U }; i != vertices_to_draw.cullFlags.size(); ++i)
+	{
+		vertices_to_draw.cullFlags[i] = 
+		(
+			(
+				vertices_to_draw.vertices[vertices_to_draw.indices[i * 3u + 1u]] 
+				- 
+				vertices_to_draw.vertices[vertices_to_draw.indices[i * 3u]]
+			) 
+			% 
+			(
+				vertices_to_draw.vertices[vertices_to_draw.indices[i * 3u + 2u]] 
+				- 
+				vertices_to_draw.vertices[vertices_to_draw.indices[i * 3u]]
+			)
+		)
+		*
+		vertices_to_draw.vertices[vertices_to_draw.indices[i * 3u]]
+		> 0.f;
+	}
+
+	for (auto& vertex : vertices_to_draw.vertices)
+	{
 		pst.Transform(vertex);
 	}
-	Color c_pull[]
+
+	constexpr Color c_pull[]
 	{
 		Colors::White,
 		Colors::Yellow,
@@ -122,9 +150,16 @@ void Game::ComposeFrame()
 		Colors::MakeRGB(127, 0, 127),
 		Colors::MakeRGB(0, 0, 127)
 	};
-	for (auto it{ vertices_to_draw.indices.begin() }; it != vertices_to_draw.indices.end(); it += 3)
+	for (std::size_t i{ 0U }; i != vertices_to_draw.cullFlags.size(); ++i)
 	{
-		gfx.DrawTriangle(vertices_to_draw.vertices[*it], vertices_to_draw.vertices[*(it + 1)], vertices_to_draw.vertices[*(it + 2)], c_pull[std::distance(vertices_to_draw.indices.begin(), it) / 3]);
+		if (vertices_to_draw.cullFlags[i]) continue;
+		gfx.DrawTriangle
+		(
+			vertices_to_draw.vertices[vertices_to_draw.indices[i * 3u]], 
+			vertices_to_draw.vertices[vertices_to_draw.indices[i * 3u + 1u]],
+			vertices_to_draw.vertices[vertices_to_draw.indices[i * 3u + 2u]], 
+			c_pull[i]
+		);
 	}
 
 	//gfx.DrawLine(start, x, Colors::Green);

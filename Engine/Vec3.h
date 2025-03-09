@@ -78,9 +78,9 @@ public:
 	{
 		return 
 		{
-			y * rhs.z - z * rhs.y // x
-			z * rhs.x - x * rhs.z // y
-			x * rhs.y - y * rhs.x // z
+			y * rhs.z - z * rhs.y, 
+			z * rhs.x - x * rhs.z, 
+			x * rhs.y - y * rhs.x 
 		};
 	}
 	_Vec3	operator+(const _Vec3& rhs) const

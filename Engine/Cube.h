@@ -12,15 +12,15 @@ public:
 	{
         auto const half_size{ size / 2.f };
 
-        model.emplace_back(-half_size, half_size, half_size);
-        model.emplace_back(half_size, half_size, half_size);
+        model.emplace_back(-half_size, -half_size, -half_size);
+        model.emplace_back(half_size, -half_size, -half_size);
         model.emplace_back(-half_size, half_size, -half_size);
         model.emplace_back(half_size, half_size, -half_size);
 
         model.emplace_back(-half_size, -half_size, half_size);
         model.emplace_back(half_size, -half_size, half_size);
-        model.emplace_back(-half_size, -half_size, -half_size);
-        model.emplace_back(half_size, -half_size, -half_size);
+        model.emplace_back(-half_size, half_size, half_size);
+        model.emplace_back(half_size, half_size, half_size);
 	}
 
 	IndexedLineList GetLines() const
@@ -38,12 +38,12 @@ public:
         {
             model,
             {
-                0u,1u,5u, 0u,4u,5u, 
-                0u,2u,6u, 0u,4u,6u, 
-                2u,3u,7u, 2u,6u,7u,
-                1u,3u,5u, 3u,7u,5u,
-                2u,0u,1u, 2u,3u,1u,
-                6u,7u,4u, 4u,5u,7u
+                0,2,1, 2,3,1, 
+                1,3,5, 3,7,5, 
+                0,4,2, 2,4,6,
+                2,6,3, 3,6,7,
+                4,5,7, 4,7,6,
+                0,1,4, 1,5,4
             }
         };
     }

@@ -5,9 +5,10 @@
 #include <iterator>
 #include "Vec3.h"
 
+template<typename T = Vec3>
 struct IndexedTriangleList
 {
-    IndexedTriangleList(std::vector<Vec3> init_vertices, std::vector<std::size_t> init_indices)
+    IndexedTriangleList(std::vector<T> init_vertices, std::vector<std::size_t> init_indices)
     :
     vertices{ std::move(init_vertices) },
     indices{ std::move(init_indices) },
@@ -17,7 +18,7 @@ struct IndexedTriangleList
         assert(indices.size() % 3U == 0U);
     }
 
-    std::vector<Vec3> vertices{ };
+    std::vector<T> vertices{ };
     std::vector<std::size_t> indices{ };
     std::vector<bool> cullFlags{ };
 };

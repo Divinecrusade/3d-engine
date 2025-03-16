@@ -25,7 +25,7 @@
 #include <vector>
 #include "ChiliMath.h"
 #include "PubeScreenTransformer.h"
-#include "Cube.h"
+#include "TexCubeScene.h"
 
 class Game
 {
@@ -46,11 +46,6 @@ private:
 	/********************************/
 	/*  User Variables              */
 	PubeScreenTransformer pst{ static_cast<float>(gfx.ScreenWidth), static_cast<float>(gfx.ScreenHeight) };
-	Cube cb{ 1.f };
-	static constexpr float dTheta = PI;
-	float offset_z = 2.0f;
-	float theta_x = 0.0f;
-	float theta_y = 0.0f;
-	float theta_z = 0.0f;
+	TexCubeScene scene{ };
 	/********************************/
 };

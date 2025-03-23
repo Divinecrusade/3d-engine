@@ -417,6 +417,40 @@ void Graphics::DrawTriangle(Vec2 p0, Vec2 p1, Vec2 p2, Color c)
 	}
 }
 
+void Graphics::DrawTriangleTex(TexVertex p0, TexVertex p1, TexVertex p2, Surface const& texture)
+{
+	if (p0.model_pos.y < p1.model_pos.y) std::swap(p0, p1);
+	if (p2.model_pos.y < p1.model_pos.y) std::swap(p2, p1);
+	if (p0.model_pos.y > p2.model_pos.y) std::swap(p0, p2);
+
+	if (std::fabs(p0.model_pos.y - p1.model_pos.y) < 1e-7f)
+	{
+		if (p0.model_pos.x > p1.model_pos.x) std::swap(p0, p1);
+		DrawFlatTopTriangleTex(p2, p0, p1, texture);
+	}
+	else if (std::fabs(p0.model_pos.y - p2.model_pos.y) < 1e-7f)
+	{
+		if (p0.model_pos.x > p2.model_pos.x) std::swap(p0, p2);
+		DrawFlatBottomTriangleTex(p1, p0, p2, texture);
+	}
+	else
+	{
+		float const alpha{ (p0.model_pos.y - p1.model_pos.y) / (p2.model_pos.y - p1.model_pos.y) };
+		TexVertex const pi{ p1.InterpolateTo(p2, alpha) };
+
+		if (pi.model_pos.x < p0.model_pos.x)
+		{
+			DrawFlatBottomTriangleTex(p1, pi, p0, texture);
+			DrawFlatTopTriangleTex(p2, pi, p0, texture);
+		}
+		else
+		{
+			DrawFlatBottomTriangleTex(p1, p0, pi, texture);
+			DrawFlatTopTriangleTex(p2, p0, pi, texture);
+		}
+	}
+}
+
 void Graphics::DrawFlatTopTriangle(Vec2 const& p0, Vec2 const& p1, Vec2 const& p2, Color c)
 {
 	assert(p0.y > p1.y && p0.y > p2.y);
@@ -435,6 +469,41 @@ void Graphics::DrawFlatTopTriangle(Vec2 const& p0, Vec2 const& p1, Vec2 const& p
 	}
 }
 
+void Graphics::DrawFlatTopTriangleTex(TexVertex const& p0, TexVertex const& p1, TexVertex const& p2, Surface const& texture)
+{
+	float const slope_left{ (p0.model_pos.x - p1.model_pos.x) / (p0.model_pos.y - p1.model_pos.y) };
+	float const slope_right{ (p0.model_pos.x - p2.model_pos.x) / (p0.model_pos.y - p2.model_pos.y) };
+
+	Vec2 const texture_scanline_step_left { (p0.texture_pos - p1.texture_pos) / (p0.model_pos.y - p1.model_pos.y) };
+	Vec2 const texture_scanline_step_right{ (p0.texture_pos - p2.texture_pos) / (p0.model_pos.y - p2.model_pos.y) };
+	Vec2 texture_scanline_left{ p1.texture_pos };
+	Vec2 texture_scanline_right{ p2.texture_pos };
+
+	float const texture_width{ static_cast<float>(texture.GetWidth()) };
+	float const texture_height{ static_cast<float>(texture.GetHeight()) };
+	float const texture_x_clamp{ texture_width - 1.f };
+	float const texture_y_clamp{ texture_height - 1.f };
+
+	for (float y{ std::ceilf(p1.model_pos.y - 0.5f) }; y < std::ceilf(p0.model_pos.y - 0.5f); ++y,
+		texture_scanline_left += texture_scanline_step_left, texture_scanline_right += texture_scanline_step_right)
+	{
+		int const left_x{ static_cast<int>(std::ceilf(slope_left * (y - p1.model_pos.y + 0.5f) + p1.model_pos.x - 0.5f)) };
+		int const right_x{ static_cast<int>(std::ceilf(slope_right * (y - p2.model_pos.y + 0.5f) + p2.model_pos.x - 0.5f)) };
+
+		Vec2 const texture_pixel_scanline_step{ (texture_scanline_right - texture_scanline_left) / (right_x - left_x) };
+		Vec2 texture_pixel_scanline{ texture_scanline_left + texture_pixel_scanline_step * 0.5f };
+		for (int x{ left_x }; x < right_x; ++x, texture_pixel_scanline += texture_pixel_scanline_step)
+		{
+			PutPixel(x, static_cast<int>(y), 
+			texture.GetPixel
+			(
+				(unsigned)std::min(texture_width * texture_pixel_scanline.x, texture_x_clamp),
+				(unsigned)std::min(texture_height * texture_pixel_scanline.y, texture_y_clamp)
+			));
+		}
+	}
+}
+
 void Graphics::DrawFlatBottomTriangle(Vec2 const& p0, Vec2 const& p1, Vec2 const& p2, Color c)
 {
 	assert(p0.y < p1.y && p0.y < p2.y);
@@ -449,6 +518,41 @@ void Graphics::DrawFlatBottomTriangle(Vec2 const& p0, Vec2 const& p1, Vec2 const
 		for (int x{ left_x }; x < right_x; ++x)
 		{
 			PutPixel(x, static_cast<int>(y), c);
+		}
+	}
+}
+
+void Graphics::DrawFlatBottomTriangleTex(TexVertex const& p0, TexVertex const& p1, TexVertex const& p2, Surface const& texture)
+{
+	float const slope_left{(p1.model_pos.x - p0.model_pos.x) / (p1.model_pos.y - p0.model_pos.y)};
+	float const slope_right{ (p2.model_pos.x - p0.model_pos.x) / (p2.model_pos.y - p0.model_pos.y) };
+
+	Vec2 const texture_scanline_step_left{ (p1.texture_pos - p0.texture_pos) / (p1.model_pos.y - p0.model_pos.y) };
+	Vec2 const texture_scanline_step_right{ (p2.texture_pos - p0.texture_pos) / (p2.model_pos.y - p0.model_pos.y) };
+	Vec2 texture_scanline_left{ p0.texture_pos };
+	Vec2 texture_scanline_right{ p0.texture_pos };
+
+	float const texture_width{ static_cast<float>(texture.GetWidth()) };
+	float const texture_height{ static_cast<float>(texture.GetHeight()) };
+	float const texture_x_clamp{ texture_width - 1.f };
+	float const texture_y_clamp{ texture_height - 1.f };
+
+	for (float y{ std::ceilf(p0.model_pos.y - 0.5f) }; y < std::ceilf(p1.model_pos.y - 0.5f); ++y,
+		texture_scanline_left += texture_scanline_step_left, texture_scanline_right += texture_scanline_step_right)
+	{
+		int const left_x{ static_cast<int>(std::ceilf(slope_left * (y - p0.model_pos.y + 0.5f) + p0.model_pos.x - 0.5f)) };
+		int const right_x{ static_cast<int>(std::ceilf(slope_right * (y - p0.model_pos.y + 0.5f) + p0.model_pos.x - 0.5f)) };
+
+		Vec2 const texture_pixel_scanline_step{ (texture_scanline_right - texture_scanline_left) / (right_x - left_x) };
+		Vec2 texture_pixel_scanline{ texture_scanline_left };
+		for (int x{ left_x }; x < right_x; ++x, texture_pixel_scanline += texture_pixel_scanline_step)
+		{
+			PutPixel(x, static_cast<int>(y),
+				texture.GetPixel
+				(
+					(unsigned)std::min(texture_width * texture_pixel_scanline.x, texture_x_clamp),
+					(unsigned)std::min(texture_height * texture_pixel_scanline.y, texture_y_clamp)
+				));
 		}
 	}
 }

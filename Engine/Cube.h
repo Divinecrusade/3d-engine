@@ -63,7 +63,7 @@ public:
     {
         std::vector<TexVertex> tc{ };
         tc.reserve(model.size());
-        std::generate(tc.begin(), tc.end(), [it1 = this->model.cbegin(), it2 = this->texture.cbegin()]() mutable { return TexVertex{ *(it1++), *(it2++) }; });
+        std::generate_n(std::back_inserter(tc), model.size(), [it1 = this->model.cbegin(), it2 = this->texture.cbegin()]() mutable { return TexVertex{*(it1++), *(it2++)}; });
         return
         {
             std::move(tc),

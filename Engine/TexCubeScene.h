@@ -5,6 +5,7 @@
 #include "Graphics.h"
 #include "PubeScreenTransformer.h"
 #include "Mat3.h"
+#include "Surface.h"
 
 
 class TexCubeScene
@@ -52,7 +53,7 @@ public:
 		//Vec3 y{ 0.f, 0.5f, 0.f };
 		//Vec3 z{ 0.f, 0.f, 0.5f };
 		//Vec3 start{ 0.f, 0.f, offset_z };
-		auto vertices_to_draw{ cb.GetTriangles() };
+		auto vertices_to_draw{ cb.GetTrianglesTex() };
 
 		//x *= rot;
 		//y *= rot;
@@ -77,8 +78,8 @@ public:
 		Vec3 const camera_offset{ 0.0f, 0.0f, offset_z };
 		for (auto& vertex : vertices_to_draw.vertices)
 		{
-			vertex *= rot;
-			vertex += camera_offset;
+			vertex.model_pos *= rot;
+			vertex.model_pos += camera_offset;
 		}
 
 		for (std::size_t i{ 0U }; i != vertices_to_draw.cullFlags.size(); ++i)
@@ -86,51 +87,36 @@ public:
 			vertices_to_draw.cullFlags[i] =
 				(
 					(
-						vertices_to_draw.vertices[vertices_to_draw.indices[i * 3u + 1u]]
+						vertices_to_draw.vertices[vertices_to_draw.indices[i * 3u + 1u]].model_pos
 						-
-						vertices_to_draw.vertices[vertices_to_draw.indices[i * 3u]]
+						vertices_to_draw.vertices[vertices_to_draw.indices[i * 3u]].model_pos
 						)
 					%
 					(
-						vertices_to_draw.vertices[vertices_to_draw.indices[i * 3u + 2u]]
+						vertices_to_draw.vertices[vertices_to_draw.indices[i * 3u + 2u]].model_pos
 						-
-						vertices_to_draw.vertices[vertices_to_draw.indices[i * 3u]]
+						vertices_to_draw.vertices[vertices_to_draw.indices[i * 3u]].model_pos
 						)
 					)
 				*
-				vertices_to_draw.vertices[vertices_to_draw.indices[i * 3u]]
+				vertices_to_draw.vertices[vertices_to_draw.indices[i * 3u]].model_pos
 		> 0.f;
 		}
 
 		for (auto& vertex : vertices_to_draw.vertices)
 		{
-			pst.Transform(vertex);
+			pst.Transform(vertex.model_pos);
 		}
 
-		constexpr Color c_pull[]
-		{
-			Colors::White,
-			Colors::Yellow,
-			Colors::Red,
-			Colors::Green,
-			Colors::Blue,
-			Colors::MakeRGB(255, 255, 0),
-			Colors::MakeRGB(0, 255, 255),
-			Colors::MakeRGB(255, 0, 255),
-			Colors::MakeRGB(127, 127, 0),
-			Colors::MakeRGB(127, 127, 127),
-			Colors::MakeRGB(127, 0, 127),
-			Colors::MakeRGB(0, 0, 127)
-		};
 		for (std::size_t i{ 0U }; i != vertices_to_draw.cullFlags.size(); ++i)
 		{
 			if (vertices_to_draw.cullFlags[i]) continue;
-			gfx.DrawTriangle
+			gfx.DrawTriangleTex
 			(
 				vertices_to_draw.vertices[vertices_to_draw.indices[i * 3u]],
 				vertices_to_draw.vertices[vertices_to_draw.indices[i * 3u + 1u]],
 				vertices_to_draw.vertices[vertices_to_draw.indices[i * 3u + 2u]],
-				c_pull[i]
+				texture
 			);
 		}
 
@@ -142,6 +128,7 @@ public:
 private:
 
 	Cube cb{ 1.f };
+	Surface texture{ Surface::FromFile(L"Images\\sauron-bhole-100x100.png") };
 	static constexpr float dTheta = PI;
 	float offset_z = 2.0f;
 	float theta_x = 0.0f;

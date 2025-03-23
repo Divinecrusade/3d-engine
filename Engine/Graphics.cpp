@@ -471,34 +471,34 @@ void Graphics::DrawFlatTopTriangle(Vec2 const& p0, Vec2 const& p1, Vec2 const& p
 
 void Graphics::DrawFlatTopTriangleTex(TexVertex const& p0, TexVertex const& p1, TexVertex const& p2, Surface const& texture)
 {
-	float const slope_left{ (p0.model_pos.x - p1.model_pos.x) / (p0.model_pos.y - p1.model_pos.y) };
-	float const slope_right{ (p0.model_pos.x - p2.model_pos.x) / (p0.model_pos.y - p2.model_pos.y) };
-
-	Vec2 const texture_scanline_step_left { (p0.texture_pos - p1.texture_pos) / (p0.model_pos.y - p1.model_pos.y) };
-	Vec2 const texture_scanline_step_right{ (p0.texture_pos - p2.texture_pos) / (p0.model_pos.y - p2.model_pos.y) };
-	Vec2 texture_scanline_left{ p1.texture_pos };
-	Vec2 texture_scanline_right{ p2.texture_pos };
-
 	float const texture_width{ static_cast<float>(texture.GetWidth()) };
 	float const texture_height{ static_cast<float>(texture.GetHeight()) };
 	float const texture_x_clamp{ texture_width - 1.f };
 	float const texture_y_clamp{ texture_height - 1.f };
 
-	for (float y{ std::ceilf(p1.model_pos.y - 0.5f) }; y < std::ceilf(p0.model_pos.y - 0.5f); ++y,
-		texture_scanline_left += texture_scanline_step_left, texture_scanline_right += texture_scanline_step_right)
-	{
-		int const left_x{ static_cast<int>(std::ceilf(slope_left * (y - p1.model_pos.y + 0.5f) + p1.model_pos.x - 0.5f)) };
-		int const right_x{ static_cast<int>(std::ceilf(slope_right * (y - p2.model_pos.y + 0.5f) + p2.model_pos.x - 0.5f)) };
+	float const delta_y{ p0.model_pos.y - p1.model_pos.y };
 
-		Vec2 const texture_pixel_scanline_step{ (texture_scanline_right - texture_scanline_left) / (right_x - left_x) };
-		Vec2 texture_pixel_scanline{ texture_scanline_left + texture_pixel_scanline_step * 0.5f };
-		for (int x{ left_x }; x < right_x; ++x, texture_pixel_scanline += texture_pixel_scanline_step)
+	TexVertex const left_slope_step { (p0 - p1) / delta_y };
+	TexVertex const right_slope_step{ (p0 - p2) / delta_y };
+
+	TexVertex left_slope{ p1 };
+	TexVertex right_slope{ p2 };
+
+	for (float y{ std::ceilf(left_slope.model_pos.y - 0.5f) }; y < std::ceilf(p0.model_pos.y - 0.5f); ++y,
+		left_slope += left_slope_step, right_slope += right_slope_step)
+	{
+		float const delta_x{ right_slope.model_pos.x - left_slope.model_pos.x };
+		
+		Vec2 const tex_step{ (right_slope.texture_pos - left_slope.texture_pos) / delta_x };
+		Vec2 tex{ left_slope.texture_pos };
+		for (float x{ std::ceilf(left_slope.model_pos.x - 0.5f) }; x < std::ceilf(right_slope.model_pos.x - 0.5f); ++x,
+			tex += tex_step)
 		{
-			PutPixel(x, static_cast<int>(y), 
+			PutPixel(static_cast<int>(x), static_cast<int>(y), 
 			texture.GetPixel
 			(
-				(unsigned)std::min(texture_width * texture_pixel_scanline.x, texture_x_clamp),
-				(unsigned)std::min(texture_height * texture_pixel_scanline.y, texture_y_clamp)
+				(unsigned)std::min(texture_width * tex.x, texture_x_clamp),
+				(unsigned)std::min(texture_height * tex.y, texture_y_clamp)
 			));
 		}
 	}
@@ -524,34 +524,34 @@ void Graphics::DrawFlatBottomTriangle(Vec2 const& p0, Vec2 const& p1, Vec2 const
 
 void Graphics::DrawFlatBottomTriangleTex(TexVertex const& p0, TexVertex const& p1, TexVertex const& p2, Surface const& texture)
 {
-	float const slope_left{(p1.model_pos.x - p0.model_pos.x) / (p1.model_pos.y - p0.model_pos.y)};
-	float const slope_right{ (p2.model_pos.x - p0.model_pos.x) / (p2.model_pos.y - p0.model_pos.y) };
-
-	Vec2 const texture_scanline_step_left{ (p1.texture_pos - p0.texture_pos) / (p1.model_pos.y - p0.model_pos.y) };
-	Vec2 const texture_scanline_step_right{ (p2.texture_pos - p0.texture_pos) / (p2.model_pos.y - p0.model_pos.y) };
-	Vec2 texture_scanline_left{ p0.texture_pos };
-	Vec2 texture_scanline_right{ p0.texture_pos };
-
 	float const texture_width{ static_cast<float>(texture.GetWidth()) };
 	float const texture_height{ static_cast<float>(texture.GetHeight()) };
 	float const texture_x_clamp{ texture_width - 1.f };
 	float const texture_y_clamp{ texture_height - 1.f };
 
-	for (float y{ std::ceilf(p0.model_pos.y - 0.5f) }; y < std::ceilf(p1.model_pos.y - 0.5f); ++y,
-		texture_scanline_left += texture_scanline_step_left, texture_scanline_right += texture_scanline_step_right)
-	{
-		int const left_x{ static_cast<int>(std::ceilf(slope_left * (y - p0.model_pos.y + 0.5f) + p0.model_pos.x - 0.5f)) };
-		int const right_x{ static_cast<int>(std::ceilf(slope_right * (y - p0.model_pos.y + 0.5f) + p0.model_pos.x - 0.5f)) };
+	float const delta_y{ p1.model_pos.y - p0.model_pos.y };
 
-		Vec2 const texture_pixel_scanline_step{ (texture_scanline_right - texture_scanline_left) / (right_x - left_x) };
-		Vec2 texture_pixel_scanline{ texture_scanline_left };
-		for (int x{ left_x }; x < right_x; ++x, texture_pixel_scanline += texture_pixel_scanline_step)
+	TexVertex const left_slope_step{ (p1 - p0) / delta_y };
+	TexVertex const right_slope_step{ (p2 - p0) / delta_y };
+
+	TexVertex left_slope{ p0 };
+	TexVertex right_slope{ p0 };
+
+	for (float y{ std::ceilf(left_slope.model_pos.y - 0.5f) }; y < std::ceilf(p1.model_pos.y - 0.5f); ++y,
+		left_slope += left_slope_step, right_slope += right_slope_step)
+	{
+		float const delta_x{ right_slope.model_pos.x - left_slope.model_pos.x };
+
+		Vec2 const tex_step{ (right_slope.texture_pos - left_slope.texture_pos) / delta_x };
+		Vec2 tex{ left_slope.texture_pos };
+		for (float x{ std::ceilf(left_slope.model_pos.x - 0.5f) }; x < std::ceilf(right_slope.model_pos.x - 0.5f); ++x,
+			tex += tex_step)
 		{
-			PutPixel(x, static_cast<int>(y),
+			PutPixel(static_cast<int>(x), static_cast<int>(y),
 				texture.GetPixel
 				(
-					(unsigned)std::min(texture_width * texture_pixel_scanline.x, texture_x_clamp),
-					(unsigned)std::min(texture_height * texture_pixel_scanline.y, texture_y_clamp)
+					(unsigned)std::min(texture_width * tex.x, texture_x_clamp),
+					(unsigned)std::min(texture_height * tex.y, texture_y_clamp)
 				));
 		}
 	}

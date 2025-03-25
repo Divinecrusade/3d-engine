@@ -78,6 +78,9 @@ private:
 	void DrawFlatTopTriangleTex(TexVertex const& p0, TexVertex const& p1, TexVertex const& p2, Surface const& texture);
 	void DrawFlatBottomTriangle(Vec2 const& p0, Vec2 const& p1, Vec2 const& p2, Color c);
 	void DrawFlatBottomTriangleTex(TexVertex const& p0, TexVertex const& p1, TexVertex const& p2, Surface const& texture);
+	void DrawFlatTriangle(TexVertex left_slope, TexVertex right_slope, 
+						  TexVertex const& left_slope_step, TexVertex const& right_slope_step,
+						  TexVertex const& to, Surface const& texture);
 private:
 	GDIPlusManager										gdipMan;
 	Microsoft::WRL::ComPtr<IDXGISwapChain>				pSwapChain;

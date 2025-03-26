@@ -21,6 +21,8 @@
 #pragma once
 #include <d3d11.h>
 #include <wrl.h>
+#include <functional>
+#include <cmath>
 #include "GDIPlusManager.h"
 #include "ChiliException.h"
 #include "Surface.h"
@@ -78,9 +80,27 @@ private:
 	void DrawFlatTopTriangleTex(TexVertex const& p0, TexVertex const& p1, TexVertex const& p2, Surface const& texture);
 	void DrawFlatBottomTriangle(Vec2 const& p0, Vec2 const& p1, Vec2 const& p2, Color c);
 	void DrawFlatBottomTriangleTex(TexVertex const& p0, TexVertex const& p1, TexVertex const& p2, Surface const& texture);
-	void DrawFlatTriangle(TexVertex left_slope, TexVertex right_slope, 
-						  TexVertex const& left_slope_step, TexVertex const& right_slope_step,
-						  TexVertex const& to, Surface const& texture);
+	void DrawFlatTriangleTex(TexVertex left_slope, TexVertex right_slope, 
+							 TexVertex const& left_slope_step, TexVertex const& right_slope_step,
+							 TexVertex const& to, Surface const& texture, 
+							 std::function<unsigned(float)> texturing_mode_x,
+							 std::function<unsigned(float)> texturing_mode_y);
+	std::function<unsigned(float)> ClampModeX(Surface const& texture)
+	{
+		return [texture_width = static_cast<float>(texture.GetWidth())](float x){ return (unsigned)std::min(texture_width * x, texture_width - 1.f); };
+	}
+	std::function<unsigned(float)> ClampModeY(Surface const& texture)
+	{
+		return [texture_height = static_cast<float>(texture.GetWidth())](float y) { return (unsigned)std::min(texture_height * y, texture_height - 1.f); };
+	}
+	std::function<unsigned(float)> WrapModeX(Surface const& texture)
+	{
+		return [texture_width = static_cast<float>(texture.GetWidth())](float x) { return (unsigned)std::fmod(texture_width * x, texture_width - 1.f); };
+	}
+	std::function<unsigned(float)> WrapModeY(Surface const& texture)
+	{
+		return [texture_height = static_cast<float>(texture.GetWidth())](float y) { return (unsigned)std::fmod(texture_height * y, texture_height - 1.f); };
+	}
 private:
 	GDIPlusManager										gdipMan;
 	Microsoft::WRL::ComPtr<IDXGISwapChain>				pSwapChain;

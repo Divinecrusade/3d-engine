@@ -25,8 +25,7 @@
 #include <assert.h>
 #include <string>
 #include <array>
-#include <functional>
-#include <cmath>
+
 
 // Ignore the intellisense error "cannot open source file" for .shh files.
 // They will be created during the build sequence before the preprocessor runs.
@@ -476,7 +475,7 @@ void Graphics::DrawFlatTopTriangleTex(TexVertex const& p0, TexVertex const& p1, 
 	TexVertex const left_slope_step { (p0 - p1) / delta_y };
 	TexVertex const right_slope_step{ (p0 - p2) / delta_y };
 
-	DrawFlatTriangle(p1, p2, left_slope_step, right_slope_step, p0, texture);
+	DrawFlatTriangleTex(p1, p2, left_slope_step, right_slope_step, p0, texture, WrapModeX(texture), WrapModeY(texture));
 }
 
 void Graphics::DrawFlatBottomTriangle(Vec2 const& p0, Vec2 const& p1, Vec2 const& p2, Color c)
@@ -504,16 +503,11 @@ void Graphics::DrawFlatBottomTriangleTex(TexVertex const& p0, TexVertex const& p
 	TexVertex const left_slope_step{ (p1 - p0) / delta_y };
 	TexVertex const right_slope_step{ (p2 - p0) / delta_y };
 
-	DrawFlatTriangle(p0, p0, left_slope_step, right_slope_step, p1, texture);
+	DrawFlatTriangleTex(p0, p0, left_slope_step, right_slope_step, p1, texture, WrapModeX(texture), WrapModeY(texture));
 }
 
-void Graphics::DrawFlatTriangle(TexVertex left_slope, TexVertex right_slope, TexVertex const& left_slope_step, TexVertex const& right_slope_step, TexVertex const& to, Surface const& texture)
+void Graphics::DrawFlatTriangleTex(TexVertex left_slope, TexVertex right_slope, TexVertex const& left_slope_step, TexVertex const& right_slope_step, TexVertex const& to, Surface const& texture, std::function<unsigned(float)> texturing_mode_x, std::function<unsigned(float)> texturing_mode_y)
 {
-	float const texture_width{ static_cast<float>(texture.GetWidth()) };
-	float const texture_height{ static_cast<float>(texture.GetHeight()) };
-	float const texture_x_clamp{ texture_width - 1.f };
-	float const texture_y_clamp{ texture_height - 1.f };
-
 	for (float y{ std::ceilf(left_slope.model_pos.y - 0.5f) }; y < std::ceilf(to.model_pos.y - 0.5f); ++y,
 		left_slope += left_slope_step, right_slope += right_slope_step)
 	{
@@ -527,8 +521,8 @@ void Graphics::DrawFlatTriangle(TexVertex left_slope, TexVertex right_slope, Tex
 			PutPixel(static_cast<int>(x), static_cast<int>(y),
 				texture.GetPixel
 				(
-					(unsigned)std::min(texture_width * tex.x, texture_x_clamp),
-					(unsigned)std::min(texture_height * tex.y, texture_y_clamp)
+					texturing_mode_x(tex.x),
+					texturing_mode_y(tex.y)
 				));
 		}
 	}

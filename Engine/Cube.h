@@ -16,20 +16,20 @@ public:
         texture.reserve(8u);
 
         model.emplace_back(-half_size, -half_size, -half_size);
-        texture.emplace_back(0.f, 1.f);
+        texture.emplace_back(0.f, 1.f * 2);
         model.emplace_back(half_size, -half_size, -half_size);
-        texture.emplace_back(1.f, 1.f);
+        texture.emplace_back(1.f * 2, 1.f * 2);
         model.emplace_back(-half_size, half_size, -half_size);
         texture.emplace_back(0.f, 0.f);
         model.emplace_back(half_size, half_size, -half_size);
-        texture.emplace_back(1.f, 0.f);
+        texture.emplace_back(1.f * 2, 0.f);
 
         model.emplace_back(-half_size, -half_size, half_size);
-        texture.emplace_back(1.f, 1.f);
+        texture.emplace_back(1.f * 2, 1.f * 2);
         model.emplace_back(half_size, -half_size, half_size);
-        texture.emplace_back(0.f, 1.f);
+        texture.emplace_back(0.f, 1.f * 2);
         model.emplace_back(-half_size, half_size, half_size);
-        texture.emplace_back(1.f, 0.f);
+        texture.emplace_back(1.f * 2, 0.f);
         model.emplace_back(half_size, half_size, half_size);
         texture.emplace_back(0.f, 0.f);
 	}

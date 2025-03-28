@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Cube.h"
+#include "CubeExtended.h"
 #include "Keyboard.h"
 #include "Graphics.h"
 #include "PubeScreenTransformer.h"
@@ -127,7 +128,7 @@ public:
 
 private:
 
-	Cube cb{ 1.f };
+	CubeExtended cb{ 1.f };
 	Surface texture{ Surface::FromFile(L"Images\\sauron-bhole-100x100.png") };
 	static constexpr float dTheta = PI;
 	float offset_z = 2.0f;

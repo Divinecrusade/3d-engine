@@ -91,7 +91,7 @@ private:
 	}
 	std::function<unsigned(float)> ClampModeY(Surface const& texture)
 	{
-		return [texture_height = static_cast<float>(texture.GetWidth())](float y) { return (unsigned)std::min(texture_height * y, texture_height - 1.f); };
+		return [texture_height = static_cast<float>(texture.GetHeight())](float y) { return (unsigned)std::min(texture_height * y, texture_height - 1.f); };
 	}
 	std::function<unsigned(float)> WrapModeX(Surface const& texture)
 	{
@@ -99,7 +99,7 @@ private:
 	}
 	std::function<unsigned(float)> WrapModeY(Surface const& texture)
 	{
-		return [texture_height = static_cast<float>(texture.GetWidth())](float y) { return (unsigned)std::fmod(texture_height * y, texture_height - 1.f); };
+		return [texture_height = static_cast<float>(texture.GetHeight())](float y) { return (unsigned)std::fmod(texture_height * y, texture_height - 1.f); };
 	}
 private:
 	GDIPlusManager										gdipMan;

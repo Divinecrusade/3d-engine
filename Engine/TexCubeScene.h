@@ -2,6 +2,7 @@
 
 #include "Cube.h"
 #include "CubeExtended.h"
+#include "Dice.h"
 #include "Keyboard.h"
 #include "Graphics.h"
 #include "PubeScreenTransformer.h"
@@ -128,8 +129,8 @@ public:
 
 private:
 
-	CubeExtended cb{ 1.f };
-	Surface texture{ Surface::FromFile(L"Images\\sauron-bhole-100x100.png") };
+	Dice cb{ 1.f };
+	Surface texture{ Surface::FromFile(L"Images\\dice.png") };
 	static constexpr float dTheta = PI;
 	float offset_z = 2.0f;
 	float theta_x = 0.0f;

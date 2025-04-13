@@ -12,8 +12,8 @@ public:
         return
         TexVertex
         {
-            model_pos.InterpolateTo(dest.model_pos, alpha),
-            texture_pos.InterpolateTo(dest.texture_pos, alpha)
+            interpolate(model_pos, dest.model_pos, alpha),
+            interpolate(texture_pos, dest.texture_pos, alpha)
         };
     }
 

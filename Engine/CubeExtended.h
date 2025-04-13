@@ -2,7 +2,6 @@
 
 #include "IndexedLineList.h"
 #include "IndexedTriangleList.hpp"
-#include "TexVertex.h"
 
 
 class CubeExtended

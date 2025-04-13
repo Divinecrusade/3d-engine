@@ -43,3 +43,9 @@ inline T wrap_angle( T theta )
 		return theta;
 	}
 }
+
+template<typename T>
+inline T interpolate(T from, T to, float alpha)
+{
+	return from + (to - from) * alpha;
+}

@@ -72,9 +72,6 @@
     <ClInclude Include="Mat3.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="PubeScreenTransformer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="IndexedLineList.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -84,9 +81,6 @@
     <ClInclude Include="IndexedTriangleList.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="TexVertex.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="TexCubeScene.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -94,6 +88,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Dice.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Pipeline.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -24,7 +24,6 @@
 #include "Vec2.h"
 #include <vector>
 #include "ChiliMath.h"
-#include "PubeScreenTransformer.h"
 #include "TexCubeScene.h"
 
 class Game
@@ -45,7 +44,6 @@ private:
 	Graphics gfx;
 	/********************************/
 	/*  User Variables              */
-	PubeScreenTransformer pst{ static_cast<float>(gfx.ScreenWidth), static_cast<float>(gfx.ScreenHeight) };
-	TexCubeScene scene{ };
+	TexCubeScene scene;
 	/********************************/
 };

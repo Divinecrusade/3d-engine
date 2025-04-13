@@ -416,40 +416,6 @@ void Graphics::DrawTriangle(Vec2 p0, Vec2 p1, Vec2 p2, Color c)
 	}
 }
 
-void Graphics::DrawTriangleTex(TexVertex p0, TexVertex p1, TexVertex p2, Surface const& texture)
-{
-	if (p0.model_pos.y < p1.model_pos.y) std::swap(p0, p1);
-	if (p2.model_pos.y < p1.model_pos.y) std::swap(p2, p1);
-	if (p0.model_pos.y > p2.model_pos.y) std::swap(p0, p2);
-
-	if (std::fabs(p0.model_pos.y - p1.model_pos.y) < 1e-7f)
-	{
-		if (p0.model_pos.x > p1.model_pos.x) std::swap(p0, p1);
-		DrawFlatTopTriangleTex(p2, p0, p1, texture);
-	}
-	else if (std::fabs(p0.model_pos.y - p2.model_pos.y) < 1e-7f)
-	{
-		if (p0.model_pos.x > p2.model_pos.x) std::swap(p0, p2);
-		DrawFlatBottomTriangleTex(p1, p0, p2, texture);
-	}
-	else
-	{
-		float const alpha{ (p0.model_pos.y - p1.model_pos.y) / (p2.model_pos.y - p1.model_pos.y) };
-		TexVertex const pi{ p1.InterpolateTo(p2, alpha) };
-
-		if (pi.model_pos.x < p0.model_pos.x)
-		{
-			DrawFlatBottomTriangleTex(p1, pi, p0, texture);
-			DrawFlatTopTriangleTex(p2, pi, p0, texture);
-		}
-		else
-		{
-			DrawFlatBottomTriangleTex(p1, p0, pi, texture);
-			DrawFlatTopTriangleTex(p2, p0, pi, texture);
-		}
-	}
-}
-
 void Graphics::DrawFlatTopTriangle(Vec2 const& p0, Vec2 const& p1, Vec2 const& p2, Color c)
 {
 	assert(p0.y > p1.y && p0.y > p2.y);
@@ -468,16 +434,6 @@ void Graphics::DrawFlatTopTriangle(Vec2 const& p0, Vec2 const& p1, Vec2 const& p
 	}
 }
 
-void Graphics::DrawFlatTopTriangleTex(TexVertex const& p0, TexVertex const& p1, TexVertex const& p2, Surface const& texture)
-{
-	float const delta_y{ p0.model_pos.y - p1.model_pos.y };
-
-	TexVertex const left_slope_step { (p0 - p1) / delta_y };
-	TexVertex const right_slope_step{ (p0 - p2) / delta_y };
-
-	DrawFlatTriangleTex(p1, p2, left_slope_step, right_slope_step, p0, texture, WrapModeX(texture), WrapModeY(texture));
-}
-
 void Graphics::DrawFlatBottomTriangle(Vec2 const& p0, Vec2 const& p1, Vec2 const& p2, Color c)
 {
 	assert(p0.y < p1.y && p0.y < p2.y);
@@ -492,38 +448,6 @@ void Graphics::DrawFlatBottomTriangle(Vec2 const& p0, Vec2 const& p1, Vec2 const
 		for (int x{ left_x }; x < right_x; ++x)
 		{
 			PutPixel(x, static_cast<int>(y), c);
-		}
-	}
-}
-
-void Graphics::DrawFlatBottomTriangleTex(TexVertex const& p0, TexVertex const& p1, TexVertex const& p2, Surface const& texture)
-{
-	float const delta_y{ p1.model_pos.y - p0.model_pos.y };
-
-	TexVertex const left_slope_step{ (p1 - p0) / delta_y };
-	TexVertex const right_slope_step{ (p2 - p0) / delta_y };
-
-	DrawFlatTriangleTex(p0, p0, left_slope_step, right_slope_step, p1, texture, WrapModeX(texture), WrapModeY(texture));
-}
-
-void Graphics::DrawFlatTriangleTex(TexVertex left_slope, TexVertex right_slope, TexVertex const& left_slope_step, TexVertex const& right_slope_step, TexVertex const& to, Surface const& texture, std::function<unsigned(float)> texturing_mode_x, std::function<unsigned(float)> texturing_mode_y)
-{
-	for (float y{ std::ceilf(left_slope.model_pos.y - 0.5f) }; y < std::ceilf(to.model_pos.y - 0.5f); ++y,
-		left_slope += left_slope_step, right_slope += right_slope_step)
-	{
-		float const delta_x{ right_slope.model_pos.x - left_slope.model_pos.x };
-
-		Vec2 const tex_step{ (right_slope.texture_pos - left_slope.texture_pos) / delta_x };
-		Vec2 tex{ left_slope.texture_pos };
-		for (float x{ std::ceilf(left_slope.model_pos.x - 0.5f) }; x < std::ceilf(right_slope.model_pos.x - 0.5f); ++x,
-			tex += tex_step)
-		{
-			PutPixel(static_cast<int>(x), static_cast<int>(y),
-				texture.GetPixel
-				(
-					texturing_mode_x(tex.x),
-					texturing_mode_y(tex.y)
-				));
 		}
 	}
 }

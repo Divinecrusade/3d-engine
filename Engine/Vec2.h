@@ -62,10 +62,6 @@ public:
 		norm.Normalize();
 		return norm;
 	}
-	_Vec2 InterpolateTo(_Vec2 const& dest, float alpha)
-	{
-		return _Vec2{ *this + (dest - *this) * alpha };
-	}
 	_Vec2	operator-() const
 	{
 		return _Vec2( -x,-y );

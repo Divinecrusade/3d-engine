@@ -2,16 +2,16 @@
 
 #include "IndexedLineList.h"
 #include "IndexedTriangleList.hpp"
-#include "Pipeline.h"
+#include "TextureBindedVertex.h"
 
 
 class Dice
 {
 public:
 
-    static IndexedTriangleList<Pipeline::Vertex> GetTrianglesTex(float size)
+    static IndexedTriangleList<TextureBindedVertex> GetTrianglesTex(float size)
     {
-        std::vector<Pipeline::Vertex> object{ };
+        std::vector<TextureBindedVertex> object{ };
 
         auto const half_size{ size / 2.f };
         object.reserve(14u);

@@ -2,88 +2,28 @@
 
 #include "Graphics.h"
 #include "IndexedTriangleList.hpp"
-#include "Surface.h"
 #include "Mat3.h"
 #include "ChiliMath.h"
+#include "ClampEffect.h"
 
 #include <array>
 
+template<class GraphicEffect, class Vertex = GraphicEffect::Vertex>
 class Pipeline
 {
 public:
 
-    class Vertex
-    {
-    public:
-
-        Vertex(Vec3 model, Vec2 texture)
-        :
-        model_pos{ std::move(model) },
-        texture_pos{ std::move(texture) }
-        { }
-
-        Vertex& operator+=(Vertex const& rhs)
-        {
-            model_pos += rhs.model_pos;
-            texture_pos += rhs.texture_pos;
-
-            return *this;
-        }
-        Vertex& operator-=(Vertex const& rhs)
-        {
-            model_pos -= rhs.model_pos;
-            texture_pos -= rhs.texture_pos;
-
-            return *this;
-        }
-
-        Vertex& operator*=(float const& rhs)
-        {
-            model_pos *= rhs;
-            texture_pos *= rhs;
-
-            return *this;
-        }
-        Vertex& operator/=(float const& rhs)
-        {
-            model_pos /= rhs;
-            texture_pos /= rhs;
-
-            return *this;
-        }
-
-        Vertex operator+(Vertex const& rhs) const
-        {
-            return Vertex{ *this } += rhs;
-        }
-        Vertex operator-(Vertex const& rhs) const
-        {
-            return Vertex{ *this } -= rhs;
-        }
-
-        Vertex operator*(float const& rhs) const
-        {
-            return Vertex{ *this } *= rhs;
-        }
-        Vertex operator/(float const& rhs) const
-        {
-            return Vertex{ *this } /= rhs;
-        }
-
-        Vec3 model_pos{ };
-        Vec2 texture_pos{ };
-    };
-
+    //using Vertex = ;
     using Triangle = std::array<Vertex, 3u>;
 
 public:
 
-    Pipeline(Graphics& gfx, std::wstring const& texture_path)
+    Pipeline(Graphics& gfx, GraphicEffect effect)
     :
     gfx{ gfx },
     screen_half_width{ gfx.ScreenWidth / 2.f },
     screen_half_height{ gfx.ScreenHeight / 2.f },
-    texture{ Surface::FromFile(texture_path) }
+    effect{ std::move(effect) }
     {  }
 
     void Draw(IndexedTriangleList<Vertex> model)
@@ -212,19 +152,17 @@ private:
         for (float y{ std::ceilf(left_slope.model_pos.y - 0.5f) }; y < std::ceilf(to.model_pos.y - 0.5f); ++y,
             left_slope += left_slope_step, right_slope += right_slope_step)
         {
-            float const delta_x{ right_slope.model_pos.x - left_slope.model_pos.x };
+            auto iLine{ left_slope };
 
-            Vec2 const tex_step{ (right_slope.texture_pos - left_slope.texture_pos) / delta_x };
-            Vec2 tex{ left_slope.texture_pos };
+            float const delta_x{ right_slope.model_pos.x - left_slope.model_pos.x };
+            auto const step{ (right_slope - left_slope) / delta_x };
+
+            iLine += step * (std::ceilf(left_slope.model_pos.x - 0.5f) + 0.5f - left_slope.model_pos.x);
+
             for (float x{ std::ceilf(left_slope.model_pos.x - 0.5f) }; x < std::ceilf(right_slope.model_pos.x - 0.5f); ++x,
-                tex += tex_step)
+                iLine += step)
             {
-                gfx.PutPixel(static_cast<int>(x), static_cast<int>(y),
-                    texture.GetPixel
-                    (
-                        std::fmod(tex.x * (texture.GetWidth() - 1), static_cast<float>(texture.GetWidth())),
-                        std::fmod(tex.y * (texture.GetHeight() - 1), static_cast<float>(texture.GetHeight()))
-                    ));
+                gfx.PutPixel(static_cast<int>(x), static_cast<int>(y), effect.ps(iLine));
             }
         }
     }
@@ -232,11 +170,10 @@ private:
 private:
 
     Graphics& gfx;
-    
     float screen_half_width;
     float screen_half_height;
 
-    Surface texture;
+    GraphicEffect effect;
 
     Mat3 rotation{ Mat3::Identity() };
     Vec3 translation{ 0.f, 0.f, 0.f };

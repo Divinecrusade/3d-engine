@@ -6,6 +6,7 @@
 #include "Keyboard.h"
 #include "Mat3.h"
 #include "Pipeline.h"
+#include "ClampEffect.h"
 
 
 class TexCubeScene
@@ -14,7 +15,7 @@ public:
 
 	TexCubeScene(Graphics& gfx)
 	:
-	pip{ gfx, L"Images\\dice.png" }
+	pip{ gfx, ClampEffect{Surface::FromFile(L"Images\\dice.png") } }
 	{ 
 		pip.SaveTranslation(Vec3{ 0.0f, 0.0f, 2.f });
 	}
@@ -63,6 +64,6 @@ public:
 
 private:
 
-	Pipeline pip;
+	Pipeline<ClampEffect> pip;
 	static constexpr float dTheta = PI;
 };

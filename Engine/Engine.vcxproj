@@ -139,6 +139,7 @@
     <ClInclude Include="ChiliException.h" />
     <ClInclude Include="ChiliMath.h" />
     <ClInclude Include="ChiliWin.h" />
+    <ClInclude Include="ClampEffect.h" />
     <ClInclude Include="Colors.h" />
     <ClInclude Include="Cube.h" />
     <ClInclude Include="CubeExtended.h" />
@@ -161,6 +162,7 @@
     <ClInclude Include="TexCubeScene.h" />
     <ClInclude Include="Vec2.h" />
     <ClInclude Include="Vec3.h" />
+    <ClInclude Include="TextureBindedVertex.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DXErr.cpp" />

@@ -102,6 +102,12 @@
     <ClInclude Include="IScene.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="SolidColorEffect.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SolidCubeScene.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DXErr.cpp">

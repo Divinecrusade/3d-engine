@@ -26,6 +26,7 @@
 #include "ChiliMath.h"
 #include "TexCubeScene.h"
 #include "ColorCubeScene.h"
+#include "SolidCubeScene.h"
 
 class Game
 {

@@ -20,6 +20,8 @@
 ******************************************************************************************/
 #pragma once
 
+#include "Vec3.h"
+
 class Color
 {
 public:
@@ -46,6 +48,16 @@ public:
 		:
 		Color( (x << 24u) | col.dword )
 	{}
+	Color(Vec3 c)
+	{
+		SetR(static_cast<unsigned char>(c.x));
+		SetG(static_cast<unsigned char>(c.y));
+		SetB(static_cast<unsigned char>(c.z));
+	}
+	operator Vec3() const
+	{ 
+		return Vec3{ float(GetR()), float(GetG()), float(GetB()) };
+	}
 	Color& operator =( Color color )
 	{
 		dword = color.dword;

@@ -25,9 +25,11 @@
 Game::Game( MainWindow& wnd )
 	:
 	wnd( wnd ),
-	gfx( wnd ),
-	scene{ gfx }
+	gfx( wnd )
 {
+	scenes.emplace_back(std::make_unique<TexCubeScene>( gfx ));
+	scenes.emplace_back(std::make_unique<ColorCubeScene>( gfx ));
+	scene = scenes.begin();
 }
 
 void Game::Go()
@@ -41,10 +43,24 @@ void Game::Go()
 void Game::UpdateModel()
 {
 	const float dt = 1.0f / 60.0f;
-	scene.Update(wnd.kbd, dt);
+
+	while (!wnd.kbd.KeyIsEmpty())
+	{
+		const auto e = wnd.kbd.ReadKey();
+		if (e.GetCode() == VK_TAB && e.IsPress())
+		{
+			++scene;
+			if (scene == scenes.end()) scene = scenes.begin();
+		}
+		else if (e.GetCode() == VK_ESCAPE && e.IsPress())
+		{
+			wnd.Kill();
+		}
+	}
+	(*scene)->Update(wnd.kbd, dt);
 }
 
 void Game::ComposeFrame()
 {
-	scene.Draw();
+	(*scene)->Draw();
 }

@@ -75,19 +75,13 @@
     <ClInclude Include="IndexedLineList.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Cube.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="IndexedTriangleList.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="TexCubeScene.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="CubeExtended.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Dice.h">
+    <ClInclude Include="Cube.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Pipeline.h">
@@ -97,6 +91,15 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="TextureBindedVertex.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ColorBlendEffect.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ColorCubeScene.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="IScene.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

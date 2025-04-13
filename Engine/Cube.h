@@ -2,72 +2,35 @@
 
 #include "IndexedLineList.h"
 #include "IndexedTriangleList.hpp"
-#include "TexVertex.h"
+#include "TextureBindedVertex.h"
 
 
 class Cube
 {
 public:
 
-    Cube(float size)
-	{
+    template<class Vertex>
+    static IndexedTriangleList<Vertex> GetPlains(float size)
+    {
+        std::vector<Vertex> model{ };
+
         auto const half_size{ size / 2.f };
         model.reserve(8u);
-        texture.reserve(8u);
 
-        model.emplace_back(-half_size, -half_size, -half_size);
-        texture.emplace_back(0.f, 1.f * 2);
-        model.emplace_back(half_size, -half_size, -half_size);
-        texture.emplace_back(1.f * 2, 1.f * 2);
-        model.emplace_back(-half_size, half_size, -half_size);
-        texture.emplace_back(0.f, 0.f);
-        model.emplace_back(half_size, half_size, -half_size);
-        texture.emplace_back(1.f * 2, 0.f);
+        model.emplace_back(Vec3{ -half_size, -half_size, -half_size });
+        model.emplace_back(Vec3{ half_size, -half_size, -half_size });
+        model.emplace_back(Vec3{ -half_size, half_size, -half_size });
+        model.emplace_back(Vec3{ half_size, half_size, -half_size });
 
-        model.emplace_back(-half_size, -half_size, half_size);
-        texture.emplace_back(1.f * 2, 1.f * 2);
-        model.emplace_back(half_size, -half_size, half_size);
-        texture.emplace_back(0.f, 1.f * 2);
-        model.emplace_back(-half_size, half_size, half_size);
-        texture.emplace_back(1.f * 2, 0.f);
-        model.emplace_back(half_size, half_size, half_size);
-        texture.emplace_back(0.f, 0.f);
-	}
+        model.emplace_back(Vec3{ -half_size, -half_size, half_size });
+        model.emplace_back(Vec3{ half_size, -half_size, half_size });
+        model.emplace_back(Vec3{ -half_size, half_size, half_size });
+        model.emplace_back(Vec3{ half_size, half_size, half_size });
 
-	IndexedLineList GetLines() const
-	{
-        return IndexedLineList
-        {
-            model,
-            { 0U,1U, 0U,2U, 0U,4U, 1U,3U, 1U,5U, 2U,3U, 2U,6U, 4U,6U, 4U,5U, 3U,7U, 7U,6U, 7U,5U }
-		};
-	}
-
-    IndexedTriangleList<Vec3> GetTriangles() const
-    {
-        return 
-        {
-            model,
-            {
-                0,2,1, 2,3,1, 
-                1,3,5, 3,7,5, 
-                0,4,2, 2,4,6,
-                2,6,3, 3,6,7,
-                4,5,7, 4,7,6,
-                0,1,4, 1,5,4
-            }
-        };
-    }
-
-    IndexedTriangleList<TexVertex> GetTrianglesTex() const
-    {
-        std::vector<TexVertex> tc{ };
-        tc.reserve(model.size());
-        std::generate_n(std::back_inserter(tc), model.size(), [it1 = this->model.cbegin(), it2 = this->texture.cbegin()]() mutable { return TexVertex{*(it1++), *(it2++)}; });
         return
-        {
-            std::move(tc),
-            {
+        IndexedTriangleList<Vertex>{
+            std::move(model),
+            std::vector<std::size_t>{
                 0,2,1, 2,3,1,
                 1,3,5, 3,7,5,
                 0,4,2, 2,4,6,
@@ -78,8 +41,108 @@ public:
         };
     }
 
-private:
+    static IndexedTriangleList<TextureBindedVertex> GetTrianglesTex(float size)
+    {
+        std::vector<TextureBindedVertex> object{ };
 
-    std::vector<Vec3> model{ };
-    std::vector<Vec2> texture{ };
+        auto const half_size{ size / 2.f };
+        object.reserve(14u);
+
+        object.emplace_back
+        (
+            Vec3{ -half_size, -half_size, -half_size },
+            Vec2{ 2.f / 3.f, 0.f }
+        );
+
+        object.emplace_back
+        (
+            Vec3{ half_size, -half_size, -half_size },
+            Vec2{ 1.f / 3.f, 0.f }
+        );
+
+        object.emplace_back
+        (
+            Vec3{ -half_size, half_size, -half_size },
+            Vec2{ 2.f / 3.f, 1.f / 4.f }
+        );
+
+        object.emplace_back
+        (
+            Vec3{ half_size, half_size, -half_size },
+            Vec2{ 1.f / 3.f, 1.f / 4.f }
+        );
+
+        object.emplace_back
+        (
+            Vec3{ -half_size, half_size, half_size },
+            Vec2{ 2.f / 3.f, 2.f / 4.f }
+        );
+
+        object.emplace_back
+        (
+            Vec3{ half_size, half_size, half_size },
+            Vec2{ 1.f / 3.f, 2.f / 4.f }
+        );
+
+        object.emplace_back
+        (
+            Vec3{ -half_size, -half_size, -half_size },
+            Vec2{ 1.f, 1.f / 4.f }
+        );
+
+        object.emplace_back
+        (
+            Vec3{ -half_size, -half_size, half_size },
+            Vec2{ 1.f, 2.f / 4.f }
+        );
+
+        object.emplace_back
+        ( 
+            Vec3{ half_size, -half_size, -half_size },
+            Vec2{ 0.f, 1.f / 4.f }
+        );
+
+        object.emplace_back
+        (
+            Vec3{ half_size, -half_size, half_size },
+            Vec2{ 0.f, 2.f / 4.f }
+        );
+
+        object.emplace_back
+        (
+            Vec3{ half_size, -half_size, half_size },
+            Vec2{ 1.f / 3.f, 3.f / 4.f }
+        );
+
+        object.emplace_back
+        (
+            Vec3{ -half_size, -half_size, half_size },
+            Vec2{ 2.f / 3.f, 3.f / 4.f }
+        );
+
+        object.emplace_back
+        (
+            Vec3{ -half_size, -half_size, -half_size },
+            Vec2{ 2.f / 3.f, 1.f }
+        );
+
+        object.emplace_back
+        (
+            Vec3{ half_size, -half_size, -half_size },
+            Vec2{ 1.f / 3.f, 1.f }
+        );
+
+        return
+        {
+            std::move(object),
+            {
+                1,0,3, 2,3,0,
+                3,2,5, 4,5,2,
+                2,6,4, 7,4,6,
+                8,3,9, 5,9,3,
+                5,4,10, 11,10,4,
+                10,11,13, 12,13,11
+            }
+        };
+    }
 };

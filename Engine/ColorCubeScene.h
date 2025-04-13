@@ -2,20 +2,19 @@
 
 #include "IScene.h"
 #include "Cube.h"
-#include "Keyboard.h"
 #include "Mat3.h"
 #include "Pipeline.h"
-#include "ClampEffect.h"
+#include "ColorBlendEffect.h"
 
 
-class TexCubeScene : public IScene
+class ColorCubeScene : public IScene
 {
 public:
 
-	TexCubeScene(Graphics& gfx)
-	:
-	pip{ gfx, ClampEffect{Surface::FromFile(L"Images\\dice.png") } }
-	{ 
+	ColorCubeScene(Graphics& gfx)
+		:
+		pip{ gfx, ColorBlendEffect{ } }
+	{
 		pip.SaveTranslation(Vec3{ 0.0f, 0.0f, 2.f });
 	}
 
@@ -46,7 +45,7 @@ public:
 		{
 			pip.SaveRotation(Mat3::RotationZ(dTheta * dt));
 		}
-		
+
 		if (kbd.KeyIsPressed('R'))
 		{
 			pip.SaveTranslation(Vec3{ 0.0f, 0.0f, -2.0f * dt });
@@ -58,11 +57,21 @@ public:
 	}
 	void Draw()
 	{
-		pip.Draw(Cube::GetTrianglesTex(1.f));
+		auto model{ Cube::GetPlains<ColorBlendEffect::ColorBindedVertex>(1.f) };
+		model.vertices[0u].color = Vec3( Colors::Black );
+		model.vertices[1u].color = Vec3( Colors::Green );
+		model.vertices[2u].color = Vec3( Colors::Red );
+		model.vertices[3u].color = Vec3( Colors::Blue );
+		model.vertices[4u].color = Vec3( Colors::Cyan );
+		model.vertices[5u].color = Vec3( Colors::Magenta );
+		model.vertices[6u].color = Vec3( Colors::Yellow );
+		model.vertices[7u].color = Vec3( Colors::White );
+
+		pip.Draw(model);
 	}
 
 private:
 
-	Pipeline<ClampEffect> pip;
+	Pipeline<ColorBlendEffect> pip;
 	static constexpr float dTheta = PI;
 };

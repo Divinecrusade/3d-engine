@@ -25,6 +25,7 @@
 #include <vector>
 #include "ChiliMath.h"
 #include "TexCubeScene.h"
+#include "ColorCubeScene.h"
 
 class Game
 {
@@ -44,6 +45,7 @@ private:
 	Graphics gfx;
 	/********************************/
 	/*  User Variables              */
-	TexCubeScene scene;
+	std::vector<std::unique_ptr<IScene>> scenes;
+	decltype(scenes.begin()) scene;
 	/********************************/
 };

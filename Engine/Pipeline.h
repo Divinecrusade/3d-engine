@@ -85,8 +85,11 @@ private:
 
     void PubeScreenTransform(Vertex& v)
     {
-        v.model_pos.x = v.model_pos.x / v.model_pos.z * screen_half_width + screen_half_width;
-        v.model_pos.y = -v.model_pos.y / v.model_pos.z * screen_half_height + screen_half_height;
+        float const zFactor{ 1.f / v.model_pos.z };
+        v *= zFactor;
+        v.model_pos.x = v.model_pos.x * screen_half_width + screen_half_width;
+        v.model_pos.y = -v.model_pos.y * screen_half_height + screen_half_height;
+        v.model_pos.z = zFactor;
     }
 
     void DrawTriangle(Triangle& object)

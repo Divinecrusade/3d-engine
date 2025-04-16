@@ -41,6 +41,26 @@ public:
         translation += trans;
     }
 
+    Mat3 GetRotation() const
+    {
+        return rotation;
+    }
+
+    Vec3 GetTranslation() const
+    {
+        return translation;
+    }
+
+    void SetRotation(Mat3 rot)
+    {
+        rotation = rot;
+    }
+
+    void SetTranslation(Vec3 trans)
+    {
+        this->translation = trans;
+    }
+
 private:
 
     void ProcessVertices(std::vector<Vertex>& vertices, std::vector<std::size_t> const& indices)

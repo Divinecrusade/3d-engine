@@ -2,7 +2,6 @@
 
 #include "Graphics.h"
 #include "IndexedTriangleList.hpp"
-#include "Mat3.h"
 #include "ChiliMath.h"
 #include "ClampEffect.h"
 
@@ -11,12 +10,12 @@
 #include <algorithm>
 #include <limits>
 
-template<class GraphicEffect, class Vertex = GraphicEffect::Vertex>
+template<class GraphicEffect, class Vertex = GraphicEffect::Vertex, class TransformedVertex = GraphicEffect::VertexShader::OutVertex>
 class Pipeline
 {
 public:
 
-    using Triangle = std::array<Vertex, 3u>;
+    using Triangle = std::array<TransformedVertex, 3u>;
 
 public:
 
@@ -41,48 +40,18 @@ public:
         ProcessVertices(model.vertices, model.indices);
     }
 
-    void SaveRotation(Mat3 rot)
-    {
-        rotation = rotation * rot;
-    }
-
-    void SaveTranslation(Vec3 trans)
-    {
-        translation += trans;
-    }
-
-    Mat3 GetRotation() const
-    {
-        return rotation;
-    }
-
-    Vec3 GetTranslation() const
-    {
-        return translation;
-    }
-
-    void SetRotation(Mat3 rot)
-    {
-        rotation = rot;
-    }
-
-    void SetTranslation(Vec3 trans)
-    {
-        this->translation = trans;
-    }
-
 private:
 
-    void ProcessVertices(std::vector<Vertex>& vertices, std::vector<std::size_t> const& indices)
+    void ProcessVertices(std::vector<Vertex> const& vertices, std::vector<std::size_t> const& indices)
     {
-        for (auto& vertex : vertices)
-        {
-            vertex.model_pos = vertex.model_pos * rotation + translation;
-        }
-        AssembleTriangles(vertices, indices);
+        std::vector<TransformedVertex> processed{ };
+
+        std::transform(vertices.begin(), vertices.end(), std::back_inserter(processed), effect.vs);
+
+        AssembleTriangles(processed, indices);
     }
 
-    void AssembleTriangles(std::vector<Vertex>& vertices, std::vector<std::size_t> const& indices)
+    void AssembleTriangles(std::vector<TransformedVertex>& vertices, std::vector<std::size_t> const& indices)
     {
         for (std::size_t i{ 0u }; i < indices.size(); i += 3u)
         {
@@ -99,7 +68,7 @@ private:
         }
     }
 
-    void ProccessTriangle(Vertex& v0, Vertex& v1, Vertex& v2)
+    void ProccessTriangle(TransformedVertex& v0, TransformedVertex& v1, TransformedVertex& v2)
     {
         PostProccessTriangle(Triangle{ v0, v1, v2 });
     }
@@ -113,7 +82,7 @@ private:
         DrawTriangle(object);
     }
 
-    void PubeScreenTransform(Vertex& v)
+    void PubeScreenTransform(TransformedVertex& v)
     {
         float const zFactor{ 1.f / v.model_pos.z };
         v *= zFactor;
@@ -160,7 +129,7 @@ private:
         }
     }
 
-    void DrawFlatTopTriangle(Vertex const& p0, Vertex const& p1, Vertex const& p2)
+    void DrawFlatTopTriangle(TransformedVertex const& p0, TransformedVertex const& p1, TransformedVertex const& p2)
     {
         float const delta_y{ p0.model_pos.y - p1.model_pos.y };
 
@@ -170,7 +139,7 @@ private:
         DrawFlatTriangle(p1, p2, left_slope_step, right_slope_step, p0);
     }
 
-    void DrawFlatBottomTriangle(Vertex const& p0, Vertex const& p1, Vertex const& p2)
+    void DrawFlatBottomTriangle(TransformedVertex const& p0, TransformedVertex const& p1, TransformedVertex const& p2)
     {
         float const delta_y{ p1.model_pos.y - p0.model_pos.y };
 
@@ -180,7 +149,7 @@ private:
         DrawFlatTriangle(p0, p0, left_slope_step, right_slope_step, p1);
     }
 
-    void DrawFlatTriangle(Vertex left_slope, Vertex right_slope, Vertex const& left_slope_step, Vertex const& right_slope_step, Vertex const& to)
+    void DrawFlatTriangle(TransformedVertex left_slope, TransformedVertex right_slope, TransformedVertex const& left_slope_step, TransformedVertex const& right_slope_step, TransformedVertex const& to)
     {
         for (float y{ std::ceilf(left_slope.model_pos.y - 0.5f) }; y < std::ceilf(to.model_pos.y - 0.5f); ++y,
             left_slope += left_slope_step, right_slope += right_slope_step)
@@ -226,8 +195,7 @@ private:
 
     std::unique_ptr<float[]> zbuffer;
 
-    GraphicEffect effect;
+public:
 
-    Mat3 rotation{ Mat3::Identity() };
-    Vec3 translation{ 0.f, 0.f, 0.f };
+    GraphicEffect effect;
 };

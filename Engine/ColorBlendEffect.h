@@ -3,6 +3,7 @@
 #include "Vec2.h"
 #include "Vec3.h"
 #include "Colors.h"
+#include "GeometryShader.h"
 
 #include <utility>
 
@@ -85,7 +86,10 @@ public:
         }
     };
 
+    using VertexShader = GeometryShader<Vertex>;
+
 public:
 
     PixelShader ps{ };
+    VertexShader vs{ };
 };

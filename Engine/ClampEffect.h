@@ -2,6 +2,7 @@
 
 #include "Surface.h"
 #include "TextureBindedVertex.h"
+#include "GeometryShader.h"
 
 #include <algorithm>
 
@@ -36,6 +37,8 @@ public:
         Surface texture;
     };
 
+    using VertexShader = GeometryShader<Vertex>;
+
 public:
 
     ClampEffect(Surface texture)
@@ -46,4 +49,5 @@ public:
 public:
 
     PixelShader ps;
+    VertexShader vs{ };
 };

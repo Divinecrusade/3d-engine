@@ -63,6 +63,8 @@ public:
 	}
 	void Draw()
 	{
+		pip.BeginFrame();
+
 		constexpr Color c[]
 		{
 			Colors::Red, Colors::Green, Colors::Blue, Colors::White, Colors::Yellow, Colors::Magenta

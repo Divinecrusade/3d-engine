@@ -67,6 +67,8 @@ public:
 		model.vertices[6u].color = Vec3( Colors::Yellow );
 		model.vertices[7u].color = Vec3( Colors::White );
 
+		pip.BeginFrame();
+
 		pip.Draw(model);
 	}
 

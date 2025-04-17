@@ -26,8 +26,8 @@ public:
             
             return texture.GetPixel
             (
-                std::min(v.texture_pos.x / v.model_pos.z * texture.GetWidth(), static_cast<float>(texture.GetWidth() - 1)),
-                std::min(v.texture_pos.y / v.model_pos.z * texture.GetHeight(), static_cast<float>(texture.GetHeight() - 1))
+                std::min(v.texture_pos.x * texture.GetWidth(), static_cast<float>(texture.GetWidth() - 1)),
+                std::min(v.texture_pos.y * texture.GetHeight(), static_cast<float>(texture.GetHeight() - 1))
             );
         }
 

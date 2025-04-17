@@ -58,6 +58,7 @@ public:
 	}
 	void Draw()
 	{
+		pip.BeginFrame();
 		pip.Draw(Cube::GetTrianglesTex(1.f));
 	}
 

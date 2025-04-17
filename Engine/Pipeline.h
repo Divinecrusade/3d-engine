@@ -7,13 +7,15 @@
 #include "ClampEffect.h"
 
 #include <array>
+#include <memory>
+#include <algorithm>
+#include <limits>
 
 template<class GraphicEffect, class Vertex = GraphicEffect::Vertex>
 class Pipeline
 {
 public:
 
-    //using Vertex = ;
     using Triangle = std::array<Vertex, 3u>;
 
 public:
@@ -23,8 +25,16 @@ public:
     gfx{ gfx },
     screen_half_width{ gfx.ScreenWidth / 2.f },
     screen_half_height{ gfx.ScreenHeight / 2.f },
+    zbuffer{ std::make_unique<float[]>(gfx.ScreenWidth * gfx.ScreenHeight) },
     effect{ std::move(effect) }
-    {  }
+    {
+        ResetZBuffer();
+    }
+
+    void BeginFrame()
+    {
+        ResetZBuffer();
+    }
 
     void Draw(IndexedTriangleList<Vertex> model)
     {
@@ -185,9 +195,27 @@ private:
             for (float x{ std::ceilf(left_slope.model_pos.x - 0.5f) }; x < std::ceilf(right_slope.model_pos.x - 0.5f); ++x,
                 iLine += step)
             {
-                gfx.PutPixel(static_cast<int>(x), static_cast<int>(y), effect.ps(iLine));
+                if (UpdateZBuffer({ static_cast<unsigned int>(x), static_cast<unsigned int>(y) }, 1.f / iLine.model_pos.z))
+                {
+                    gfx.PutPixel(static_cast<int>(x), static_cast<int>(y), effect.ps(iLine / iLine.model_pos.z));
+                }
             }
         }
+    }
+
+    void ResetZBuffer()
+    {
+        std::fill_n(zbuffer.get(), gfx.ScreenWidth * gfx.ScreenHeight, std::numeric_limits<float>::infinity());
+    }
+
+    bool UpdateZBuffer(_Vec2<unsigned int> pos, float z)
+    {
+        if (zbuffer[pos.y * gfx.ScreenWidth + pos.x] > z)
+        {
+            zbuffer[pos.y * gfx.ScreenWidth + pos.x] = z;
+            return true;
+        }
+        return false;
     }
 
 private:
@@ -195,6 +223,8 @@ private:
     Graphics& gfx;
     float screen_half_width;
     float screen_half_height;
+
+    std::unique_ptr<float[]> zbuffer;
 
     GraphicEffect effect;
 

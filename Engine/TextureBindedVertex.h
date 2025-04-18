@@ -7,12 +7,11 @@ class TextureBindedVertex
 {
 public:
 
-    TextureBindedVertex(Vec3 model, Vec2 texture)
+    TextureBindedVertex(Vec3 model, Vec2 texture = { 0.f, 0.f })
         :
         model_pos{ std::move(model) },
         texture_pos{ std::move(texture) }
-    {
-    }
+    { }
 
     TextureBindedVertex& operator+=(TextureBindedVertex const& rhs)
     {

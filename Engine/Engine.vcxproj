@@ -157,6 +157,7 @@
     <ClInclude Include="Mat3.h" />
     <ClInclude Include="Mouse.h" />
     <ClInclude Include="Pipeline.h" />
+    <ClInclude Include="Plain.h" />
     <ClInclude Include="Rect.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="IScene.h" />
@@ -167,6 +168,7 @@
     <ClInclude Include="Vec2.h" />
     <ClInclude Include="Vec3.h" />
     <ClInclude Include="TextureBindedVertex.h" />
+    <ClInclude Include="WabePlainScene.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DXErr.cpp" />

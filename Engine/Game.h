@@ -27,6 +27,7 @@
 #include "TexCubeScene.h"
 #include "ColorCubeScene.h"
 #include "SolidCubeScene.h"
+#include "WabePlainScene.h"
 
 class Game
 {

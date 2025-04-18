@@ -111,6 +111,12 @@
     <ClInclude Include="GeometryShader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Plain.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="WabePlainScene.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DXErr.cpp">

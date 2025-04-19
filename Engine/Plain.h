@@ -26,18 +26,26 @@ public:
             for (std::size_t j{ 0ull }; j != triangles_in_row; ++j, x += cathetus_length)
             {
                 indices.emplace_back(model.size());
-                model.emplace_back(Vec3{ x, y, z });
+                model.emplace_back(Vec3{ x, y, z }); // left-top | size-6
                 indices.emplace_back(model.size());
-                model.emplace_back(Vec3{ x + cathetus_length, y, z });
+                model.emplace_back(Vec3{ x + cathetus_length, y, z }); // right-top | size-5
                 indices.emplace_back(model.size());
-                model.emplace_back(Vec3{ x, y - cathetus_length, z });
+                model.emplace_back(Vec3{ x, y - cathetus_length, z }); // left-bottom | size-4
 
                 indices.emplace_back(model.size());
-                model.emplace_back(Vec3{ x + cathetus_length, y, z });
+                model.emplace_back(Vec3{ x + cathetus_length, y, z }); // right-top | size-3
                 indices.emplace_back(model.size());
-                model.emplace_back(Vec3{ x + cathetus_length, y - cathetus_length, z });
+                model.emplace_back(Vec3{ x + cathetus_length, y - cathetus_length, z }); // right-bottom | size-2
                 indices.emplace_back(model.size());
-                model.emplace_back(Vec3{ x, y - cathetus_length, z });
+                model.emplace_back(Vec3{ x, y - cathetus_length, z }); // left-bottom | size-1
+
+                indices.emplace_back(model.size() - 6ull); // left-top
+                indices.emplace_back(model.size() - 4ull); // left-bottom
+                indices.emplace_back(model.size() - 5ull); // right-top
+
+                indices.emplace_back(model.size() - 3ull); // right-top
+                indices.emplace_back(model.size() - 1ull); // left-bottom
+                indices.emplace_back(model.size() - 2ull); // right-bottom
             }
         }
 

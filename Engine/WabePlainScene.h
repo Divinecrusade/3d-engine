@@ -5,7 +5,7 @@
 #include "Keyboard.h"
 #include "Mat3.h"
 #include "Pipeline.h"
-#include "ClampEffect.h"
+#include "WaveEffect.h"
 
 
 class WabePlainScene : public IScene
@@ -14,9 +14,11 @@ public:
 
 	WabePlainScene(Graphics& gfx)
 	:
-	pip{ gfx, ClampEffect{Surface::FromFile(L"Images\\sauron-bhole-100x100.png") } }
+	pip{ gfx, WaveEffect{Surface::FromFile(L"Images\\sauron-bhole-100x100.png") } },
+	plain{ Plain::GetSkinned<ClampEffect::Vertex>(9.f) }
 	{
-		pip.effect.vs.SaveTranslation(Vec3{ 0.0f, 0.0f, 2.f });
+		pip.effect.vs.SaveTranslation(Vec3{ 0.0f, 0.0f, 1.f });
+		pip.effect.vs.SaveRotation(Mat3::RotationY(PI / 4.f) * Mat3::RotationZ(PI / 4.f) * Mat3::RotationX(PI / 2.f));
 	}
 
 	void Update(Keyboard& kbd, float dt)
@@ -55,15 +57,17 @@ public:
 		{
 			pip.effect.vs.SaveTranslation(Vec3{ 0.0f, 0.0f, 2.0f * dt });
 		}
+		pip.effect.vs.UpdateTime(dt);
 	}
 	void Draw()
 	{
 		pip.BeginFrame();
-		pip.Draw(Plain::GetSkinned<ClampEffect::Vertex>(1.f));
+		pip.Draw(plain);
 	}
 
 private:
 
-	Pipeline<ClampEffect> pip;
+	Pipeline<WaveEffect> pip;
+	IndexedTriangleList<WaveEffect::Vertex> plain;
 	static constexpr float dTheta = PI;
 };

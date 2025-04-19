@@ -169,6 +169,7 @@
     <ClInclude Include="Vec3.h" />
     <ClInclude Include="TextureBindedVertex.h" />
     <ClInclude Include="WabePlainScene.h" />
+    <ClInclude Include="WaveEffect.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DXErr.cpp" />

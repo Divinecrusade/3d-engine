@@ -40,7 +40,7 @@ public:
         this->translation = trans;
     }
 
-    OutVertex operator()(InVertex const& v) const
+    virtual OutVertex operator()(InVertex const& v) const
     {
         OutVertex vertex{ v };
 

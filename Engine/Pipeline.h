@@ -93,9 +93,9 @@ private:
 
     void DrawTriangle(Triangle& object)
     {
-        Vertex& p0{ object[0u] };
-        Vertex& p1{ object[1u] };
-        Vertex& p2{ object[2u] };
+        TransformedVertex& p0{ object[0u] };
+        TransformedVertex& p1{ object[1u] };
+        TransformedVertex& p2{ object[2u] };
 
         if (p0.model_pos.y < p1.model_pos.y) std::swap(p0, p1);
         if (p2.model_pos.y < p1.model_pos.y) std::swap(p2, p1);
@@ -114,7 +114,7 @@ private:
         else
         {
             float const alpha{ (p0.model_pos.y - p1.model_pos.y) / (p2.model_pos.y - p1.model_pos.y) };
-            Vertex const pi{  interpolate(p1, p2, alpha) };
+            TransformedVertex const pi{  interpolate(p1, p2, alpha) };
 
             if (pi.model_pos.x < p0.model_pos.x)
             {
@@ -133,8 +133,8 @@ private:
     {
         float const delta_y{ p0.model_pos.y - p1.model_pos.y };
 
-        Vertex const left_slope_step{ (p0 - p1) / delta_y };
-        Vertex const right_slope_step{ (p0 - p2) / delta_y };
+        TransformedVertex const left_slope_step{ (p0 - p1) / delta_y };
+        TransformedVertex const right_slope_step{ (p0 - p2) / delta_y };
 
         DrawFlatTriangle(p1, p2, left_slope_step, right_slope_step, p0);
     }
@@ -143,8 +143,8 @@ private:
     {
         float const delta_y{ p1.model_pos.y - p0.model_pos.y };
 
-        Vertex const left_slope_step{ (p1 - p0) / delta_y };
-        Vertex const right_slope_step{ (p2 - p0) / delta_y };
+        TransformedVertex const left_slope_step{ (p1 - p0) / delta_y };
+        TransformedVertex const right_slope_step{ (p2 - p0) / delta_y };
 
         DrawFlatTriangle(p0, p0, left_slope_step, right_slope_step, p1);
     }

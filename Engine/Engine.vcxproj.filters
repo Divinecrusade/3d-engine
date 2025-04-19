@@ -120,6 +120,12 @@
     <ClInclude Include="WaveEffect.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="PositionColorEffect.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PositionColorCubeScene.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DXErr.cpp">

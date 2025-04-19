@@ -28,6 +28,7 @@
 #include "ColorCubeScene.h"
 #include "SolidCubeScene.h"
 #include "WabePlainScene.h"
+#include "PositionColorCubeScene.h"
 
 class Game
 {

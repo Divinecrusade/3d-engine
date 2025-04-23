@@ -12,7 +12,7 @@
 
 template<class GraphicEffect, 
          class Vertex = GraphicEffect::Vertex, 
-         class TransformedVertex = GraphicEffect::VertexShader::OutVertex,
+         class VSV = GraphicEffect::VertexShader::OutVertex,
          class GSV = GraphicEffect::GeometryShader::OutVertex>
 class Pipeline
 {
@@ -47,14 +47,14 @@ private:
 
     void ProcessVertices(std::vector<Vertex> const& vertices, std::vector<std::size_t> const& indices)
     {
-        std::vector<TransformedVertex> processed{ };
+        std::vector<VSV> processed{ };
 
         std::transform(vertices.begin(), vertices.end(), std::back_inserter(processed), effect.vs);
 
         AssembleTriangles(processed, indices);
     }
 
-    void AssembleTriangles(std::vector<TransformedVertex>& vertices, std::vector<std::size_t> const& indices)
+    void AssembleTriangles(std::vector<VSV>& vertices, std::vector<std::size_t> const& indices)
     {
         for (std::size_t i{ 0u }; i < indices.size(); i += 3u)
         {
@@ -89,7 +89,7 @@ private:
         DrawTriangle(object);
     }
 
-    void PubeScreenTransform(TransformedVertex& v)
+    void PubeScreenTransform(VSV& v)
     {
         float const zFactor{ 1.f / v.model_pos.z };
         v *= zFactor;
@@ -136,7 +136,7 @@ private:
         }
     }
 
-    void DrawFlatTopTriangle(TransformedVertex const& p0, TransformedVertex const& p1, TransformedVertex const& p2)
+    void DrawFlatTopTriangle(VSV const& p0, VSV const& p1, VSV const& p2)
     {
         float const delta_y{ p0.model_pos.y - p1.model_pos.y };
 
@@ -146,7 +146,7 @@ private:
         DrawFlatTriangle(p1, p2, left_slope_step, right_slope_step, p0);
     }
 
-    void DrawFlatBottomTriangle(TransformedVertex const& p0, TransformedVertex const& p1, TransformedVertex const& p2)
+    void DrawFlatBottomTriangle(VSV const& p0, VSV const& p1, VSV const& p2)
     {
         float const delta_y{ p1.model_pos.y - p0.model_pos.y };
 
@@ -156,7 +156,7 @@ private:
         DrawFlatTriangle(p0, p0, left_slope_step, right_slope_step, p1);
     }
 
-    void DrawFlatTriangle(TransformedVertex left_slope, TransformedVertex right_slope, TransformedVertex const& left_slope_step, TransformedVertex const& right_slope_step, TransformedVertex const& to)
+    void DrawFlatTriangle(VSV left_slope, VSV right_slope, VSV const& left_slope_step, VSV const& right_slope_step, VSV const& to)
     {
         for (float y{ std::ceilf(left_slope.model_pos.y - 0.5f) }; y < std::ceilf(to.model_pos.y - 0.5f); ++y,
             left_slope += left_slope_step, right_slope += right_slope_step)

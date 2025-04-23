@@ -70,6 +70,14 @@ public:
         {
             return ColorBindedVertex{ *this } /= rhs;
         }
+        ColorBindedVertex operator%(ColorBindedVertex const& rhs) const
+        {
+            return ColorBindedVertex{ this->model_pos % rhs.model_pos };
+        }
+        float operator*(ColorBindedVertex const& rhs) const
+        {
+            return this->model_pos * rhs.model_pos;
+        }
 
         Vec3 model_pos{ };
         Vec3 color{ };

@@ -22,31 +22,31 @@
     <Filter Include="Header Files\pipeline">
       <UniqueIdentifier>{b20f0277-11ea-4cd1-a392-8df999f0d626}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\pipeline\effects">
-      <UniqueIdentifier>{ee21e7a9-860f-401f-8d97-37955e58f853}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\pipeline\objects">
-      <UniqueIdentifier>{79d73baf-2f3b-4196-99ba-60825522d0c5}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\engine">
       <UniqueIdentifier>{07516281-5e49-453f-bd00-f835967dc844}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\effects">
+      <UniqueIdentifier>{ee21e7a9-860f-401f-8d97-37955e58f853}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\objects">
+      <UniqueIdentifier>{79d73baf-2f3b-4196-99ba-60825522d0c5}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ClampEffect.h">
-      <Filter>Header Files\pipeline\effects</Filter>
+      <Filter>Header Files\effects</Filter>
     </ClInclude>
     <ClInclude Include="ColorBlendEffect.h">
-      <Filter>Header Files\pipeline\effects</Filter>
+      <Filter>Header Files\effects</Filter>
     </ClInclude>
     <ClInclude Include="PositionColorEffect.h">
-      <Filter>Header Files\pipeline\effects</Filter>
+      <Filter>Header Files\effects</Filter>
     </ClInclude>
     <ClInclude Include="WaveEffect.h">
-      <Filter>Header Files\pipeline\effects</Filter>
+      <Filter>Header Files\effects</Filter>
     </ClInclude>
     <ClInclude Include="SolidColorEffect.h">
-      <Filter>Header Files\pipeline\effects</Filter>
+      <Filter>Header Files\effects</Filter>
     </ClInclude>
     <ClInclude Include="ColorCubeScene.h">
       <Filter>Header Files\scenes</Filter>
@@ -76,10 +76,10 @@
       <Filter>Header Files\pipeline</Filter>
     </ClInclude>
     <ClInclude Include="Plain.h">
-      <Filter>Header Files\pipeline\objects</Filter>
+      <Filter>Header Files\objects</Filter>
     </ClInclude>
     <ClInclude Include="Cube.h">
-      <Filter>Header Files\pipeline\objects</Filter>
+      <Filter>Header Files\objects</Filter>
     </ClInclude>
     <ClInclude Include="Pipeline.h">
       <Filter>Header Files\pipeline</Filter>

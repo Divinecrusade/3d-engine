@@ -1,7 +1,6 @@
 #pragma once
 
-#include "Vec2.h"
-#include "Vec3.h"
+#include "Mat3.h"
 #include "Colors.h"
 #include "DefaultVertexShader.h"
 #include "DefaultGeometryShader.h"
@@ -71,24 +70,99 @@ public:
         Color color{ };
     };
 
-    using Vertex = ColorBindedVertex;
+    using Vertex = Vec3;
 
     class PixelShader
     {
     public:
 
-        Color operator()(Vertex const& v) const
+        Color operator()(ColorBindedVertex const& v) const
         {
             return v.color;
         }
     };
 
-    using VertexShader = DefaultVertexShader<Vertex>;
-    using GeometryShader = DefaultGeometryShader<VertexShader::OutVertex>;
+    class VertexShader
+    {
+    public:
+
+        using InVertex  = Vertex;
+        using OutVertex = InVertex;
+
+        void SaveRotation(Mat3 rot)
+        {
+            rotation = rotation * rot;
+        }
+
+        void SaveTranslation(Vec3 trans)
+        {
+            translation += trans;
+        }
+
+        Mat3 GetRotation() const
+        {
+            return rotation;
+        }
+
+        Vec3 GetTranslation() const
+        {
+            return translation;
+        }
+
+        void SetRotation(Mat3 rot)
+        {
+            rotation = rot;
+        }
+
+        void SetTranslation(Vec3 trans)
+        {
+            this->translation = trans;
+        }
+
+        virtual OutVertex operator()(InVertex const& v) const
+        {
+            return v * rotation + translation;
+        }
+
+    private:
+
+        Mat3 rotation{ Mat3::Identity() };
+        Vec3 translation{ 0.f, 0.f, 0.f };
+    };
+    class GeometryShader
+    {
+    public:
+
+        using InVertex  = Vertex;
+        using OutVertex = ColorBindedVertex;
+
+        GeometryShader(std::vector<Color> colors_pull_init, std::size_t delimeter_init)
+        :
+        colors_pull{ std::move(colors_pull_init) },
+        delimiter{ delimeter_init }
+        { }
+
+        OutVertex operator()(InVertex v, std::size_t i)
+        {
+            return OutVertex{ v, colors_pull[i / delimiter] };
+        }
+
+    private:
+
+        std::vector<Color> colors_pull;
+        std::size_t delimiter;
+    };
+
+public:
+
+    SolidColorEffect(std::vector<Color> colors_pull_init, std::size_t delimeter_init)
+    :
+    gs{ std::move(colors_pull_init), std::move(delimeter_init) }
+    {  }
 
 public:
 
     PixelShader ps{ };
     VertexShader vs{ };
-    GeometryShader gs{ };
+    GeometryShader gs;
 };

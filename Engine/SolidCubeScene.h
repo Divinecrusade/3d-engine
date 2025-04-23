@@ -13,7 +13,12 @@ public:
 
 	SolidCubeScene(Graphics& gfx)
 		:
-		pip{ gfx, SolidColorEffect{ } }
+		pip{ gfx, SolidColorEffect
+			{ 
+				{Colors::Red, Colors::Green, Colors::Blue, Colors::White, Colors::Yellow, Colors::Magenta}, 
+				2ull
+			} 
+		}
 	{
 		pip.effect.vs.SaveTranslation(Vec3{ 0.0f, 0.0f, 2.f });
 	}
@@ -64,27 +69,11 @@ public:
 	void Draw()
 	{
 		pip.BeginFrame();
+		auto model{ Cube::GetPlains<SolidColorEffect::Vertex>(0.75f) };
 
-		constexpr Color c[]
+		pip.Draw(model);
 		{
-			Colors::Red, Colors::Green, Colors::Blue, Colors::White, Colors::Yellow, Colors::Magenta
-		};
-
-		{
-			auto model{ Cube::GetTriangles<SolidColorEffect::ColorBindedVertex>(0.75f) };
-			for (int i{ 0 }; i != model.vertices.size(); ++i)
-			{
-				model.vertices[i].color = c[i / 4];
-			}
-			pip.Draw(model);
-		}
-
-		{
-			auto model{ Cube::GetTriangles<SolidColorEffect::ColorBindedVertex>(0.75f) };
-			for (int i{ 0 }; i != model.vertices.size(); ++i)
-			{
-				model.vertices[i].color = c[i / 4];
-			}
+			auto model{ Cube::GetPlains<SolidColorEffect::Vertex>(0.75f) };
 
 			auto const rot{ pip.effect.vs.GetRotation() };
 			auto const translation{ pip.effect.vs.GetTranslation() };

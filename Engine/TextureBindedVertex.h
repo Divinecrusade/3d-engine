@@ -60,6 +60,14 @@ public:
     {
         return TextureBindedVertex{ *this } /= rhs;
     }
+    TextureBindedVertex operator%(TextureBindedVertex const& rhs) const
+    {
+        return TextureBindedVertex{ this->model_pos % rhs.model_pos };
+    }
+    float operator*(TextureBindedVertex const& rhs) const
+    {
+        return this->model_pos * rhs.model_pos;
+    }
 
     Vec3 model_pos{ };
     Vec2 texture_pos{ };

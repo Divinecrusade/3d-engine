@@ -60,23 +60,19 @@ private:
         {
             if 
             (
-                (vertices[indices[i + 1u]].model_pos - vertices[indices[i]].model_pos)
+                (vertices[indices[i + 1u]] - vertices[indices[i]])
                 %
-                (vertices[indices[i + 2u]].model_pos - vertices[indices[i]].model_pos)
+                (vertices[indices[i + 2u]] - vertices[indices[i]])
                 *
-                vertices[indices[i]].model_pos > 0.f
+                vertices[indices[i]] > 0.f
             ) continue;
 
-            ProccessTriangle(Triangle{ vertices[indices[i]], vertices[indices[i + 1u]], vertices[indices[i + 2u]] }, i / 3ull);
+            ProccessTriangle(Triangle{ effect.gs(vertices[indices[i]], i / 3ull),  effect.gs(vertices[indices[i + 1u]], i / 3ull),  effect.gs(vertices[indices[i + 2u]], i / 3ull) });
         }
     }
 
-    void ProccessTriangle(Triangle object, std::size_t i)
+    void ProccessTriangle(Triangle object)
     {
-        for (auto& v : object)
-        {
-            v = effect.gs(v, i);
-        }
         PostProccessTriangle(std::move(object));
     }
 
@@ -89,7 +85,7 @@ private:
         DrawTriangle(object);
     }
 
-    void PubeScreenTransform(VSV& v)
+    void PubeScreenTransform(GSV& v)
     {
         float const zFactor{ 1.f / v.model_pos.z };
         v *= zFactor;
@@ -136,7 +132,7 @@ private:
         }
     }
 
-    void DrawFlatTopTriangle(VSV const& p0, VSV const& p1, VSV const& p2)
+    void DrawFlatTopTriangle(GSV const& p0, GSV const& p1, GSV const& p2)
     {
         float const delta_y{ p0.model_pos.y - p1.model_pos.y };
 
@@ -146,7 +142,7 @@ private:
         DrawFlatTriangle(p1, p2, left_slope_step, right_slope_step, p0);
     }
 
-    void DrawFlatBottomTriangle(VSV const& p0, VSV const& p1, VSV const& p2)
+    void DrawFlatBottomTriangle(GSV const& p0, GSV const& p1, GSV const& p2)
     {
         float const delta_y{ p1.model_pos.y - p0.model_pos.y };
 
@@ -156,7 +152,7 @@ private:
         DrawFlatTriangle(p0, p0, left_slope_step, right_slope_step, p1);
     }
 
-    void DrawFlatTriangle(VSV left_slope, VSV right_slope, VSV const& left_slope_step, VSV const& right_slope_step, VSV const& to)
+    void DrawFlatTriangle(GSV left_slope, GSV right_slope, GSV const& left_slope_step, GSV const& right_slope_step, GSV const& to)
     {
         for (float y{ std::ceilf(left_slope.model_pos.y - 0.5f) }; y < std::ceilf(to.model_pos.y - 0.5f); ++y,
             left_slope += left_slope_step, right_slope += right_slope_step)

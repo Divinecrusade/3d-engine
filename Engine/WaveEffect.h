@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ClampEffect.h"
+#include "DefaultGeometryShader.h"
 #include <cmath>
 
 class WaveEffect
@@ -34,6 +35,8 @@ public:
         static constexpr float wave_amplitude_factor{ 5.f };
     };
 
+    using GeometryShader = DefaultGeometryShader<VertexShader::OutVertex>;
+
 public:
 
     WaveEffect(Surface texture)
@@ -46,4 +49,5 @@ public:
 
     PixelShader ps;
     VertexShader vs{ };
+    GeometryShader gs{ };
 };

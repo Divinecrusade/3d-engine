@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ColorBlendEffect.h"
+#include "DefaultGeometryShader.h"
 #include <cmath>
 
 class PositionColorEffect
@@ -70,8 +71,11 @@ public:
         Vec3 translation{ 0.f, 0.f, 0.f };
     };
 
+    using GeometryShader = DefaultGeometryShader<VertexShader::OutVertex>;
+
 public:
 
     PixelShader ps{ };
     VertexShader vs{ };
+    GeometryShader gs{ };
 };

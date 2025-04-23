@@ -3,6 +3,7 @@
 #include "Surface.h"
 #include "TextureBindedVertex.h"
 #include "DefaultVertexShader.h"
+#include "DefaultGeometryShader.h"
 
 #include <algorithm>
 
@@ -38,6 +39,7 @@ public:
     };
 
     using VertexShader = DefaultVertexShader<Vertex>;
+    using GeometryShader = DefaultGeometryShader<VertexShader::OutVertex>;
 
 public:
 
@@ -50,4 +52,5 @@ public:
 
     PixelShader ps;
     VertexShader vs{ };
+    GeometryShader gs{ };
 };

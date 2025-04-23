@@ -4,6 +4,7 @@
 #include "Vec3.h"
 #include "Colors.h"
 #include "DefaultVertexShader.h"
+#include "DefaultGeometryShader.h"
 
 #include <utility>
 
@@ -83,9 +84,11 @@ public:
     };
 
     using VertexShader = DefaultVertexShader<Vertex>;
+    using GeometryShader = DefaultGeometryShader<VertexShader::OutVertex>;
 
 public:
 
     PixelShader ps{ };
     VertexShader vs{ };
+    GeometryShader gs{ };
 };

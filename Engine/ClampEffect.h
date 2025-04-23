@@ -2,7 +2,7 @@
 
 #include "Surface.h"
 #include "TextureBindedVertex.h"
-#include "GeometryShader.h"
+#include "DefaultVertexShader.h"
 
 #include <algorithm>
 
@@ -37,7 +37,7 @@ public:
         Surface texture;
     };
 
-    using VertexShader = GeometryShader<Vertex>;
+    using VertexShader = DefaultVertexShader<Vertex>;
 
 public:
 

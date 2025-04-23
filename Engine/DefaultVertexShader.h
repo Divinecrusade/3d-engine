@@ -3,7 +3,7 @@
 #include "Mat3.h"
 
 template<class Vertex>
-class GeometryShader
+class DefaultVertexShader
 {
 public:
 

@@ -3,7 +3,7 @@
 #include "Vec2.h"
 #include "Vec3.h"
 #include "Colors.h"
-#include "GeometryShader.h"
+#include "DefaultVertexShader.h"
 
 #include <utility>
 
@@ -82,7 +82,7 @@ public:
         }
     };
 
-    using VertexShader = GeometryShader<Vertex>;
+    using VertexShader = DefaultVertexShader<Vertex>;
 
 public:
 

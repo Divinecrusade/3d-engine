@@ -10,13 +10,13 @@ public:
     using Vertex = ClampEffect::Vertex;
 
     using PixelShader = ClampEffect::PixelShader;
-    class VertexShader : public GeometryShader<Vertex>
+    class VertexShader : public DefaultVertexShader<Vertex>
     {
     public:
 
         OutVertex operator()(InVertex const& v) const override
         {
-            auto vert{ GeometryShader<Vertex>::operator()(v) };
+            auto vert{ DefaultVertexShader<Vertex>::operator()(v) };
             vert.model_pos.y = wave_length_factor * std::sinf(time * wave_shift_factor + vert.model_pos.x * wave_amplitude_factor);
             return vert;        
         }

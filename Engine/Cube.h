@@ -93,6 +93,44 @@ public:
         };
     }
 
+    template<class Vertex>
+    static IndexedTriangleList<Vertex> GetTrianglesWithNormals(float size)
+    {
+        auto mesh{ GetTriangles<Vertex>(size) };
+
+        mesh.vertices[0].n = Vec3{ 0.f, 0.f, -1.f };
+        mesh.vertices[1].n = Vec3{ 0.f, 0.f, -1.f };
+        mesh.vertices[2].n = Vec3{ 0.f, 0.f, -1.f };
+        mesh.vertices[3].n = Vec3{ 0.f, 0.f, -1.f };
+
+        mesh.vertices[4].n = Vec3{ 1.f, 0.f, 0.f };
+        mesh.vertices[5].n = Vec3{ 1.f, 0.f, 0.f };
+        mesh.vertices[6].n = Vec3{ 1.f, 0.f, 0.f };
+        mesh.vertices[7].n = Vec3{ 1.f, 0.f, 0.f };
+
+        mesh.vertices[8].n = Vec3{ 0.f, 0.f, 1.f };
+        mesh.vertices[9].n = Vec3{ 0.f, 0.f, 1.f };
+        mesh.vertices[10].n = Vec3{ 0.f, 0.f, 1.f };
+        mesh.vertices[11].n = Vec3{ 0.f, 0.f, 1.f };
+
+        mesh.vertices[12].n = Vec3{ -1.f, 0.f, 0.f };
+        mesh.vertices[13].n = Vec3{ -1.f, 0.f, 0.f };
+        mesh.vertices[14].n = Vec3{ -1.f, 0.f, 0.f };
+        mesh.vertices[15].n = Vec3{ -1.f, 0.f, 0.f };
+
+        mesh.vertices[16].n = Vec3{ 0.f, 1.f, 0.f };
+        mesh.vertices[17].n = Vec3{ 0.f, 1.f, 0.f };
+        mesh.vertices[18].n = Vec3{ 0.f, 1.f, 0.f };
+        mesh.vertices[19].n = Vec3{ 0.f, 1.f, 0.f };
+
+        mesh.vertices[20].n = Vec3{ 0.f, -1.f, -1.f };
+        mesh.vertices[21].n = Vec3{ 0.f, -1.f, -1.f };
+        mesh.vertices[22].n = Vec3{ 0.f, -1.f, -1.f };
+        mesh.vertices[23].n = Vec3{ 0.f, -1.f, -1.f };
+
+        return mesh;
+    }
+
     static IndexedTriangleList<TextureBindedVertex> GetTrianglesTex(float size)
     {
         std::vector<TextureBindedVertex> object{ };

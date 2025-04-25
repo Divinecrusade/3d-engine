@@ -166,6 +166,8 @@
     <ClInclude Include="IScene.h" />
     <ClInclude Include="SolidColorEffect.h" />
     <ClInclude Include="SolidCubeScene.h" />
+    <ClInclude Include="SolidShadingEffect.h" />
+    <ClInclude Include="SolidShadingScene.h" />
     <ClInclude Include="Surface.h" />
     <ClInclude Include="TexCubeScene.h" />
     <ClInclude Include="Vec2.h" />

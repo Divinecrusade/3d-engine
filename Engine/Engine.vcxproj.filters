@@ -144,6 +144,12 @@
     <ClInclude Include="Vec3.h">
       <Filter>Header Files\engine</Filter>
     </ClInclude>
+    <ClInclude Include="SolidShadingEffect.h">
+      <Filter>Header Files\effects</Filter>
+    </ClInclude>
+    <ClInclude Include="SolidShadingScene.h">
+      <Filter>Header Files\scenes</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DXErr.cpp">

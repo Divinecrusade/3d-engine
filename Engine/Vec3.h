@@ -45,6 +45,30 @@ public:
 		norm.Normalize();
 		return norm;
 	}
+	_Vec3& Hadamard(_Vec3 const& v)
+	{
+		x *= v.x;
+		y *= v.y;
+		z *= v.z;
+
+		return *this;
+	}
+	_Vec3 GetHadamarded(_Vec3 const& v) const
+	{
+		return _Vec3{ *this }.Hadamard(v);
+	}
+	_Vec3& Saturate()
+	{
+		x = std::max(0.f, std::min(1.f, x));
+		y = std::max(0.f, std::min(1.f, y));
+		z = std::max(0.f, std::min(1.f, z));
+
+		return *this;
+	}
+	_Vec3 GetSaturated()
+	{
+		return _Vec3{ *this }.Saturate();
+	}
 	_Vec3	operator-() const
 	{
 		return _Vec3(-x, -y, -z);

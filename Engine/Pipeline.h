@@ -152,24 +152,38 @@ private:
         DrawFlatTriangle(p0, p0, left_slope_step, right_slope_step, p1);
     }
 
-    void DrawFlatTriangle(GSV left_slope, GSV right_slope, GSV const& left_slope_step, GSV const& right_slope_step, GSV const& to)
+    void DrawFlatTriangle(GSV left_slope, GSV right_slope, const GSV& left_slope_step, const GSV& right_slope_step, const GSV& to)
     {
-        for (float y{ std::ceilf(left_slope.model_pos.y - 0.5f) }; y < std::ceilf(to.model_pos.y - 0.5f); ++y,
-            left_slope += left_slope_step, right_slope += right_slope_step)
+        float const y_start{ std::floor(left_slope.model_pos.y + 0.5f) };
+        float const y_end{ std::floor(to.model_pos.y + 0.5f) };
+
+        for (float y{ y_start }; y < y_end; ++y)
         {
-            auto iLine{ left_slope };
+            float dy{ y + 0.5f - left_slope.model_pos.y };
+            GSV l{ left_slope + left_slope_step * dy };
+            GSV r{ right_slope + right_slope_step * dy };
 
-            float const delta_x{ right_slope.model_pos.x - left_slope.model_pos.x };
-            auto const step{ (right_slope - left_slope) / delta_x };
+            if (l.model_pos.x > r.model_pos.x) std::swap(l, r);
 
-            iLine += step * (std::ceilf(left_slope.model_pos.x - 0.5f) + 0.5f - left_slope.model_pos.x);
+            float const x_start{ std::floor(l.model_pos.x + 0.5f) };
+            float const x_end{ std::floor(r.model_pos.x + 0.5f) };
 
-            for (float x{ std::ceilf(left_slope.model_pos.x - 0.5f) }; x < std::ceilf(right_slope.model_pos.x - 0.5f); ++x,
-                iLine += step)
+            float const dx{ x_start + 0.5f - l.model_pos.x };
+
+            // Защита от деления на 0
+            float span = r.model_pos.x - l.model_pos.x;
+            if (span <= 0.0f) continue;
+
+            GSV const step{ (r - l) / span };
+            GSV iLine{ l + step * dx };
+
+            for (float x{ x_start }; x < x_end; ++x, iLine += step)
             {
-                if (UpdateZBuffer({ static_cast<unsigned int>(x), static_cast<unsigned int>(y) }, 1.f / iLine.model_pos.z))
+                float const inv_z{ 1.0f / iLine.model_pos.z };
+
+                if (UpdateZBuffer({ static_cast<unsigned int>(x), static_cast<unsigned int>(y) }, inv_z))
                 {
-                    gfx.PutPixel(static_cast<int>(x), static_cast<int>(y), effect.ps(iLine / iLine.model_pos.z));
+                    gfx.PutPixel(static_cast<int>(x), static_cast<int>(y), effect.ps(iLine * inv_z));
                 }
             }
         }

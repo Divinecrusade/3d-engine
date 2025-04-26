@@ -3,7 +3,7 @@
 #include "SolidColorEffect.h"
 #include "ColorBlendEffect.h"
 
-class SolidShadingEffect
+class SolidShadingEffectV
 {
 public:
 
@@ -99,6 +99,51 @@ public:
         Vec3 dir{ 0.f, 0.f, 1.f };
     };
     using GeometryShader = DefaultGeometryShader<VertexShader::OutVertex>;
+
+public:
+
+    PixelShader ps{ };
+    VertexShader vs{ };
+    GeometryShader gs{ };
+};
+
+class SolidShadingEffectG
+{
+public:
+
+    using Vertex = Vec3;
+
+    using PixelShader = ColorBlendEffect::PixelShader;
+    using VertexShader = SolidColorEffect::VertexShader;
+
+    class GeometryShader
+    {
+    public:
+
+        using InVertex = Vertex;
+        using OutVertex = ColorBlendEffect::ColorBindedVertex;
+
+        std::array<OutVertex, 3ull> operator()(InVertex const& v0, InVertex const& v1, InVertex const& v2, std::size_t) const
+        {
+            Vec3 const n{ (v1 - v0) % (v2 - v0) };
+            Vec3 const diffused{ diffuse * std::max(0.f, -(n * dir)) };
+            Color const c{ material.GetHadamarded(diffused + ambient).GetSaturated() * 255.f };
+
+            return std::array<OutVertex, 3ull>{ OutVertex{ v0, c }, OutVertex{ v1, c }, OutVertex{ v2, c } };
+        }
+
+        void RotateLight(Mat3 const& rot)
+        {
+            dir *= rot;
+        }
+
+    private:
+
+        Vec3 diffuse{ 1.f, 1.f, 1.f };
+        Vec3 ambient{ 0.1f, 0.1f, 0.1f };
+        Vec3 material{ 1.f, 1.f, 1.f };
+        Vec3 dir{ 0.f, 0.f, 1.f };
+    };
 
 public:
 

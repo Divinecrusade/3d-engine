@@ -27,7 +27,8 @@ Game::Game( MainWindow& wnd )
 	wnd( wnd ),
 	gfx( wnd )
 {
-	scenes.emplace_back(std::make_unique<SolidShadingScene>( gfx ));
+	scenes.emplace_back(std::make_unique<SolidShadingSceneV>( gfx ));
+	scenes.emplace_back(std::make_unique<SolidShadingSceneG>( gfx ));
 	scenes.emplace_back(std::make_unique<PositionColorCubeScene>( gfx ));
 	scenes.emplace_back(std::make_unique<TexCubeScene>( gfx ));
 	scenes.emplace_back(std::make_unique<ColorCubeScene>( gfx ));

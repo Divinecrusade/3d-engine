@@ -150,9 +150,14 @@ public:
         delimiter{ delimeter_init }
         { }
 
-        OutVertex operator()(InVertex v, std::size_t i)
+        std::array<OutVertex, 3ull> operator()(InVertex const& v0, InVertex const& v1, InVertex const& v2, std::size_t i) const
         {
-            return OutVertex{ v, colors_pull[i / delimiter] };
+            return std::array<OutVertex, 3ull>
+            { 
+                OutVertex{ v0, colors_pull[i / delimiter] },
+                OutVertex{ v1, colors_pull[i / delimiter] },
+                OutVertex{ v2, colors_pull[i / delimiter] }
+            };
         }
 
     private:

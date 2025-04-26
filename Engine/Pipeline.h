@@ -67,7 +67,7 @@ private:
                 vertices[indices[i]] > 0.f
             ) continue;
 
-            ProccessTriangle(Triangle{ effect.gs(vertices[indices[i]], i / 3ull),  effect.gs(vertices[indices[i + 1u]], i / 3ull),  effect.gs(vertices[indices[i + 2u]], i / 3ull) });
+            ProccessTriangle(Triangle{ effect.gs(vertices[indices[i]], vertices[indices[i + 1u]], vertices[indices[i + 2u]], i / 3ull) });
         }
     }
 

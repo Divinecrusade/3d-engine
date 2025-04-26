@@ -8,8 +8,8 @@ public:
     using InVertex  = Vertex;
     using OutVertex = Vertex;
 
-    OutVertex operator()(InVertex const& v, std::size_t) const
+    std::array<OutVertex, 3ull> operator()(InVertex const& v0, InVertex const& v1, InVertex const& v2, std::size_t) const
     {
-        return v;
+        return { v0, v1, v2 };
     }
 };

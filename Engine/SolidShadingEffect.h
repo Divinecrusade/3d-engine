@@ -125,7 +125,7 @@ public:
 
         std::array<OutVertex, 3ull> operator()(InVertex const& v0, InVertex const& v1, InVertex const& v2, std::size_t) const
         {
-            Vec3 const n{ (v1 - v0) % (v2 - v0) };
+            Vec3 const n{ ((v1 - v0) % (v2 - v0)).GetNormalized() };
             Vec3 const diffused{ diffuse * std::max(0.f, -(n * dir)) };
             Color const c{ material.GetHadamarded(diffused + ambient).GetSaturated() * 255.f };
 
@@ -141,7 +141,7 @@ public:
 
         Vec3 diffuse{ 1.f, 1.f, 1.f };
         Vec3 ambient{ 0.1f, 0.1f, 0.1f };
-        Vec3 material{ 1.f, 1.f, 1.f };
+        Vec3 material{ 0.6f, 0.4f, 0.5f };
         Vec3 dir{ 0.f, 0.f, 1.f };
     };
 

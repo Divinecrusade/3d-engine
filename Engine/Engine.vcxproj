@@ -156,6 +156,7 @@
     <ClInclude Include="MainWindow.h" />
     <ClInclude Include="Mat2.h" />
     <ClInclude Include="Mat3.h" />
+    <ClInclude Include="ModelScene.h" />
     <ClInclude Include="Mouse.h" />
     <ClInclude Include="Pipeline.h" />
     <ClInclude Include="Plain.h" />
@@ -170,6 +171,7 @@
     <ClInclude Include="SolidShadingScene.h" />
     <ClInclude Include="Surface.h" />
     <ClInclude Include="TexCubeScene.h" />
+    <ClInclude Include="tiny_obj_loader.h" />
     <ClInclude Include="Vec2.h" />
     <ClInclude Include="Vec3.h" />
     <ClInclude Include="TextureBindedVertex.h" />
@@ -186,6 +188,7 @@
     <ClCompile Include="MainWindow.cpp" />
     <ClCompile Include="Mouse.cpp" />
     <ClCompile Include="Surface.cpp" />
+    <ClCompile Include="tiny_obj_loader.cc" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="FramebufferPS.hlsl">

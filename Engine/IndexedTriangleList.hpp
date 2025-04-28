@@ -9,6 +9,43 @@
 #include <sstream>
 #include "Vec3.h"
 #include "tiny_obj_loader.h"
+#include "Seb.h"
+
+struct PointAdapterVec3
+{
+public:
+
+	using T = float;
+
+	float operator[](size_t i) const
+	{
+		switch (i)
+		{
+			case 0: return p.x;
+			case 1: return p.y;
+			case 2: return p.z;
+			default: throw std::exception{ "Out of scope of Vec3 dimension" };
+		}
+	}
+
+	Vec3 const& p;
+};
+
+struct PointAccessorAdapterVec3
+{
+	PointAdapterVec3 const& operator[](size_t i) const
+	{
+		return PointAdapterVec3{ v.at(i) };
+	}
+
+	size_t size() const
+	{
+		return v.size();
+	}
+
+	std::vector<Vec3> const& v;
+};
+
 
 template<typename T = Vec3>
 struct IndexedTriangleList
@@ -152,6 +189,23 @@ struct IndexedTriangleList
 
 		return tl;
 	}
+
+	template<class PointAdapter, class PointAccessorAdapter>
+	float AdjustFromCenter()
+	{
+		using namespace SEB_NAMESPACE;
+
+		Smallest_enclosing_ball<PointAdapter::T, PointAdapter, PointAccessorAdapter> sphere{ 3, PointAccessorAdapter{ vertices } };
+
+		auto center{ sphere.center_begin() };
+		for (auto& v : vertices)
+		{
+			v -= T{ center[0], center[1], center[2] };
+		}
+
+		return sphere.squared_radius();
+	}
+
 
     std::vector<T> vertices{ };
     std::vector<std::size_t> indices{ };

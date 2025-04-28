@@ -31,6 +31,9 @@
     <Filter Include="Header Files\objects">
       <UniqueIdentifier>{79d73baf-2f3b-4196-99ba-60825522d0c5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\miniball">
+      <UniqueIdentifier>{8e559944-6e0e-48f0-8518-690fbf62051c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ClampEffect.h">
@@ -150,6 +153,30 @@
     <ClInclude Include="SolidShadingScene.h">
       <Filter>Header Files\scenes</Filter>
     </ClInclude>
+    <ClInclude Include="tiny_obj_loader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Seb.h">
+      <Filter>Header Files\miniball</Filter>
+    </ClInclude>
+    <ClInclude Include="Seb_configure.h">
+      <Filter>Header Files\miniball</Filter>
+    </ClInclude>
+    <ClInclude Include="Seb_point.h">
+      <Filter>Header Files\miniball</Filter>
+    </ClInclude>
+    <ClInclude Include="Seb-inl.h">
+      <Filter>Header Files\miniball</Filter>
+    </ClInclude>
+    <ClInclude Include="Subspan.h">
+      <Filter>Header Files\miniball</Filter>
+    </ClInclude>
+    <ClInclude Include="Subspan-inl.h">
+      <Filter>Header Files\miniball</Filter>
+    </ClInclude>
+    <ClInclude Include="ModelScene.h">
+      <Filter>Header Files\scenes</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DXErr.cpp">
@@ -177,6 +204,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="GDIPlusManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="tiny_obj_loader.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

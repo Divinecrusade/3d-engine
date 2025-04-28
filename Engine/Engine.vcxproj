@@ -165,10 +165,16 @@
     <ClInclude Include="Rect.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="IScene.h" />
+    <ClInclude Include="Seb-inl.h" />
+    <ClInclude Include="Seb.h" />
+    <ClInclude Include="Seb_configure.h" />
+    <ClInclude Include="Seb_point.h" />
     <ClInclude Include="SolidColorEffect.h" />
     <ClInclude Include="SolidCubeScene.h" />
     <ClInclude Include="SolidShadingEffect.h" />
     <ClInclude Include="SolidShadingScene.h" />
+    <ClInclude Include="Subspan-inl.h" />
+    <ClInclude Include="Subspan.h" />
     <ClInclude Include="Surface.h" />
     <ClInclude Include="TexCubeScene.h" />
     <ClInclude Include="tiny_obj_loader.h" />

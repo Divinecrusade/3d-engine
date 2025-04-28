@@ -16,7 +16,8 @@ public:
 		pip{ gfx, SolidShadingEffectG{ } },
 		model{ MODELS_DIR, filename }
 	{
-		pip.effect.vs.SaveTranslation(Vec3{ 0.0f, 0.0f, 2.f });
+		auto r{ model.AdjustFromCenter<PointAdapterVec3, PointAccessorAdapterVec3>() };
+		pip.effect.vs.SaveTranslation(Vec3{ 0.0f, 0.0f, 1.f + r });
 	}
 
 	void Update(Keyboard& kbd, float dt)
@@ -74,7 +75,7 @@ public:
 private:
 
 	Pipeline<SolidShadingEffectG> pip;
-	IndexedTriangleList<SolidShadingEffectG::Vertex> const model;
+	IndexedTriangleList<SolidShadingEffectG::Vertex> model;
 	static constexpr char const* MODELS_DIR = "./";
 	static constexpr float dTheta = PI;
 };

@@ -14,7 +14,8 @@ public:
 	ModelScene(Graphics& gfx, std::string const& filename)
 		:
 		pip{ gfx, SolidShadingEffectG{ } },
-		model{ MODELS_DIR, filename }
+		//model{ MODELS_DIR, filename }
+		model{ IndexedTriangleList<Vec3>::MyLoad(filename) }
 	{
 		auto r{ model.AdjustFromCenter<PointAdapterVec3, PointAccessorAdapterVec3>() };
 		pip.effect.vs.SaveTranslation(Vec3{ 0.0f, 0.0f, 1.f + r });

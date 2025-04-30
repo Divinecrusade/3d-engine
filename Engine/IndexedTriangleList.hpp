@@ -190,6 +190,53 @@ struct IndexedTriangleList
 		return tl;
 	}
 
+	static IndexedTriangleList<T> MyLoad(std::string const& filename)
+	{
+		std::ifstream fin{ filename };
+		std::vector<T> vertices{ };
+		std::vector<std::size_t> indices{ };
+
+		while (!fin.eof() && fin.good())
+		{
+			std::string line{ };
+			std::getline(fin, line);
+
+			std::istringstream sin{ line };
+
+			if (line.empty()) continue;
+
+			std::string word{ };
+
+			sin >> word;
+
+			char const keychar{ word.front() };
+
+			if (keychar == '#') continue;
+			else if (keychar == 'v')
+			{
+				float x{ };
+				float y{ };
+				float z{ };
+
+				sin >> x >> y >> z;
+
+				vertices.emplace_back(x, y, z);
+			}
+			else if (keychar == 'f')
+			{
+				std::array<std::size_t, 3ull> triangle_indices{ };
+
+				for (auto& i : triangle_indices)
+				{
+					sin >> i;
+					indices.emplace_back(i - 1ull);
+				}
+			}
+		}
+
+		return IndexedTriangleList<T>{ std::move(vertices), std::move(indices) };
+	}
+
 	template<class PointAdapter, class PointAccessorAdapter>
 	float AdjustFromCenter()
 	{

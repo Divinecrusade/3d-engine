@@ -31,6 +31,7 @@
 #include "PositionColorCubeScene.h"
 #include "SolidShadingScene.h"
 #include "ModelScene.h"
+#include "WabeShadingScene.h"
 
 class Game
 {

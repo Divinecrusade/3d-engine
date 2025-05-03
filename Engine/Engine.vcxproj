@@ -177,11 +177,13 @@
     <ClInclude Include="Subspan.h" />
     <ClInclude Include="Surface.h" />
     <ClInclude Include="TexCubeScene.h" />
+    <ClInclude Include="TextureWaveShadingEffect.h" />
     <ClInclude Include="tiny_obj_loader.h" />
     <ClInclude Include="Vec2.h" />
     <ClInclude Include="Vec3.h" />
     <ClInclude Include="TextureBindedVertex.h" />
     <ClInclude Include="WabePlainScene.h" />
+    <ClInclude Include="WabeShadingScene.h" />
     <ClInclude Include="WaveEffect.h" />
   </ItemGroup>
   <ItemGroup>

@@ -113,7 +113,7 @@ public:
 
     using Vertex = Vec3;
 
-    using PixelShader = ColorBlendEffect::PixelShader;
+    using PixelShader = SolidColorEffect::PixelShader;
     using VertexShader = SolidColorEffect::VertexShader;
 
     class GeometryShader
@@ -121,7 +121,7 @@ public:
     public:
 
         using InVertex = Vertex;
-        using OutVertex = ColorBlendEffect::ColorBindedVertex;
+        using OutVertex = SolidColorEffect::ColorBindedVertex;
 
         std::array<OutVertex, 3ull> operator()(InVertex const& v0, InVertex const& v1, InVertex const& v2, std::size_t) const
         {
@@ -140,8 +140,8 @@ public:
     private:
 
         Vec3 diffuse{ 1.f, 1.f, 1.f };
-        Vec3 ambient{ 0.1f, 0.1f, 0.1f };
-        Vec3 material{ 0.6f, 0.4f, 0.5f };
+        Vec3 ambient{ 0.3f, 0.3f, 0.3f };
+        Vec3 material{ 1.f, 1.0f, 1.0f };
         Vec3 dir{ 0.f, 0.f, 1.f };
     };
 

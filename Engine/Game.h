@@ -32,6 +32,7 @@
 #include "SolidShadingScene.h"
 #include "ModelScene.h"
 #include "WabeShadingScene.h"
+#include "SphereScene.h"
 
 class Game
 {

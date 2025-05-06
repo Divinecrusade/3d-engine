@@ -173,6 +173,8 @@
     <ClInclude Include="SolidCubeScene.h" />
     <ClInclude Include="SolidShadingEffect.h" />
     <ClInclude Include="SolidShadingScene.h" />
+    <ClInclude Include="Sphere.h" />
+    <ClInclude Include="SphereScene.h" />
     <ClInclude Include="Subspan-inl.h" />
     <ClInclude Include="Subspan.h" />
     <ClInclude Include="Surface.h" />

@@ -27,6 +27,7 @@ Game::Game( MainWindow& wnd )
 	wnd( wnd ),
 	gfx( wnd )
 {
+	scenes.emplace_back(std::make_unique<SphereScene>(gfx));
 	scenes.emplace_back(std::make_unique<ModelScene>( gfx, "bunny.obj" ));
 	scenes.emplace_back(std::make_unique<SolidShadingSceneV>( gfx ));
 	scenes.emplace_back(std::make_unique<SolidShadingSceneG>( gfx ));
@@ -36,6 +37,7 @@ Game::Game( MainWindow& wnd )
 	scenes.emplace_back(std::make_unique<SolidCubeScene>( gfx ));
 	scenes.emplace_back(std::make_unique<WabePlainScene>( gfx ));
 	scenes.emplace_back(std::make_unique<WabeShadingScene>( gfx ));
+
 	scene = scenes.begin();
 }
 

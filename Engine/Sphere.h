@@ -86,6 +86,8 @@ public:
 	template<class Vertex>
 	static IndexedTriangleList<Vertex> GetTriangles(float size, int latDiv = 6, int longDiv = 12)
 	{
+		++latDiv;
+
         Vec3 base{0.f, 0.f, size / 2.f};
         float const lat_delta_angle{ PI / latDiv };
         float const long_delta_angle{ 2.f * PI / longDiv };

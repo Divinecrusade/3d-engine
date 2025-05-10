@@ -160,4 +160,15 @@ public:
 
         return IndexedTriangleList<Vertex>{ std::move(model), std::move(indices) };
     }
+
+	template<class Vertex>
+	static IndexedTriangleList<Vertex> GetTrianglesWithNormals(float size, int latDiv = 6, int longDiv = 12)
+	{
+		auto model{ GetTriangles<Vertex>(size, latDiv, longDiv) };
+		for (auto& v : model.vertices)
+		{
+			v.n = v.GetNormalized();
+		}
+		return model;
+	}
 };

@@ -4,6 +4,7 @@
 #include "Sphere.h"
 #include "Pipeline.h"
 #include "SolidShadingEffect.h"
+#include "GouraudShadingEffect.h"
 
 
 class SphereScene : public IScene
@@ -12,8 +13,8 @@ public:
 
 	SphereScene(Graphics& gfx)
 		:
-		pip{ gfx, SolidShadingEffectG{ } },
-		model{ Sphere::GetTriangles<Vec3>(1.f) }
+		pip{ gfx, GourandShadingEffect{ } },
+		model{ Sphere::GetTrianglesWithNormals<GourandShadingEffect::Vertex>(1.f, 24, 48) }
 	{
 		pip.effect.vs.SaveTranslation(Vec3{ 0.0f, 0.0f, 1.f });
 	}
@@ -57,11 +58,11 @@ public:
 
 		if (kbd.KeyIsPressed('Z'))
 		{
-			pip.effect.gs.RotateLight(Mat3::RotationY(-dTheta * dt));
+			pip.effect.vs.RotateLight(Mat3::RotationY(-dTheta * dt));
 		}
 		if (kbd.KeyIsPressed('X'))
 		{
-			pip.effect.gs.RotateLight(Mat3::RotationY(dTheta * dt));
+			pip.effect.vs.RotateLight(Mat3::RotationY(dTheta * dt));
 		}
 	}
 	void Draw()
@@ -72,7 +73,7 @@ public:
 
 private:
 
-	Pipeline<SolidShadingEffectG> pip;
-	IndexedTriangleList<SolidShadingEffectG::Vertex> model;
+	Pipeline<GourandShadingEffect> pip;
+	IndexedTriangleList<GourandShadingEffect::Vertex> model;
 	static constexpr float dTheta = PI;
 };

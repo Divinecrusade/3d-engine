@@ -253,6 +253,69 @@ struct IndexedTriangleList
 		return sphere.squared_radius();
 	}
 
+	static IndexedTriangleList<T> LoadWithNormals(std::string const& filename)
+	{
+		std::ifstream fin{ filename };
+		std::vector<T> vertices{ };
+		std::vector<Vec3> normales{ };
+		std::vector<std::size_t> indices{ };
+
+		while (!fin.eof() && fin.good())
+		{
+			std::string line{ };
+			std::getline(fin, line);
+
+			std::istringstream sin{ line };
+
+			if (line.empty()) continue;
+
+			std::string word{ };
+
+			sin >> word;
+
+			if (word.front() == 'f')
+			{
+				std::array<std::size_t, 3ull> triangle_indices{ };
+
+				for (auto& i : triangle_indices)
+				{
+					sin >> word;
+
+					//std::size_t pos_sep{ };
+					//i = std::stoull(word, &pos_sep) - 1ull;
+					//char* end = nullptr;
+					//std::size_t j{ std::strtoull(word.c_str() + pos_sep + 2, &end, 10) - 1ull };
+					//vertices[i].n = normales[j];
+					//indices.push_back(j);
+					std::size_t pos_sep{ };
+					i = std::stoull(word, &pos_sep) - 1ull;
+					char* end = nullptr;
+					vertices[i].n = normales[std::strtoull(word.c_str() + pos_sep + 2, &end, 10) - 1ull];
+					indices.push_back(i);
+				}
+			}
+			else if (word.front() == 'v')
+			{
+				float x{ };
+				float y{ };
+				float z{ };
+
+				sin >> x >> y >> z;
+
+				if (word.size() == 1)
+				{
+					vertices.emplace_back(Vec3{ x, y, z });
+				}
+				else if (*std::next(word.begin()) == 'n')
+				{
+					normales.emplace_back(x, y, z);
+				}
+			}
+		}
+
+		return IndexedTriangleList<T>{ std::move(vertices), std::move(indices) };
+	}
+
 
     std::vector<T> vertices{ };
     std::vector<std::size_t> indices{ };

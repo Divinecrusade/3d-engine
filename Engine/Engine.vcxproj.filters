@@ -192,6 +192,9 @@
     <ClInclude Include="GouraudShadingEffect.h">
       <Filter>Header Files\effects</Filter>
     </ClInclude>
+    <ClInclude Include="ModelGourandScene.h">
+      <Filter>Header Files\scenes</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DXErr.cpp">

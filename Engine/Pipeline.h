@@ -38,7 +38,7 @@ public:
         ResetZBuffer();
     }
 
-    void Draw(IndexedTriangleList<Vertex> model)
+    void Draw(IndexedTriangleList<Vertex> const& model)
     {
         ProcessVertices(model.vertices, model.indices);
     }

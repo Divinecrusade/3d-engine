@@ -157,6 +157,7 @@
     <ClInclude Include="MainWindow.h" />
     <ClInclude Include="Mat2.h" />
     <ClInclude Include="Mat3.h" />
+    <ClInclude Include="ModelGourandScene.h" />
     <ClInclude Include="ModelScene.h" />
     <ClInclude Include="Mouse.h" />
     <ClInclude Include="Pipeline.h" />

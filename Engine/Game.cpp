@@ -30,6 +30,16 @@ Game::Game( MainWindow& wnd )
 	scenes.emplace_back(std::make_unique<ModelGourandScene>(gfx, "suzanne.obj"));
 	scenes.emplace_back(std::make_unique<SphereScene>(gfx));
 	scenes.emplace_back(std::make_unique<ModelScene>( gfx, "bunny.obj" ));
+	auto model{ IndexedTriangleList<Vec3>::MyLoad("bunny.obj") };
+	model.AdjustFromCenter<PointAdapterVec3, PointAccessorAdapterVec3>();
+	scenes.emplace_back
+	(
+		std::make_unique<ModelGourandScene>
+		( 
+			gfx, 
+			CalculateNormals<GourandShadingEffect::Vertex, Vec3>(model)
+		)
+	);
 	scenes.emplace_back(std::make_unique<SolidShadingSceneV>( gfx ));
 	scenes.emplace_back(std::make_unique<SolidShadingSceneG>( gfx ));
 	scenes.emplace_back(std::make_unique<PositionColorCubeScene>( gfx ));

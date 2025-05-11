@@ -281,12 +281,6 @@ struct IndexedTriangleList
 				{
 					sin >> word;
 
-					//std::size_t pos_sep{ };
-					//i = std::stoull(word, &pos_sep) - 1ull;
-					//char* end = nullptr;
-					//std::size_t j{ std::strtoull(word.c_str() + pos_sep + 2, &end, 10) - 1ull };
-					//vertices[i].n = normales[j];
-					//indices.push_back(j);
 					std::size_t pos_sep{ };
 					i = std::stoull(word, &pos_sep) - 1ull;
 					char* end = nullptr;
@@ -320,3 +314,39 @@ struct IndexedTriangleList
     std::vector<T> vertices{ };
     std::vector<std::size_t> indices{ };
 };
+
+template<class T, class F>
+static IndexedTriangleList<T> CalculateNormals(IndexedTriangleList<F> without_normals)
+{
+	static auto const update_normals
+	{
+		[](T& A, T& B, T& C)
+		{
+			auto const normal{ (B - A) % (C - A) };
+			A.n += normal;
+			B.n += normal;
+			C.n += normal;
+		}
+	};
+	std::vector<T> vertices{ };
+	vertices.reserve(without_normals.vertices.size());
+	std::transform(std::make_move_iterator(without_normals.vertices.begin()), std::make_move_iterator(without_normals.vertices.end()), std::back_inserter(vertices),
+	[](auto&& v){ return T{ std::move(v) }; });
+
+	for (std::size_t triangle_base{ 0ull }; triangle_base < without_normals.indices.size(); triangle_base += 3ull)
+	{
+		T& A{ vertices[without_normals.indices[triangle_base + 0ull]] };
+		T& B{ vertices[without_normals.indices[triangle_base + 1ull]] };
+		T& C{ vertices[without_normals.indices[triangle_base + 2ull]] };
+		
+		update_normals(A, B, C);
+		update_normals(B, C, A);
+		update_normals(C, A, B);
+
+		A.n.Normalize();
+		B.n.Normalize();
+		C.n.Normalize();
+	}
+
+	return IndexedTriangleList<T>{ std::move(vertices), std::move(without_normals.indices) };
+}

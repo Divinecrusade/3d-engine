@@ -13,8 +13,14 @@ public:
 
 	ModelGourandScene(Graphics& gfx, std::string const& filename)
 		:
+		ModelGourandScene{ gfx, IndexedTriangleList<GourandShadingEffect::Vertex>::LoadWithNormals(filename) }
+	{
+	}
+
+	ModelGourandScene(Graphics& gfx, IndexedTriangleList<GourandShadingEffect::Vertex> model)
+		:
 		pip{ gfx, GourandShadingEffect{ } },
-		model{ IndexedTriangleList<GourandShadingEffect::Vertex>::LoadWithNormals(filename) }
+		model{ std::move(model) }
 	{
 		pip.effect.vs.SaveTranslation(Vec3{ 0.0f, 0.0f, 3.f });
 	}

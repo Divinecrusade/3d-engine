@@ -149,6 +149,7 @@
     <ClInclude Include="Game.h" />
     <ClInclude Include="GDIPlusManager.h" />
     <ClInclude Include="DefaultVertexShader.h" />
+    <ClInclude Include="GouraudPointLightEffect.h" />
     <ClInclude Include="GouraudShadingEffect.h" />
     <ClInclude Include="Graphics.h" />
     <ClInclude Include="IndexedLineList.h" />
@@ -162,6 +163,7 @@
     <ClInclude Include="Mouse.h" />
     <ClInclude Include="Pipeline.h" />
     <ClInclude Include="Plain.h" />
+    <ClInclude Include="PointLightScene.h" />
     <ClInclude Include="PositionColorCubeScene.h" />
     <ClInclude Include="PositionColorEffect.h" />
     <ClInclude Include="Rect.h" />

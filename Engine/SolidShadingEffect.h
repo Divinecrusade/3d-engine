@@ -32,7 +32,7 @@ public:
     {
     public:
 
-        Color operator()(SolidColorEffect::ColorBindedVertex const& v) const
+        Color operator()(SolidColorEffectWithVariants::ColorBindedVertex const& v) const
         {
             return v.color;
         }
@@ -43,7 +43,7 @@ public:
     public:
 
         using InVertex = Vertex;
-        using OutVertex = SolidColorEffect::ColorBindedVertex;
+        using OutVertex = SolidColorEffectWithVariants::ColorBindedVertex;
 
         void SaveRotation(Mat3 rot)
         {
@@ -113,15 +113,15 @@ public:
 
     using Vertex = Vec3;
 
-    using PixelShader = SolidColorEffect::PixelShader;
-    using VertexShader = SolidColorEffect::VertexShader;
+    using PixelShader = SolidColorEffectWithVariants::PixelShader;
+    using VertexShader = SolidColorEffectWithVariants::VertexShader;
 
     class GeometryShader
     {
     public:
 
         using InVertex = Vertex;
-        using OutVertex = SolidColorEffect::ColorBindedVertex;
+        using OutVertex = SolidColorEffectWithVariants::ColorBindedVertex;
 
         std::array<OutVertex, 3ull> operator()(InVertex const& v0, InVertex const& v1, InVertex const& v2, std::size_t) const
         {

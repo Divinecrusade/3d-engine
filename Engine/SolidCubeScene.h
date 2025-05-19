@@ -13,7 +13,7 @@ public:
 
 	SolidCubeScene(Graphics& gfx)
 		:
-		pip{ gfx, SolidColorEffect
+		pip{ gfx, SolidColorEffectWithVariants
 			{ 
 				{Colors::Red, Colors::Green, Colors::Blue, Colors::White, Colors::Yellow, Colors::Magenta}, 
 				2ull
@@ -69,11 +69,11 @@ public:
 	void Draw()
 	{
 		pip.BeginFrame();
-		auto model{ Cube::GetPlains<SolidColorEffect::Vertex>(0.75f) };
+		auto model{ Cube::GetPlains<SolidColorEffectWithVariants::Vertex>(0.75f) };
 
 		pip.Draw(model);
 		{
-			auto model{ Cube::GetPlains<SolidColorEffect::Vertex>(0.75f) };
+			auto model{ Cube::GetPlains<SolidColorEffectWithVariants::Vertex>(0.75f) };
 
 			auto const rot{ pip.effect.vs.GetRotation() };
 			auto const translation{ pip.effect.vs.GetTranslation() };
@@ -90,7 +90,7 @@ public:
 
 private:
 
-	Pipeline<SolidColorEffect> pip;
+	Pipeline<SolidColorEffectWithVariants> pip;
 	static constexpr float dTheta = PI;
 	Mat3 theta = Mat3::Identity();
 };

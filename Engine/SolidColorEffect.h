@@ -7,7 +7,7 @@
 
 #include <utility>
 
-class SolidColorEffect
+class SolidColorEffectWithVariants
 {
 public:
 
@@ -168,10 +168,55 @@ public:
 
 public:
 
-    SolidColorEffect(std::vector<Color> colors_pull_init, std::size_t delimeter_init)
+    SolidColorEffectWithVariants(std::vector<Color> colors_pull_init, std::size_t delimeter_init)
     :
     gs{ std::move(colors_pull_init), std::move(delimeter_init) }
     {  }
+
+public:
+
+    PixelShader ps{ };
+    VertexShader vs{ };
+    GeometryShader gs;
+};
+
+class SolidColorEffect
+{
+public:
+
+    using Vertex = Vec3;
+
+    using VertexShader = DefaultVertexShader<Vertex>;
+    class GeometryShader
+    {
+    public:
+
+        using InVertex = Vertex;
+        using OutVertex = SolidColorEffectWithVariants::ColorBindedVertex;
+
+        GeometryShader(Color c)
+        : c{ c }
+        { }
+
+        std::array<OutVertex, 3ull> operator()(InVertex const& v0, InVertex const& v1, InVertex const& v2, std::size_t) const
+        {
+            return { OutVertex{ v0, c }, OutVertex{ v1, c }, OutVertex{ v2, c } };
+        }
+
+    private:
+
+        Color c;
+    };
+
+    using PixelShader = SolidColorEffectWithVariants::PixelShader;
+
+public:
+
+    SolidColorEffect(Color c)
+    :
+    gs{ c }
+    {
+    }
 
 public:
 

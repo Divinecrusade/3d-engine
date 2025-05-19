@@ -34,6 +34,7 @@
 #include "WabeShadingScene.h"
 #include "SphereScene.h"
 #include "ModelGourandScene.h"
+#include "PointLightScene.h"
 
 class Game
 {

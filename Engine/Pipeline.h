@@ -27,10 +27,19 @@ public:
     gfx{ gfx },
     screen_half_width{ gfx.ScreenWidth / 2.f },
     screen_half_height{ gfx.ScreenHeight / 2.f },
-    zbuffer{ std::make_unique<float[]>(gfx.ScreenWidth * gfx.ScreenHeight) },
+    zbuffer{ std::make_shared<std::unique_ptr<float[]>>(std::make_unique<float[]>(gfx.ScreenWidth * gfx.ScreenHeight)) },
     effect{ std::move(effect) }
     {
-        ResetZBuffer();
+    }
+
+    Pipeline(Graphics& gfx, GraphicEffect effect, std::shared_ptr<std::unique_ptr<float[]>> zbuffer)
+        :
+        gfx{ gfx },
+        screen_half_width{ gfx.ScreenWidth / 2.f },
+        screen_half_height{ gfx.ScreenHeight / 2.f },
+        zbuffer{ zbuffer },
+        effect{ std::move(effect) }
+    {
     }
 
     void BeginFrame()
@@ -191,14 +200,15 @@ private:
 
     void ResetZBuffer()
     {
-        std::fill_n(zbuffer.get(), gfx.ScreenWidth * gfx.ScreenHeight, std::numeric_limits<float>::infinity());
+        std::fill_n(zbuffer.get()->get(), gfx.ScreenWidth * gfx.ScreenHeight, std::numeric_limits<float>::infinity());
     }
 
     bool UpdateZBuffer(_Vec2<unsigned int> pos, float z)
     {
-        if (zbuffer[pos.y * gfx.ScreenWidth + pos.x] > z)
+        auto zb{ zbuffer.get()->get() };
+        if (zb[pos.y * gfx.ScreenWidth + pos.x] > z)
         {
-            zbuffer[pos.y * gfx.ScreenWidth + pos.x] = z;
+            zb[pos.y * gfx.ScreenWidth + pos.x] = z;
             return true;
         }
         return false;
@@ -210,7 +220,7 @@ private:
     float screen_half_width;
     float screen_half_height;
 
-    std::unique_ptr<float[]> zbuffer;
+    std::shared_ptr<std::unique_ptr<float[]>> zbuffer;
 
 public:
 

@@ -11,7 +11,7 @@ public:
     {
         std::vector<Vertex> model{ };
         std::vector<std::size_t> indices{ };
-        std::size_t const triangles_total{ 1ull << (2ull * triangles_in_row) };
+        std::size_t const triangles_total{ triangles_in_row * triangles_in_row * 2ull };
         std::size_t const vertices_total{ 3ull * triangles_total };
         model.reserve(vertices_total);
         indices.reserve(vertices_total);

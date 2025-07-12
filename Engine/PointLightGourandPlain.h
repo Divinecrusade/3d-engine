@@ -18,7 +18,7 @@ class PointLightGourandPlain : public IScene {
           std::make_unique<float[]>(gfx.ScreenWidth * gfx.ScreenHeight))},
   pip_model{gfx, GourandPointLightEffect{}, zbuffer},
   pip_point_light_dummy{gfx, Colors::White, zbuffer},
-  model{std::move(Plain::GetNonSkinnedWithNormals<GourandPointLightEffect::Vertex>(14, 2.f))},
+  model{std::move(Plain::GetNonSkinnedWithNormals<GourandPointLightEffect::Vertex>(16, 2.f))},
   point_light_dummy{Sphere::GetTriangles<SolidColorEffect::Vertex>(0.2f)} {
     pip_model.effect.vs.SaveTranslation(Vec3{0.0f, 0.0f, 3.f});
     pip_model.effect.vs.SaveRotation(Mat3::RotationY(PI));

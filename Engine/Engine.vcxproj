@@ -163,6 +163,7 @@
     <ClInclude Include="Mouse.h" />
     <ClInclude Include="Pipeline.h" />
     <ClInclude Include="Plain.h" />
+    <ClInclude Include="PointLightGourandPlain.h" />
     <ClInclude Include="PointLightScene.h" />
     <ClInclude Include="PositionColorCubeScene.h" />
     <ClInclude Include="PositionColorEffect.h" />

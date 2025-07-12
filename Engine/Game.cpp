@@ -27,6 +27,7 @@ Game::Game( MainWindow& wnd )
 	wnd( wnd ),
 	gfx( wnd )
 {
+	scenes.emplace_back(std::make_unique<PointLightGourandPlain>(gfx));
 	scenes.emplace_back(std::make_unique<PointLightScene>(gfx, "suzanne.obj"));
 	scenes.emplace_back(std::make_unique<ModelGourandScene>(gfx, "suzanne.obj"));
 	scenes.emplace_back(std::make_unique<SphereScene>(gfx));

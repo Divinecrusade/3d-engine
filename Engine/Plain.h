@@ -56,6 +56,16 @@ public:
             };
     }
 
+    template <class Vertex>
+    static IndexedTriangleList<Vertex> GetNonSkinnedWithNormals(
+        std::size_t triangles_in_row, float size = 1.f) {
+      auto plain{GetNonSkinned<Vertex>(triangles_in_row, size)};
+      for (auto& vertex : plain.vertices) {
+        vertex.n = Vec3{0.f, 0.f, 1.f};
+      }
+      return plain;
+    }
+
 
     template<class Vertex>
     static IndexedTriangleList<Vertex> GetSkinned(std::size_t triangles_in_row, float size = 1.f)

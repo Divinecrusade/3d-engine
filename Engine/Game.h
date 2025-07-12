@@ -35,6 +35,7 @@
 #include "SphereScene.h"
 #include "ModelGourandScene.h"
 #include "PointLightScene.h"
+#include "PointLightGourandPlain.h"
 
 class Game
 {

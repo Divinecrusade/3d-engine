@@ -8,17 +8,17 @@
 #include "SolidColorEffect.h"
 
 
-class PointLightScene : public IScene
+class PointLightGourandObjectScene : public IScene
 {
 public:
 
-	PointLightScene(Graphics& gfx, std::string const& filename)
+	PointLightGourandObjectScene(Graphics& gfx, std::string const& filename)
 		:
-		PointLightScene{ gfx, IndexedTriangleList<GourandShadingEffect::Vertex>::LoadWithNormals(filename) }
+		PointLightGourandObjectScene{ gfx, IndexedTriangleList<GourandShadingEffect::Vertex>::LoadWithNormals(filename) }
 	{
 	}
 
-	PointLightScene(Graphics& gfx, IndexedTriangleList<GourandShadingEffect::Vertex> model)
+	PointLightGourandObjectScene(Graphics& gfx, IndexedTriangleList<GourandShadingEffect::Vertex> model)
 		:
 		zbuffer{ std::make_shared<std::unique_ptr<float[]>>(std::make_unique<float[]>(gfx.ScreenWidth * gfx.ScreenHeight)) },
 		pip_model{ gfx, GourandPointLightEffect{}, zbuffer },

@@ -2,24 +2,26 @@
 
 #pragma once
 
-#include "GouraudPointLightEffect.h"
+#include "PhongShadingEffect.h"
 #include "IScene.h"
 #include "Mat3.h"
 #include "Pipeline.h"
+#include "Plain.h"
 #include "SolidColorEffect.h"
 #include "Sphere.h"
-#include "Plain.h"
 
-class PointLightGourandPlain : public IScene {
+class PointLightPhongPlainScene : public IScene {
  public:
-  PointLightGourandPlain(Graphics& gfx)
-  : 
-  zbuffer{std::make_shared<std::unique_ptr<float[]>>(
-          std::make_unique<float[]>(gfx.ScreenWidth * gfx.ScreenHeight))},
-  pip_model{gfx, GourandPointLightEffect{}, zbuffer},
-  pip_point_light_dummy{gfx, Colors::White, zbuffer},
-  model{std::move(Plain::GetNonSkinnedWithNormals<GourandPointLightEffect::Vertex>(16, 2.f))},
-  point_light_dummy{Sphere::GetTriangles<SolidColorEffect::Vertex>(0.2f)} {
+  PointLightPhongPlainScene(Graphics& gfx)
+      : zbuffer{std::make_shared<std::unique_ptr<float[]>>(
+            std::make_unique<float[]>(gfx.ScreenWidth * gfx.ScreenHeight))},
+        pip_model{gfx, PhongShadingEffect{}, zbuffer},
+        pip_point_light_dummy{gfx, Colors::White, zbuffer},
+        model{std::move(
+            Plain::GetNonSkinnedWithNormals<PhongShadingEffect::Vertex>(
+                2, 2.f))},
+        point_light_dummy{
+            Sphere::GetTriangles<SolidColorEffect::Vertex>(0.2f)} {
     pip_model.effect.vs.SaveTranslation(Vec3{0.0f, 0.0f, 3.f});
     pip_model.effect.vs.SaveRotation(Mat3::RotationY(PI));
     pip_point_light_dummy.effect.vs.SetTranslation(Vec3{1.5f, 1.5f, 3.f});
@@ -60,16 +62,16 @@ class PointLightGourandPlain : public IScene {
 
     auto const translation{pip_point_light_dummy.effect.vs.GetTranslation()};
     pip_point_light_dummy.Draw(point_light_dummy);
-    pip_model.effect.vs.MoveLight(translation);
+    pip_model.effect.ps.MoveLight(translation);
     pip_model.Draw(model);
-    pip_model.effect.vs.MoveLight(-translation);
+    pip_model.effect.ps.MoveLight(-translation);
   }
 
  private:
   std::shared_ptr<std::unique_ptr<float[]>> zbuffer;
-  Pipeline<GourandPointLightEffect> pip_model;
+  Pipeline<PhongShadingEffect> pip_model;
   Pipeline<SolidColorEffect> pip_point_light_dummy;
-  IndexedTriangleList<GourandPointLightEffect::Vertex> model;
+  IndexedTriangleList<PhongShadingEffect::Vertex> model;
   IndexedTriangleList<SolidColorEffect::Vertex> point_light_dummy;
   static constexpr float dTheta = PI;
 };

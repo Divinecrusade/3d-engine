@@ -179,7 +179,6 @@ private:
 
             float const dx{ x_start + 0.5f - l.model_pos.x };
 
-            // Защита от деления на 0
             float span = r.model_pos.x - l.model_pos.x;
             if (span <= 0.0f) continue;
 

@@ -198,10 +198,19 @@
     <ClInclude Include="GouraudPointLightEffect.h">
       <Filter>Header Files\effects</Filter>
     </ClInclude>
-    <ClInclude Include="PointLightScene.h">
+    <ClInclude Include="PointLightGourandObjectScene.h">
       <Filter>Header Files\scenes</Filter>
     </ClInclude>
-    <ClInclude Include="PointLightGourandPlain.h">
+    <ClInclude Include="PointLightGourandPlainScene.h">
+      <Filter>Header Files\scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="PhongShadingEffect.h">
+      <Filter>Header Files\effects</Filter>
+    </ClInclude>
+    <ClInclude Include="PointLightPhongPlainScene.h">
+      <Filter>Header Files\scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="PointLightPhongObjectScene.h">
       <Filter>Header Files\scenes</Filter>
     </ClInclude>
   </ItemGroup>

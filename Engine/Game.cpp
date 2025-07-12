@@ -27,8 +27,10 @@ Game::Game( MainWindow& wnd )
 	wnd( wnd ),
 	gfx( wnd )
 {
-	scenes.emplace_back(std::make_unique<PointLightGourandPlain>(gfx));
-	scenes.emplace_back(std::make_unique<PointLightScene>(gfx, "suzanne.obj"));
+	scenes.emplace_back(std::make_unique<PointLightPhongPlainScene>(gfx));
+	scenes.emplace_back(std::make_unique<PointLightGourandPlainScene>(gfx));
+  scenes.emplace_back(std::make_unique<PointLightPhongObjectScene>(gfx, "suzanne.obj"));
+	scenes.emplace_back(std::make_unique<PointLightGourandObjectScene>(gfx, "suzanne.obj"));
 	scenes.emplace_back(std::make_unique<ModelGourandScene>(gfx, "suzanne.obj"));
 	scenes.emplace_back(std::make_unique<SphereScene>(gfx));
 	scenes.emplace_back(std::make_unique<ModelScene>( gfx, "bunny.obj" ));

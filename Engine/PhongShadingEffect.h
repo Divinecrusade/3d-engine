@@ -92,7 +92,7 @@ class PhongShadingEffect {
            linear_attenuation * distance_to_light + constant_attenuation)};
 
       Vec3 const diffused{diffuse * attenuation *
-          std::max(0.f, (transformed_v.n) * to_light_n)};
+          std::max(0.f, transformed_v.n.GetNormalized() * to_light_n)};
       Color const c{material.GetHadamarded(diffused + ambient).GetSaturated() *
                     255.f};
 

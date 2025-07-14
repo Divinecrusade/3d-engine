@@ -27,31 +27,32 @@ Game::Game( MainWindow& wnd )
 	wnd( wnd ),
 	gfx( wnd )
 {
-	scenes.emplace_back(std::make_unique<PointLightPhongPlainScene>(gfx));
-	scenes.emplace_back(std::make_unique<PointLightGourandPlainScene>(gfx));
+  scenes.emplace_back(std::make_unique<PhongSpecularScene>(gfx, "suzanne.obj"));
+	//scenes.emplace_back(std::make_unique<PointLightPhongPlainScene>(gfx));
+	//scenes.emplace_back(std::make_unique<PointLightGourandPlainScene>(gfx));
   scenes.emplace_back(std::make_unique<PointLightPhongObjectScene>(gfx, "suzanne.obj"));
-	scenes.emplace_back(std::make_unique<PointLightGourandObjectScene>(gfx, "suzanne.obj"));
-	scenes.emplace_back(std::make_unique<ModelGourandScene>(gfx, "suzanne.obj"));
-	scenes.emplace_back(std::make_unique<SphereScene>(gfx));
-	scenes.emplace_back(std::make_unique<ModelScene>( gfx, "bunny.obj" ));
-	auto model{ IndexedTriangleList<Vec3>::MyLoad("bunny.obj") };
-	model.AdjustFromCenter<PointAdapterVec3, PointAccessorAdapterVec3>();
-	scenes.emplace_back
-	(
-		std::make_unique<ModelGourandScene>
-		( 
-			gfx, 
-			CalculateNormals<GourandShadingEffect::Vertex, Vec3>(model)
-		)
-	);
-	scenes.emplace_back(std::make_unique<SolidShadingSceneV>( gfx ));
-	scenes.emplace_back(std::make_unique<SolidShadingSceneG>( gfx ));
-	scenes.emplace_back(std::make_unique<PositionColorCubeScene>( gfx ));
-	scenes.emplace_back(std::make_unique<TexCubeScene>( gfx ));
-	scenes.emplace_back(std::make_unique<ColorCubeScene>( gfx ));
-	scenes.emplace_back(std::make_unique<SolidCubeScene>( gfx ));
-	scenes.emplace_back(std::make_unique<WabePlainScene>( gfx ));
-	scenes.emplace_back(std::make_unique<WabeShadingScene>( gfx ));
+	//scenes.emplace_back(std::make_unique<PointLightGourandObjectScene>(gfx, "suzanne.obj"));
+	//scenes.emplace_back(std::make_unique<ModelGourandScene>(gfx, "suzanne.obj"));
+	//scenes.emplace_back(std::make_unique<SphereScene>(gfx));
+	//scenes.emplace_back(std::make_unique<ModelScene>( gfx, "bunny.obj" ));
+	//auto model{ IndexedTriangleList<Vec3>::MyLoad("bunny.obj") };
+	//model.AdjustFromCenter<PointAdapterVec3, PointAccessorAdapterVec3>();
+	//scenes.emplace_back
+	//(
+	//	std::make_unique<ModelGourandScene>
+	//	( 
+	//		gfx, 
+	//		CalculateNormals<GourandShadingEffect::Vertex, Vec3>(model)
+	//	)
+	//);
+	//scenes.emplace_back(std::make_unique<SolidShadingSceneV>( gfx ));
+	//scenes.emplace_back(std::make_unique<SolidShadingSceneG>( gfx ));
+	//scenes.emplace_back(std::make_unique<PositionColorCubeScene>( gfx ));
+	//scenes.emplace_back(std::make_unique<TexCubeScene>( gfx ));
+	//scenes.emplace_back(std::make_unique<ColorCubeScene>( gfx ));
+	//scenes.emplace_back(std::make_unique<SolidCubeScene>( gfx ));
+	//scenes.emplace_back(std::make_unique<WabePlainScene>( gfx ));
+	//scenes.emplace_back(std::make_unique<WabeShadingScene>( gfx ));
 
 	scene = scenes.begin();
 }

@@ -161,6 +161,8 @@
     <ClInclude Include="ModelGourandScene.h" />
     <ClInclude Include="ModelScene.h" />
     <ClInclude Include="Mouse.h" />
+    <ClInclude Include="PhongSpecularEffect.h" />
+    <ClInclude Include="PhongSpecularScene.h" />
     <ClInclude Include="PointLightPhongObjectScene.h" />
     <ClInclude Include="PhongShadingEffect.h" />
     <ClInclude Include="Pipeline.h" />

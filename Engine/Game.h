@@ -38,6 +38,7 @@
 #include "PointLightGourandPlainScene.h"
 #include "PointLightPhongPlainScene.h"
 #include "PointLightPhongObjectScene.h"
+#include "PhongSpecularScene.h"
 
 class Game
 {

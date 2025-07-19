@@ -2,6 +2,7 @@
 
 #include "DefaultGeometryShader.h"
 #include "SolidShadingEffect.h"
+#include "Mat4.h"
 #include <cmath>
 
 class PhongSpecularEffect {
@@ -63,25 +64,21 @@ class PhongSpecularEffect {
     using OutVertex = VertexWithNormalAndWorldPos;
 
     OutVertex operator()(InVertex const& v) {
-      auto new_pos{v * rotation + translation};
-      return {new_pos, v.n * rotation, new_pos};
+      auto new_pos{Vec4{v} * rotation + translation};
+      return {new_pos, Vec4{v.n} * rotation, new_pos};
     }
 
-    void SaveRotation(Mat3 rot) { rotation = rotation * rot; }
+    void SaveRotation(Mat4 rot) { rotation = rotation * rot; }
 
-    void SaveTranslation(Vec3 trans) { translation += trans; }
+    void SaveTranslation(Vec4 trans) { translation += trans; }
 
-    Mat3 GetRotation() const { return rotation; }
+    void SetRotation(Mat4 rot) { rotation = rot; }
 
-    Vec3 GetTranslation() const { return translation; }
-
-    void SetRotation(Mat3 rot) { rotation = rot; }
-
-    void SetTranslation(Vec3 trans) { this->translation = trans; }
+    void SetTranslation(Vec4 trans) { this->translation = trans; }
 
    private:
-    Mat3 rotation{Mat3::Identity()};
-    Vec3 translation{0.f, 0.f, 0.f};
+    Mat4 rotation{Mat4::Identity()};
+    Vec4 translation{};
   };
   using GeometryShader = DefaultGeometryShader<VertexShader::OutVertex>;
   class PixelShader {
@@ -108,7 +105,7 @@ class PhongSpecularEffect {
       return c;
     }
 
-    void MoveLight(Vec3 delta_pos) { light_pos += delta_pos; }
+    void MoveLight(Vec4 delta_pos) { light_pos += delta_pos; }
 
    private:
     Vec3 diffuse{1.f, 1.f, 1.f};
@@ -119,10 +116,10 @@ class PhongSpecularEffect {
     float quadradic_attenuation{2.619f};
     float constant_attenuation{0.382f};
 
-    float specular_power_factor{6.f};
-    float specular_range_factor{0.01f};
+    float specular_power_factor{2.f};
+    float specular_range_factor{0.1f};
 
-    Vec3 light_pos{0.f, 0.f, 0.f};
+    Vec4 light_pos{};
   };
 
  public:

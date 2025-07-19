@@ -64,21 +64,16 @@ class PhongSpecularEffect {
     using OutVertex = VertexWithNormalAndWorldPos;
 
     OutVertex operator()(InVertex const& v) {
-      auto new_pos{Vec4{v} * rotation + translation};
-      return {new_pos, Vec4{v.n} * rotation, new_pos};
+      auto new_pos{Vec4{v} * transformation};
+      return {new_pos, Vec4{v.n, 0.f} * transformation, new_pos};
     }
 
-    void SaveRotation(Mat4 rot) { rotation = rotation * rot; }
-
-    void SaveTranslation(Vec4 trans) { translation += trans; }
-
-    void SetRotation(Mat4 rot) { rotation = rot; }
-
-    void SetTranslation(Vec4 trans) { this->translation = trans; }
+    void BindTransformation(Mat4 const& new_transformation) {
+      transformation = new_transformation;
+    }
 
    private:
-    Mat4 rotation{Mat4::Identity()};
-    Vec4 translation{};
+    Mat4 transformation;
   };
   using GeometryShader = DefaultGeometryShader<VertexShader::OutVertex>;
   class PixelShader {

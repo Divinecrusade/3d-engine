@@ -34,6 +34,10 @@ class _Mat4 {
     }
     return result;
   }
+  _Mat4& operator*=(const _Mat4& rhs) {
+    *this = *this * rhs;
+    return *this;
+  }
   static _Mat4 Identity() {
     return {(T)1, (T)0, (T)0, (T)0, 
             (T)0, (T)1, (T)0, (T)0,
@@ -69,6 +73,12 @@ class _Mat4 {
             -sinTheta, cosTheta, (T)0, (T)0,
             (T)0, (T)0, (T)1, (T)0,
             (T)0, (T)0, (T)0, (T)1};
+  }
+  static _Mat4 Translation(_Vec4<T> const& by) {
+    return {(T)1, (T)0, (T)0, (T)0, 
+            (T)0, (T)1, (T)0, (T)0,
+            (T)0, (T)0, (T)1, (T)0, 
+            by.x, by.y, by.z, (T)1};
   }
 
  public:

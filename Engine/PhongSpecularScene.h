@@ -23,31 +23,31 @@ class PhongSpecularScene : public IScene {
         model{std::move(model)},
         point_light_dummy{
             Sphere::GetTriangles<SolidColorEffect::Vertex>(0.2f)} {
-    pip_model.effect.vs.SaveTranslation(Vec4{0.0f, 0.0f, 3.f});
-    pip_model.effect.vs.SaveRotation(Mat4::RotationY(PI));
     pip_model.effect.ps.MoveLight(Vec4{0.3f, 0.3f, 1.f});
     pip_point_light_dummy.effect.vs.SetTranslation(Vec3{0.3f, 0.3f, 1.f});
   }
 
   void Update(Keyboard& kbd, float dt) {
     if (kbd.KeyIsPressed('W')) {
-      pip_model.effect.vs.SaveRotation(Mat4::RotationX(PI / 90.f));
+      thetaX += PI / 90.f;
     }
     if (kbd.KeyIsPressed('A')) {
-      pip_model.effect.vs.SaveRotation(Mat4::RotationZ(PI / 90.f));
+      thetaZ += PI / 90.f;
     }
     if (kbd.KeyIsPressed('S')) {
-      pip_model.effect.vs.SaveRotation(Mat4::RotationX(-PI / 90.f));
+      thetaX += -PI / 90.f;
     }
     if (kbd.KeyIsPressed('D')) {
-      pip_model.effect.vs.SaveRotation(Mat4::RotationZ(-PI / 90.f));
+      thetaZ += -PI / 90.f;
     }
     if (kbd.KeyIsPressed('Z')) {
-      pip_model.effect.vs.SaveRotation(Mat4::RotationY(PI / 90.f));
+      thetaY += PI / 90.f;
     }
     if (kbd.KeyIsPressed('X')) {
-      pip_model.effect.vs.SaveRotation(Mat4::RotationY(-PI / 90.f));
+      thetaY += -PI / 90.f;
     }
+
+    pip_model.effect.vs.BindTransformation(Mat4::RotationX(thetaX) * Mat4::RotationY(thetaY) * Mat4::RotationZ(thetaZ) * Mat4::Translation(Vec4{0.0f, 0.0f, 3.f}));
   }
   void Draw() {
     pip_model.BeginFrame();
@@ -63,4 +63,8 @@ class PhongSpecularScene : public IScene {
   IndexedTriangleList<PhongSpecularEffect::Vertex> model;
   IndexedTriangleList<SolidColorEffect::Vertex> point_light_dummy;
   static constexpr float dTheta = PI;
+
+  float thetaX{0.f};
+  float thetaY{PI};
+  float thetaZ{0.f};
 };

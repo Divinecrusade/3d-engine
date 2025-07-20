@@ -21,11 +21,11 @@ class PhongSpecularScene : public IScene {
         pip_point_light_dummy{gfx, {Colors::White}, zbuffer},
         pip_model{gfx, PhongSpecularEffect{}, zbuffer},
         model{std::move(model)},
-        point_light_dummy{Sphere::GetTriangles<SolidColorEffectH::Vertex>(0.2f)}
+        point_light_dummy{Sphere::GetTriangles<SolidColorEffectH::Vertex>(0.1f)}
   {
     pip_model.effect.ps.MoveLight(Vec4{0.3f, 0.3f, 1.f});
     pip_model.effect.vs.BindProjection(projection);
-    pip_point_light_dummy.effect.vs.BindWorldTransformation(Mat4::Translation(Vec4{0.3f, 0.3f, 1.f}));
+    pip_point_light_dummy.effect.vs.BindWorldTransformation(Mat4::Translation(Vec4{0.8f, 0.3f, 1.5f}));
     pip_point_light_dummy.effect.vs.BindProjection(projection);
   }
 
@@ -43,13 +43,22 @@ class PhongSpecularScene : public IScene {
       thetaZ += -PI / 90.f;
     }
     if (kbd.KeyIsPressed('Z')) {
-      thetaY += PI / 90.f;
+      zoomFactor += 0.01f;
     }
     if (kbd.KeyIsPressed('X')) {
-      thetaY += -PI / 90.f;
+      zoomFactor -= 0.01f;
+    }
+    if (kbd.KeyIsPressed('Q')) {
+      zTranslation += 0.1f;
+    }
+    if (kbd.KeyIsPressed('E')) {
+      zTranslation -= 0.1f;
     }
 
-    pip_model.effect.vs.BindWorldTransformation(Mat4::RotationX(thetaX) * Mat4::RotationY(thetaY) * Mat4::RotationZ(thetaZ) * Mat4::Translation(Vec4{0.0f, 0.0f, 2.5f}));
+    pip_model.effect.vs.BindWorldTransformation(
+        Mat4::Scaling(zoomFactor) * Mat4::RotationX(thetaX) *
+        Mat4::RotationY(thetaY) * Mat4::RotationZ(thetaZ) *
+        Mat4::Translation(Vec4{0.0f, 0.0f, 2.5f + zTranslation}));
   }
   void Draw() {
     pip_model.BeginFrame();
@@ -65,9 +74,11 @@ class PhongSpecularScene : public IScene {
   IndexedTriangleList<PhongSpecularEffect::Vertex> model;
   IndexedTriangleList<SolidColorEffectH::Vertex> point_light_dummy;
   static constexpr float dTheta = PI;
-  Mat4 projection{Mat4::PerspectiveProjectionFromFOV(90.f, 4.f / 3.f, 1.f, 10.f)};
+  Mat4 projection{Mat4::PerspectiveProjectionFromFOV(90.f, 4.f / 3.f, 1.f, 4.f)};
 
   float thetaX{0.f};
   float thetaY{PI};
   float thetaZ{0.f};
+  float zoomFactor{1.f};
+  float zTranslation{0.f};
 };

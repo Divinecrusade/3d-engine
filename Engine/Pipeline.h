@@ -82,9 +82,79 @@ private:
         }
     }
 
-    void ProccessTriangle(Triangle object)
+    void ProccessTriangle(Triangle&& object)
     {
-        PostProccessTriangle(std::move(object));
+        ClipCullTriangle(std::forward<Triangle>(object));
+    }
+
+    void ClipCullTriangle(Triangle&& object) {
+      if (object[0].model_pos.x > object[0].model_pos.w &&
+          object[1].model_pos.x > object[1].model_pos.w &&
+          object[2].model_pos.x > object[2].model_pos.w) 
+        return;
+      if (object[0].model_pos.x < -object[0].model_pos.w &&
+          object[1].model_pos.x < -object[1].model_pos.w &&
+          object[2].model_pos.x < -object[2].model_pos.w)
+        return;
+      if (object[0].model_pos.y > object[0].model_pos.w &&
+          object[1].model_pos.y > object[1].model_pos.w &&
+          object[2].model_pos.y > object[2].model_pos.w)
+        return;
+      if (object[0].model_pos.y < -object[0].model_pos.w &&
+          object[1].model_pos.y < -object[1].model_pos.w &&
+          object[2].model_pos.y < -object[2].model_pos.w)
+        return;
+      if (object[0].model_pos.z > object[0].model_pos.w &&
+          object[1].model_pos.z > object[1].model_pos.w &&
+          object[2].model_pos.z > object[2].model_pos.w)
+        return;
+      if (object[0].model_pos.z < 0.f &&
+          object[1].model_pos.z < 0.f &&
+          object[2].model_pos.z < 0.f)
+        return;
+
+
+      auto const Clip1{[this](GSV& v0, GSV& v1, GSV& v2) {
+        auto const alphaA{(-v0.model_pos.z) / (v1.model_pos.z - v0.model_pos.z)};
+        auto const alphaB{(-v0.model_pos.z) / (v2.model_pos.z - v0.model_pos.z)};
+        auto v0A{interpolate(v0, v1, alphaA)};
+        auto v0B{interpolate(v0, v2, alphaB)};
+        PostProccessTriangle(Triangle{v0A, v1, v2});
+        PostProccessTriangle(Triangle{v0B, v1, v2});
+      }};
+      auto const Clip2{[this](GSV& v0, GSV& v1, GSV& v2) {
+        auto const alpha0{(-v0.model_pos.z) / (v2.model_pos.z - v0.model_pos.z)};
+        auto const alpha1{(-v0.model_pos.z) / (v2.model_pos.z - v1.model_pos.z)};
+        v0 = interpolate(v0, v2, alpha0);
+        v1 = interpolate(v1, v2, alpha1);
+        PostProccessTriangle(Triangle{v0, v1, v2});
+      }};
+
+      if (object[0].model_pos.z < 0.f) {
+        if (object[1].model_pos.z < 0.f) {
+          Clip2(object[0], object[1], object[2]);
+        } 
+        else if (object[2].model_pos.z < 0.f) {
+          Clip2(object[0], object[2], object[1]);
+        } 
+        else {
+          Clip1(object[0], object[1], object[2]);
+        }
+      } 
+      else if (object[1].model_pos.z < 0.f) {
+        if (object[2].model_pos.z < 0.f) {
+          Clip2(object[1], object[2], object[0]);
+        } 
+        else {
+          Clip1(object[1], object[0], object[2]);
+        }
+      } 
+      else if (object[2].model_pos.z < 0.f) {
+        Clip1(object[2], object[0], object[1]);
+      } 
+      else {
+        PostProccessTriangle(std::forward<Triangle>(object));
+      }
     }
 
     void PostProccessTriangle(Triangle object)
@@ -165,8 +235,8 @@ private:
 
     void DrawFlatTriangle(GSV left_slope, GSV right_slope, const GSV& left_slope_step, const GSV& right_slope_step, const GSV& to)
     {
-        float const y_start{ std::floor(left_slope.model_pos.y + 0.5f) };
-        float const y_end{ std::floor(to.model_pos.y + 0.5f) };
+        float const y_start{ std::max(std::floor(left_slope.model_pos.y + 0.5f), 0.f) };
+        float const y_end{ std::min(std::floor(to.model_pos.y + 0.5f), Graphics::ScreenHeight - 1.f) };
 
         for (float y{ y_start }; y < y_end; ++y)
         {
@@ -176,8 +246,8 @@ private:
 
             if (l.model_pos.x > r.model_pos.x) std::swap(l, r);
 
-            float const x_start{ std::floor(l.model_pos.x + 0.5f) };
-            float const x_end{ std::floor(r.model_pos.x + 0.5f) };
+            float const x_start{ std::max(std::floor(l.model_pos.x + 0.5f), 0.f) };
+            float const x_end{ std::min(std::floor(r.model_pos.x + 0.5f), Graphics::ScreenWidth - 1.f) };
 
             float const dx{ x_start + 0.5f - l.model_pos.x };
 

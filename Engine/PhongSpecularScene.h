@@ -57,7 +57,7 @@ class PhongSpecularScene : public IScene {
   Pipeline<PhongSpecularEffect> pip_model;
   IndexedTriangleList<PhongSpecularEffect::Vertex> model;
   static constexpr float dTheta = PI;
-  Mat4 projection{Mat4::PerspectiveProjection(2.f, 2.f, 1.f, 10.f)};
+  Mat4 projection{Mat4::PerspectiveProjectionFromFOV(90.f, 4.f / 3.f, 1.f, 10.f)};
 
   float thetaX{0.f};
   float thetaY{PI};

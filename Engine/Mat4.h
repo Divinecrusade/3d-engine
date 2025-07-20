@@ -88,6 +88,17 @@ class _Mat4 {
            (T)0, (T)0, -f * n / (f - n), (T)0};
   }
 
+  static _Mat4 PerspectiveProjectionFromFOV(T fov, T ar, T n, T f) {
+    auto const fov_rad{fov * (T)PI / 180};
+    auto const w{(T)1.0f / std::tan(fov_rad / (T)2)};
+    auto const h{w * ar};
+
+    return { w, (T)0, (T)0, (T)0, 
+            (T)0, h, (T)0, (T)0,
+            (T)0, (T)0, f / (f - n), (T)1, 
+            (T)0, (T)0, -f * n / (f - n), (T)0};
+  }
+
  public:
   // [ row ][ col ]
   T elements[4][4];

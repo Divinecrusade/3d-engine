@@ -24,20 +24,6 @@
 #include "Vec2.h"
 #include <vector>
 #include "ChiliMath.h"
-#include "TexCubeScene.h"
-#include "ColorCubeScene.h"
-#include "SolidCubeScene.h"
-#include "WabePlainScene.h"
-#include "PositionColorCubeScene.h"
-#include "SolidShadingScene.h"
-#include "ModelScene.h"
-#include "WabeShadingScene.h"
-#include "SphereScene.h"
-#include "ModelGourandScene.h"
-#include "PointLightGourandObjectScene.h"
-#include "PointLightGourandPlainScene.h"
-#include "PointLightPhongPlainScene.h"
-#include "PointLightPhongObjectScene.h"
 #include "PhongSpecularScene.h"
 
 class Game

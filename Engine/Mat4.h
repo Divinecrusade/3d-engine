@@ -81,6 +81,13 @@ class _Mat4 {
             by.x, by.y, by.z, (T)1};
   }
 
+  static _Mat4 PerspectiveProjection(T w, T h, T n, T f) {
+    return {2 * n / w, (T)0, (T)0, (T)0,
+           (T)0, 2 * n / h, (T)0, (T)0,
+           (T)0, (T)0, f / (f - n), (T)1,
+           (T)0, (T)0, -f * n / (f - n), (T)0};
+  }
+
  public:
   // [ row ][ col ]
   T elements[4][4];

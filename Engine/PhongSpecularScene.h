@@ -2,7 +2,6 @@
 
 #include "IScene.h"
 #include "Pipeline.h"
-#include "SolidColorEffect.h"
 #include "Sphere.h"
 #include "PhongSpecularEffect.h"
 
@@ -19,12 +18,10 @@ class PhongSpecularScene : public IScene {
       : zbuffer{std::make_shared<std::unique_ptr<float[]>>(
             std::make_unique<float[]>(gfx.ScreenWidth * gfx.ScreenHeight))},
         pip_model{gfx, PhongSpecularEffect{}, zbuffer},
-        pip_point_light_dummy{gfx, Colors::White, zbuffer},
-        model{std::move(model)},
-        point_light_dummy{
-            Sphere::GetTriangles<SolidColorEffect::Vertex>(0.2f)} {
+        model{std::move(model)}
+  {
     pip_model.effect.ps.MoveLight(Vec4{0.3f, 0.3f, 1.f});
-    pip_point_light_dummy.effect.vs.SetTranslation(Vec3{0.3f, 0.3f, 1.f});
+    pip_model.effect.vs.BindProjection(projection);
   }
 
   void Update(Keyboard& kbd, float dt) {
@@ -47,22 +44,20 @@ class PhongSpecularScene : public IScene {
       thetaY += -PI / 90.f;
     }
 
-    pip_model.effect.vs.BindTransformation(Mat4::RotationX(thetaX) * Mat4::RotationY(thetaY) * Mat4::RotationZ(thetaZ) * Mat4::Translation(Vec4{0.0f, 0.0f, 3.f}));
+    pip_model.effect.vs.BindWorldTransformation(Mat4::RotationX(thetaX) * Mat4::RotationY(thetaY) * Mat4::RotationZ(thetaZ) * Mat4::Translation(Vec4{0.0f, 0.0f, 2.5f}));
   }
   void Draw() {
     pip_model.BeginFrame();
 
-    pip_point_light_dummy.Draw(point_light_dummy);
     pip_model.Draw(model);
   }
 
  private:
   std::shared_ptr<std::unique_ptr<float[]>> zbuffer;
   Pipeline<PhongSpecularEffect> pip_model;
-  Pipeline<SolidColorEffect> pip_point_light_dummy;
   IndexedTriangleList<PhongSpecularEffect::Vertex> model;
-  IndexedTriangleList<SolidColorEffect::Vertex> point_light_dummy;
   static constexpr float dTheta = PI;
+  Mat4 projection{Mat4::PerspectiveProjection(2.f, 2.f, 1.f, 10.f)};
 
   float thetaX{0.f};
   float thetaY{PI};

@@ -65,15 +65,17 @@ private:
 
     void AssembleTriangles(std::vector<VSV>& vertices, std::vector<std::size_t> const& indices)
     {
+        auto const eye{Vec4{} * effect.vs.GetProjection()};
         for (std::size_t i{ 0u }; i < indices.size(); i += 3u)
         {
             if 
             (
-                (vertices[indices[i + 1u]] - vertices[indices[i]])
+                (vertices[indices[i + 1u]].model_pos - vertices[indices[i]].model_pos)
                 %
-                (vertices[indices[i + 2u]] - vertices[indices[i]])
+                (vertices[indices[i + 2u]].model_pos - vertices[indices[i]].model_pos)
                 *
-                vertices[indices[i]] > 0.f
+                (vertices[indices[i]].model_pos - eye) >
+              0.f
             ) continue;
 
             ProccessTriangle(Triangle{ effect.gs(vertices[indices[i]], vertices[indices[i + 1u]], vertices[indices[i + 2u]], i / 3ull) });
@@ -89,18 +91,18 @@ private:
     {
         for (auto& vertex : object)
         {
-            PubeScreenTransform(vertex);
+            TransformToNDC(vertex);
         }
         DrawTriangle(object);
     }
 
-    void PubeScreenTransform(GSV& v)
+    void TransformToNDC(GSV& v)
     {
-        float const zFactor{ 1.f / v.model_pos.z };
-        v *= zFactor;
+        float const wInv{ 1.f / v.model_pos.w };
+        v *= wInv;
         v.model_pos.x = v.model_pos.x * screen_half_width + screen_half_width;
         v.model_pos.y = -v.model_pos.y * screen_half_height + screen_half_height;
-        v.model_pos.z = zFactor;
+        v.model_pos.w = wInv; 
     }
 
     void DrawTriangle(Triangle& object)
@@ -187,11 +189,13 @@ private:
 
             for (float x{ x_start }; x < x_end; ++x, iLine += step)
             {
-                float const inv_z{ 1.0f / iLine.model_pos.z };
-
-                if (UpdateZBuffer({ static_cast<unsigned int>(x), static_cast<unsigned int>(y) }, inv_z))
+                if (UpdateZBuffer({static_cast<unsigned int>(x),
+                                   static_cast<unsigned int>(y)},
+                                   iLine.model_pos.z))
                 {
-                    gfx.PutPixel(static_cast<int>(x), static_cast<int>(y), effect.ps(iLine * inv_z));
+                    auto const recovered_w{1 / iLine.model_pos.w};
+                    gfx.PutPixel(static_cast<int>(x), static_cast<int>(y),
+                                 effect.ps(iLine * recovered_w));
                 }
             }
         }

@@ -1,13 +1,22 @@
 #pragma once
 
 #include "DefaultGeometryShader.h"
-#include "SolidShadingEffect.h"
 #include "Mat4.h"
 #include <cmath>
 
 class PhongSpecularEffect {
  public:
-  using Vertex = SolidShadingEffectV::VertexWithNormale;
+  class VertexWithNormal : public Vec4 {
+   public:
+    VertexWithNormal(Vec3 v) : Vec4{v} {}
+
+    Vec4 GetModel() const { return *this; }
+
+   public:
+    Vec3 n{0.f, 0.f, 0.f};
+  };
+
+  using Vertex = VertexWithNormal;
 
   class VertexShader {
    public:
@@ -15,13 +24,11 @@ class PhongSpecularEffect {
 
     class VertexWithNormalAndWorldPos {
      public:
-      VertexWithNormalAndWorldPos operator-(
-          VertexWithNormalAndWorldPos const& rhs) const {
+      VertexWithNormalAndWorldPos operator-(VertexWithNormalAndWorldPos const& rhs) const {
         return {model_pos - rhs.model_pos, n - rhs.n, worldPos - rhs.worldPos};
       }
 
-      VertexWithNormalAndWorldPos operator+(
-          VertexWithNormalAndWorldPos const& rhs) const {
+      VertexWithNormalAndWorldPos operator+(VertexWithNormalAndWorldPos const& rhs) const {
         return {model_pos + rhs.model_pos, n + rhs.n, worldPos + rhs.worldPos};
       }
 
@@ -29,8 +36,7 @@ class PhongSpecularEffect {
         return model_pos * rhs.model_pos;
       }
 
-      VertexWithNormalAndWorldPos operator%(
-          VertexWithNormalAndWorldPos const& rhs) const {
+      VertexWithNormalAndWorldPos operator%(VertexWithNormalAndWorldPos const& rhs) const {
         return {model_pos % rhs.model_pos, n, worldPos};
       }
 
@@ -56,7 +62,7 @@ class PhongSpecularEffect {
         return *this;
       }
 
-      Vec3 model_pos{};
+      Vec4 model_pos{};
       Vec3 n{};
       Vec3 worldPos{};
     };
@@ -64,16 +70,28 @@ class PhongSpecularEffect {
     using OutVertex = VertexWithNormalAndWorldPos;
 
     OutVertex operator()(InVertex const& v) {
-      auto new_pos{Vec4{v} * transformation};
-      return {new_pos, Vec4{v.n, 0.f} * transformation, new_pos};
+      return {v * worldProj, Vec4{v.n, 0.f} * world, v * world};
     }
 
-    void BindTransformation(Mat4 const& new_transformation) {
-      transformation = new_transformation;
+    void BindWorldTransformation(Mat4 const& new_transformation) {
+      world = new_transformation;
+      worldProj = world * proj;
+    }
+
+    void BindProjection(Mat4 const& new_projection) {
+      proj = new_projection;
+      worldProj = world * proj;
+    }
+
+    Mat4 const& GetProjection() const {
+      return proj;
     }
 
    private:
-    Mat4 transformation;
+
+    Mat4 world{Mat4::Identity()};
+    Mat4 proj{Mat4::Identity()};
+    Mat4 worldProj{Mat4::Identity()};
   };
   using GeometryShader = DefaultGeometryShader<VertexShader::OutVertex>;
   class PixelShader {
@@ -111,8 +129,8 @@ class PhongSpecularEffect {
     float quadradic_attenuation{2.619f};
     float constant_attenuation{0.382f};
 
-    float specular_power_factor{2.f};
-    float specular_range_factor{0.1f};
+    float specular_power_factor{4.f};
+    float specular_range_factor{0.3f};
 
     Vec4 light_pos{};
   };

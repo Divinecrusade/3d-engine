@@ -181,6 +181,7 @@
     <ClInclude Include="Seb_configure.h" />
     <ClInclude Include="Seb_point.h" />
     <ClInclude Include="SolidColorEffect.h" />
+    <ClInclude Include="SolidColorEffectH.h" />
     <ClInclude Include="SolidCubeScene.h" />
     <ClInclude Include="SolidShadingEffect.h" />
     <ClInclude Include="SolidShadingScene.h" />

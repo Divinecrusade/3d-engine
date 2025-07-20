@@ -225,6 +225,9 @@
     <ClInclude Include="Vec4.h">
       <Filter>Header Files\engine</Filter>
     </ClInclude>
+    <ClInclude Include="SolidColorEffectH.h">
+      <Filter>Header Files\effects</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DXErr.cpp">

@@ -4,6 +4,7 @@
 #include "Pipeline.h"
 #include "Sphere.h"
 #include "PhongSpecularEffect.h"
+#include "SolidColorEffectH.h"
 
 class PhongSpecularScene : public IScene {
  public:
@@ -17,11 +18,15 @@ class PhongSpecularScene : public IScene {
                      IndexedTriangleList<PhongSpecularEffect::Vertex> model)
       : zbuffer{std::make_shared<std::unique_ptr<float[]>>(
             std::make_unique<float[]>(gfx.ScreenWidth * gfx.ScreenHeight))},
+        pip_point_light_dummy{gfx, {Colors::White}, zbuffer},
         pip_model{gfx, PhongSpecularEffect{}, zbuffer},
-        model{std::move(model)}
+        model{std::move(model)},
+        point_light_dummy{Sphere::GetTriangles<SolidColorEffectH::Vertex>(0.2f)}
   {
     pip_model.effect.ps.MoveLight(Vec4{0.3f, 0.3f, 1.f});
     pip_model.effect.vs.BindProjection(projection);
+    pip_point_light_dummy.effect.vs.BindWorldTransformation(Mat4::Translation(Vec4{0.3f, 0.3f, 1.f}));
+    pip_point_light_dummy.effect.vs.BindProjection(projection);
   }
 
   void Update(Keyboard& kbd, float dt) {
@@ -49,13 +54,16 @@ class PhongSpecularScene : public IScene {
   void Draw() {
     pip_model.BeginFrame();
 
+    pip_point_light_dummy.Draw(point_light_dummy);
     pip_model.Draw(model);
   }
 
  private:
   std::shared_ptr<std::unique_ptr<float[]>> zbuffer;
   Pipeline<PhongSpecularEffect> pip_model;
+  Pipeline<SolidColorEffectH> pip_point_light_dummy;
   IndexedTriangleList<PhongSpecularEffect::Vertex> model;
+  IndexedTriangleList<SolidColorEffectH::Vertex> point_light_dummy;
   static constexpr float dTheta = PI;
   Mat4 projection{Mat4::PerspectiveProjectionFromFOV(90.f, 4.f / 3.f, 1.f, 10.f)};
 

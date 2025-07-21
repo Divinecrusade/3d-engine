@@ -1,9 +1,11 @@
 #pragma once
 
-#include "DefaultGeometryShader.h"
-#include "BaseVertexShader.h"
-#include "Mat4.h"
 #include <cmath>
+
+#include "BasePhongEffect.h"
+#include "BaseVertexShader.h"
+#include "DefaultGeometryShader.h"
+#include "Mat4.h"
 
 class PhongSpecularEffect {
  public:
@@ -67,52 +69,31 @@ class PhongSpecularEffect {
     Vec3 worldPos{};
   };
 
-  class VertexShader : public BaseVertexShader<Vertex, VertexWithNormalAndWorldPos> {
+  class VertexShader
+      : public BaseVertexShader<Vertex, VertexWithNormalAndWorldPos> {
    public:
     OutVertex operator()(InVertex const& v) override {
       return {v * worldViewProj, Vec4{v.n, 0.f} * worldView, v * worldView};
     }
   };
   using GeometryShader = DefaultGeometryShader<VertexShader::OutVertex>;
-  class PixelShader {
+  class PixelShader : public BasePhongEffect {
    public:
+    PixelShader() : BasePhongEffect{} {}
+
     Color operator()(GeometryShader::OutVertex const& transformed_v) const {
-      auto const surface_n{transformed_v.n.GetNormalized()};
-      auto const to_light{light_pos - transformed_v.worldPos};
-      auto const distance_to_light{to_light.Len()};
-      auto const to_light_n{to_light / distance_to_light};
-      auto const attenuation{
-          1.f /
-          (quadradic_attenuation * distance_to_light * distance_to_light +
-           linear_attenuation * distance_to_light + constant_attenuation)};
-
-      auto const r{ surface_n * (to_light * surface_n) * 2.f - to_light};
-
-      Vec3 const speculared{diffuse * specular_range_factor *
-                            std::pow(std::max(0.f, -r.GetNormalized() * transformed_v.worldPos), specular_power_factor)};
-      Vec3 const diffused{diffuse * attenuation *
-                          std::max(0.f, surface_n * to_light_n)};
-      Color const c{material.GetHadamarded(diffused + ambient + speculared)
-                            .GetSaturated() * 255.f};
-
-      return c;
+      return Shade(transformed_v, Vec3{0.8f, 0.85f, 1.f}, linear_attenuation,
+          quadradic_attenuation, constant_attenuation, specular_power_factor,
+          specular_range_factor);
     }
 
-    void SetLightPosition(Vec4 pos) { light_pos = pos; }
-
    private:
-    Vec3 diffuse{1.f, 1.f, 1.f};
-    Vec3 ambient{0.1f, 0.1f, 0.1f};
-    Vec3 material{0.8f, 0.85f, 1.f};
+    static constexpr float linear_attenuation{1.0f};
+    static constexpr float quadradic_attenuation{2.619f};
+    static constexpr float constant_attenuation{0.382f};
 
-    float linear_attenuation{1.0f};
-    float quadradic_attenuation{2.619f};
-    float constant_attenuation{0.382f};
-
-    float specular_power_factor{5.f};
-    float specular_range_factor{0.05f};
-
-    Vec4 light_pos{};
+    static constexpr float specular_power_factor{5.f};
+    static constexpr float specular_range_factor{0.05f};
   };
 
  public:

@@ -38,6 +38,15 @@ class _Mat4 {
     *this = *this * rhs;
     return *this;
   }
+  _Mat4 operator!() {
+    _Mat4 inv{};
+    for (size_t i = 0; i != 4; ++i)
+    for (size_t j = 0; j != 4; ++j)
+    {
+      inv.elements[i][j] = elements[j][i];
+    }
+    return inv;
+  }
   static _Mat4 Identity() {
     return {(T)1, (T)0, (T)0, (T)0, 
             (T)0, (T)1, (T)0, (T)0,

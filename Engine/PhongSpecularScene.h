@@ -46,40 +46,42 @@ class PhongSpecularScene : public IScene {
           if (!mouse_engaged) break;
 
           auto const delta_pos{e.GetPos() - mouse_pos};
-          camera_rot = camera_rot *
-                       Mat4::RotationX(w_angle_delta * float(delta_pos.y)) *
-                       Mat4::RotationY(h_angle_delta * float(delta_pos.x));
+          camera_rot_inv = camera_rot_inv *
+                       Mat4::RotationX(w_angle_delta * -float(delta_pos.y)) *
+                       Mat4::RotationY(h_angle_delta * -float(delta_pos.x));
           mouse_pos = e.GetPos();
           break;
       }
     }
     
     if (kbd.KeyIsPressed('W')) {
-      camera_pos.z += dt * camera_speed;
+      camera_pos += Vec4{0.f, 0.f, 1.f} * !camera_rot_inv * dt * camera_speed;
     }
     if (kbd.KeyIsPressed('S')) {
-      camera_pos.z -= dt * camera_speed;
+      camera_pos -= Vec4{0.f, 0.f, 1.f} * !camera_rot_inv * dt * camera_speed;
     }
     if (kbd.KeyIsPressed('A')) {
-      camera_pos.x -= dt * camera_speed;
+      camera_pos -= Vec4{1.f, 0.f, 0.f} * !camera_rot_inv * dt * camera_speed;
     }
     if (kbd.KeyIsPressed('D')) {
-      camera_pos.x += dt * camera_speed;
+      camera_pos += Vec4{1.f, 0.f, 0.f} * !camera_rot_inv * dt * camera_speed;
     }
     if (kbd.KeyIsPressed('Z')) {
-      camera_pos.y -= dt * camera_speed;
+      camera_pos = Vec4{0.f, 1.f, 0.f} * !camera_rot_inv * dt * camera_speed;
     }
     if (kbd.KeyIsPressed('X')) {
-      camera_pos.y += dt * camera_speed;
+      camera_pos = Vec4{0.f, 1.f, 0.f} * !camera_rot_inv * dt * camera_speed;
     }
 
     auto const view_offset{-camera_pos};
-    pip_model.effect.vs.BindView(Mat4::Translation(view_offset));
+    pip_model.effect.vs.BindView(Mat4::Translation(view_offset) *
+                                 camera_rot_inv);
     pip_model.effect.ps.SetLightPosition(light_pos + view_offset);
     
     pip_point_light_dummy.effect.vs.BindWorldViewTransformation( 
         Mat4::Translation(light_pos) * 
-        Mat4::Translation(view_offset));
+        Mat4::Translation(view_offset) *
+        camera_rot_inv);
   }
   void Draw() {
     pip_model.BeginFrame();
@@ -104,7 +106,7 @@ class PhongSpecularScene : public IScene {
 
   static constexpr float h_angle_delta{hFOV / Graphics::ScreenHeight * PI / 180.f};
   static constexpr float w_angle_delta{wFOV / Graphics::ScreenWidth * PI / 180.f};
-  Mat4 camera_rot{Mat4::Identity()};
+  Mat4 camera_rot_inv{Mat4::Identity()};
 
   static constexpr float camera_speed = 0.5f;
   Vec3 camera_pos{0.f, 0.f, 0.f};

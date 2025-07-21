@@ -57,7 +57,7 @@ void Game::UpdateModel()
 			wnd.Kill();
 		}
 	}
-	(*scene)->Update(wnd.kbd, dt);
+	(*scene)->Update(wnd.kbd, dt, wnd.mouse);
 }
 
 void Game::ComposeFrame()

@@ -5,6 +5,7 @@
 #include "Sphere.h"
 #include "PhongSpecularEffect.h"
 #include "SolidColorEffectH.h"
+#include "ChiliMath.h"
 
 class PhongSpecularScene : public IScene {
  public:
@@ -28,7 +29,31 @@ class PhongSpecularScene : public IScene {
     pip_model.effect.vs.BindWorldTransformation(Mat4::RotationY(PI) * Mat4::Translation(object_pos));
   }
 
-  void Update(Keyboard& kbd, float dt) {
+  void Update(Keyboard& kbd, float dt, Mouse& mouse) {
+    while (!mouse.IsEmpty()) {
+      auto const e{mouse.Read()};
+      switch (e.GetType()) {
+        case Mouse::Event::Type::LPress:
+          mouse_engaged = true;
+          mouse_pos = e.GetPos();
+          break;
+
+        case Mouse::Event::Type::LRelease:
+          mouse_engaged = false;
+          break;
+
+        case Mouse::Event::Type::Move:
+          if (!mouse_engaged) break;
+
+          auto const delta_pos{e.GetPos() - mouse_pos};
+          camera_rot = camera_rot *
+                       Mat4::RotationX(w_angle_delta * float(delta_pos.y)) *
+                       Mat4::RotationY(h_angle_delta * float(delta_pos.x));
+          mouse_pos = e.GetPos();
+          break;
+      }
+    }
+    
     if (kbd.KeyIsPressed('W')) {
       camera_pos.z += dt * camera_speed;
     }
@@ -49,11 +74,10 @@ class PhongSpecularScene : public IScene {
     }
 
     auto const view_offset{-camera_pos};
-
     pip_model.effect.vs.BindView(Mat4::Translation(view_offset));
-    pip_model.effect.ps.SetLightPosition(view_offset + camera_pos);
+    pip_model.effect.ps.SetLightPosition(light_pos + view_offset);
     
-    pip_point_light_dummy.effect.vs.BindWorldViewTransformation(
+    pip_point_light_dummy.effect.vs.BindWorldViewTransformation( 
         Mat4::Translation(light_pos) * 
         Mat4::Translation(view_offset));
   }
@@ -71,15 +95,23 @@ class PhongSpecularScene : public IScene {
   IndexedTriangleList<PhongSpecularEffect::Vertex> model;
   IndexedTriangleList<SolidColorEffectH::Vertex> point_light_dummy;
   static constexpr float dTheta = PI;
-  static constexpr float FOV = 90;
+  static constexpr float wFOV = 90.f;
   static constexpr float screen_ratio = 4.f / 3.f;
+  static constexpr float hFOV = wFOV / screen_ratio;
   static constexpr float _near = 1.f;
   static constexpr float _far = 4.f;
-  Mat4 projection{Mat4::PerspectiveProjectionFromFOV(FOV, screen_ratio, _near, _far)};
+  Mat4 projection{Mat4::PerspectiveProjectionFromFOV(wFOV, screen_ratio, _near, _far)};
+
+  static constexpr float h_angle_delta{hFOV / Graphics::ScreenHeight * PI / 180.f};
+  static constexpr float w_angle_delta{wFOV / Graphics::ScreenWidth * PI / 180.f};
+  Mat4 camera_rot{Mat4::Identity()};
 
   static constexpr float camera_speed = 0.5f;
   Vec3 camera_pos{0.f, 0.f, 0.f};
 
   Vec3 light_pos{0.3f, 0.3f, 1.f};
   Vec3 object_pos{0.0f, 0.0f, 2.5f};
+
+  Vei2 mouse_pos{};
+  bool mouse_engaged{false};
 };

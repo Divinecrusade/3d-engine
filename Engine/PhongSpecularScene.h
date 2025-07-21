@@ -23,42 +23,39 @@ class PhongSpecularScene : public IScene {
         model{std::move(model)},
         point_light_dummy{Sphere::GetTriangles<SolidColorEffectH::Vertex>(0.1f)}
   {
-    pip_model.effect.ps.MoveLight(Vec4{0.3f, 0.3f, 1.f});
     pip_model.effect.vs.BindProjection(projection);
-    pip_point_light_dummy.effect.vs.BindWorldTransformation(Mat4::Translation(Vec4{0.8f, 0.3f, 1.5f}));
     pip_point_light_dummy.effect.vs.BindProjection(projection);
+    pip_model.effect.ps.MoveLight(light_pos);
   }
 
   void Update(Keyboard& kbd, float dt) {
     if (kbd.KeyIsPressed('W')) {
-      thetaX += PI / 90.f;
-    }
-    if (kbd.KeyIsPressed('A')) {
-      thetaZ += PI / 90.f;
+      camera_pos.z += dt * camera_speed;
     }
     if (kbd.KeyIsPressed('S')) {
-      thetaX += -PI / 90.f;
+      camera_pos.z -= dt * camera_speed;
+    }
+    if (kbd.KeyIsPressed('A')) {
+      camera_pos.x -= dt * camera_speed;
     }
     if (kbd.KeyIsPressed('D')) {
-      thetaZ += -PI / 90.f;
+      camera_pos.x += dt * camera_speed;
     }
     if (kbd.KeyIsPressed('Z')) {
-      zoomFactor += 0.01f;
+      camera_pos.y -= dt * camera_speed;
     }
     if (kbd.KeyIsPressed('X')) {
-      zoomFactor -= 0.01f;
-    }
-    if (kbd.KeyIsPressed('Q')) {
-      zTranslation += 0.1f;
-    }
-    if (kbd.KeyIsPressed('E')) {
-      zTranslation -= 0.1f;
+      camera_pos.y += dt * camera_speed;
     }
 
+    auto const view_offset{-camera_pos};
     pip_model.effect.vs.BindWorldTransformation(
-        Mat4::Scaling(zoomFactor) * Mat4::RotationX(thetaX) *
-        Mat4::RotationY(thetaY) * Mat4::RotationZ(thetaZ) *
-        Mat4::Translation(Vec4{0.0f, 0.0f, 2.5f + zTranslation}));
+        Mat4::RotationY(PI) * Mat4::Translation(object_pos));
+    pip_model.effect.vs.BindView(Mat4::Translation(view_offset));
+    //pip_model.effect.ps.MoveLight(view_offset);
+    pip_point_light_dummy.effect.vs.BindWorldViewTransformation(
+        Mat4::Translation(light_pos) * 
+        Mat4::Translation(view_offset));
   }
   void Draw() {
     pip_model.BeginFrame();
@@ -74,11 +71,15 @@ class PhongSpecularScene : public IScene {
   IndexedTriangleList<PhongSpecularEffect::Vertex> model;
   IndexedTriangleList<SolidColorEffectH::Vertex> point_light_dummy;
   static constexpr float dTheta = PI;
-  Mat4 projection{Mat4::PerspectiveProjectionFromFOV(90.f, 4.f / 3.f, 1.f, 4.f)};
+  static constexpr float FOV = 90;
+  static constexpr float screen_ratio = 4.f / 3.f;
+  static constexpr float _near = 1.f;
+  static constexpr float _far = 4.f;
+  Mat4 projection{Mat4::PerspectiveProjectionFromFOV(FOV, screen_ratio, _near, _far)};
 
-  float thetaX{0.f};
-  float thetaY{PI};
-  float thetaZ{0.f};
-  float zoomFactor{1.f};
-  float zTranslation{0.f};
+  static constexpr float camera_speed = 0.5f;
+  Vec3 camera_pos{0.f, 0.f, 0.f};
+
+  Vec3 light_pos{0.3f, 0.3f, 1.f};
+  Vec3 object_pos{0.0f, 0.0f, 2.5f};
 };

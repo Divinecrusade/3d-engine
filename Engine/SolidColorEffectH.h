@@ -41,25 +41,25 @@ class SolidColorEffectH {
     using OutVertex = Vertex4;
 
     OutVertex operator()(InVertex const& v) {
-      return {v * worldProj};
+      return {v * worldViewProj};
     }
 
-    void BindWorldTransformation(Mat4 const& new_transformation) {
-      world = new_transformation;
-      worldProj = world * proj;
+    void BindWorldViewTransformation(Mat4 const& new_transformation) {
+      worldView = new_transformation;
+      worldViewProj = worldView * proj;
     }
 
     void BindProjection(Mat4 const& new_projection) {
       proj = new_projection;
-      worldProj = world * proj;
+      worldViewProj = worldView * proj;
     }
 
     Mat4 const& GetProjection() const { return proj; }
 
    private:
-    Mat4 world{Mat4::Identity()};
+    Mat4 worldView{Mat4::Identity()};
     Mat4 proj{Mat4::Identity()};
-    Mat4 worldProj{Mat4::Identity()};
+    Mat4 worldViewProj{Mat4::Identity()};
   };
   using GeometryShader = DefaultGeometryShader<VertexShader::OutVertex>;
   class PixelShader {

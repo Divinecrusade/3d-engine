@@ -70,17 +70,24 @@ class PhongSpecularEffect {
     using OutVertex = VertexWithNormalAndWorldPos;
 
     OutVertex operator()(InVertex const& v) {
-      return {v * worldProj, Vec4{v.n, 0.f} * world, v * world};
+      return {v * worldViewProj, Vec4{v.n, 0.f} * worldView, v * worldView};
     }
 
     void BindWorldTransformation(Mat4 const& new_transformation) {
       world = new_transformation;
-      worldProj = world * proj;
+      worldView = world * view;
+      worldViewProj = worldView * proj;
+    }
+
+    void BindView(Mat4 const& new_view) {
+      view = new_view;
+      worldView = world * view;
+      worldViewProj = worldView * proj;
     }
 
     void BindProjection(Mat4 const& new_projection) {
       proj = new_projection;
-      worldProj = world * proj;
+      worldViewProj = worldView * proj;
     }
 
     Mat4 const& GetProjection() const {
@@ -90,8 +97,10 @@ class PhongSpecularEffect {
    private:
 
     Mat4 world{Mat4::Identity()};
+    Mat4 view{Mat4::Identity()};
     Mat4 proj{Mat4::Identity()};
-    Mat4 worldProj{Mat4::Identity()};
+    Mat4 worldView{Mat4::Identity()};
+    Mat4 worldViewProj{Mat4::Identity()};
   };
   using GeometryShader = DefaultGeometryShader<VertexShader::OutVertex>;
   class PixelShader {
@@ -129,7 +138,7 @@ class PhongSpecularEffect {
     float quadradic_attenuation{2.619f};
     float constant_attenuation{0.382f};
 
-    float specular_power_factor{4.f};
+    float specular_power_factor{2.f};
     float specular_range_factor{0.3f};
 
     Vec4 light_pos{};

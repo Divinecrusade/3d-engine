@@ -34,39 +34,15 @@
     <Filter Include="Header Files\miniball">
       <UniqueIdentifier>{8e559944-6e0e-48f0-8518-690fbf62051c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\scenes\outdated">
+      <UniqueIdentifier>{0c7c05df-867a-441c-94ba-2ebe2514b258}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\effects\outdated">
+      <UniqueIdentifier>{7449b35f-6929-4b41-9d05-cf80dd209729}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="ClampEffect.h">
-      <Filter>Header Files\effects</Filter>
-    </ClInclude>
-    <ClInclude Include="ColorBlendEffect.h">
-      <Filter>Header Files\effects</Filter>
-    </ClInclude>
-    <ClInclude Include="PositionColorEffect.h">
-      <Filter>Header Files\effects</Filter>
-    </ClInclude>
-    <ClInclude Include="WaveEffect.h">
-      <Filter>Header Files\effects</Filter>
-    </ClInclude>
-    <ClInclude Include="SolidColorEffect.h">
-      <Filter>Header Files\effects</Filter>
-    </ClInclude>
-    <ClInclude Include="ColorCubeScene.h">
-      <Filter>Header Files\scenes</Filter>
-    </ClInclude>
-    <ClInclude Include="PositionColorCubeScene.h">
-      <Filter>Header Files\scenes</Filter>
-    </ClInclude>
     <ClInclude Include="IScene.h">
-      <Filter>Header Files\scenes</Filter>
-    </ClInclude>
-    <ClInclude Include="WabePlainScene.h">
-      <Filter>Header Files\scenes</Filter>
-    </ClInclude>
-    <ClInclude Include="TexCubeScene.h">
-      <Filter>Header Files\scenes</Filter>
-    </ClInclude>
-    <ClInclude Include="SolidCubeScene.h">
       <Filter>Header Files\scenes</Filter>
     </ClInclude>
     <ClInclude Include="DefaultGeometryShader.h">
@@ -147,12 +123,6 @@
     <ClInclude Include="Vec3.h">
       <Filter>Header Files\engine</Filter>
     </ClInclude>
-    <ClInclude Include="SolidShadingEffect.h">
-      <Filter>Header Files\effects</Filter>
-    </ClInclude>
-    <ClInclude Include="SolidShadingScene.h">
-      <Filter>Header Files\scenes</Filter>
-    </ClInclude>
     <ClInclude Include="tiny_obj_loader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -174,44 +144,8 @@
     <ClInclude Include="Subspan-inl.h">
       <Filter>Header Files\miniball</Filter>
     </ClInclude>
-    <ClInclude Include="ModelScene.h">
-      <Filter>Header Files\scenes</Filter>
-    </ClInclude>
-    <ClInclude Include="TextureWaveShadingEffect.h">
-      <Filter>Header Files\effects</Filter>
-    </ClInclude>
-    <ClInclude Include="WabeShadingScene.h">
-      <Filter>Header Files\scenes</Filter>
-    </ClInclude>
     <ClInclude Include="Sphere.h">
       <Filter>Header Files\objects</Filter>
-    </ClInclude>
-    <ClInclude Include="SphereScene.h">
-      <Filter>Header Files\scenes</Filter>
-    </ClInclude>
-    <ClInclude Include="GouraudShadingEffect.h">
-      <Filter>Header Files\effects</Filter>
-    </ClInclude>
-    <ClInclude Include="ModelGourandScene.h">
-      <Filter>Header Files\scenes</Filter>
-    </ClInclude>
-    <ClInclude Include="GouraudPointLightEffect.h">
-      <Filter>Header Files\effects</Filter>
-    </ClInclude>
-    <ClInclude Include="PointLightGourandObjectScene.h">
-      <Filter>Header Files\scenes</Filter>
-    </ClInclude>
-    <ClInclude Include="PointLightGourandPlainScene.h">
-      <Filter>Header Files\scenes</Filter>
-    </ClInclude>
-    <ClInclude Include="PhongShadingEffect.h">
-      <Filter>Header Files\effects</Filter>
-    </ClInclude>
-    <ClInclude Include="PointLightPhongPlainScene.h">
-      <Filter>Header Files\scenes</Filter>
-    </ClInclude>
-    <ClInclude Include="PointLightPhongObjectScene.h">
-      <Filter>Header Files\scenes</Filter>
     </ClInclude>
     <ClInclude Include="PhongSpecularEffect.h">
       <Filter>Header Files\effects</Filter>
@@ -227,6 +161,81 @@
     </ClInclude>
     <ClInclude Include="SolidColorEffectH.h">
       <Filter>Header Files\effects</Filter>
+    </ClInclude>
+    <ClInclude Include="BaseVertexShader.h">
+      <Filter>Header Files\effects</Filter>
+    </ClInclude>
+    <ClInclude Include="ColorCubeScene.h">
+      <Filter>Header Files\scenes\outdated</Filter>
+    </ClInclude>
+    <ClInclude Include="ModelGourandScene.h">
+      <Filter>Header Files\scenes\outdated</Filter>
+    </ClInclude>
+    <ClInclude Include="ModelScene.h">
+      <Filter>Header Files\scenes\outdated</Filter>
+    </ClInclude>
+    <ClInclude Include="PointLightGourandObjectScene.h">
+      <Filter>Header Files\scenes\outdated</Filter>
+    </ClInclude>
+    <ClInclude Include="PointLightGourandPlainScene.h">
+      <Filter>Header Files\scenes\outdated</Filter>
+    </ClInclude>
+    <ClInclude Include="PointLightPhongObjectScene.h">
+      <Filter>Header Files\scenes\outdated</Filter>
+    </ClInclude>
+    <ClInclude Include="PointLightPhongPlainScene.h">
+      <Filter>Header Files\scenes\outdated</Filter>
+    </ClInclude>
+    <ClInclude Include="PositionColorCubeScene.h">
+      <Filter>Header Files\scenes\outdated</Filter>
+    </ClInclude>
+    <ClInclude Include="SolidCubeScene.h">
+      <Filter>Header Files\scenes\outdated</Filter>
+    </ClInclude>
+    <ClInclude Include="SolidShadingScene.h">
+      <Filter>Header Files\scenes\outdated</Filter>
+    </ClInclude>
+    <ClInclude Include="SphereScene.h">
+      <Filter>Header Files\scenes\outdated</Filter>
+    </ClInclude>
+    <ClInclude Include="TexCubeScene.h">
+      <Filter>Header Files\scenes\outdated</Filter>
+    </ClInclude>
+    <ClInclude Include="WabePlainScene.h">
+      <Filter>Header Files\scenes\outdated</Filter>
+    </ClInclude>
+    <ClInclude Include="WabeShadingScene.h">
+      <Filter>Header Files\scenes\outdated</Filter>
+    </ClInclude>
+    <ClInclude Include="ClampEffect.h">
+      <Filter>Header Files\effects\outdated</Filter>
+    </ClInclude>
+    <ClInclude Include="ColorBlendEffect.h">
+      <Filter>Header Files\effects\outdated</Filter>
+    </ClInclude>
+    <ClInclude Include="GouraudPointLightEffect.h">
+      <Filter>Header Files\effects\outdated</Filter>
+    </ClInclude>
+    <ClInclude Include="GouraudShadingEffect.h">
+      <Filter>Header Files\effects\outdated</Filter>
+    </ClInclude>
+    <ClInclude Include="PhongShadingEffect.h">
+      <Filter>Header Files\effects\outdated</Filter>
+    </ClInclude>
+    <ClInclude Include="PositionColorEffect.h">
+      <Filter>Header Files\effects\outdated</Filter>
+    </ClInclude>
+    <ClInclude Include="SolidColorEffect.h">
+      <Filter>Header Files\effects\outdated</Filter>
+    </ClInclude>
+    <ClInclude Include="SolidShadingEffect.h">
+      <Filter>Header Files\effects\outdated</Filter>
+    </ClInclude>
+    <ClInclude Include="WaveEffect.h">
+      <Filter>Header Files\effects\outdated</Filter>
+    </ClInclude>
+    <ClInclude Include="TextureWaveShadingEffect.h">
+      <Filter>Header Files\effects\outdated</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

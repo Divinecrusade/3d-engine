@@ -1,6 +1,7 @@
 #pragma once
 
 #include "DefaultGeometryShader.h"
+#include "BaseVertexShader.h"
 #include "Mat4.h"
 #include <cmath>
 
@@ -18,89 +19,59 @@ class PhongSpecularEffect {
 
   using Vertex = VertexWithNormal;
 
-  class VertexShader {
+  class VertexWithNormalAndWorldPos {
    public:
-    using InVertex = Vertex;
+    VertexWithNormalAndWorldPos operator-(
+        VertexWithNormalAndWorldPos const& rhs) const {
+      return {model_pos - rhs.model_pos, n - rhs.n, worldPos - rhs.worldPos};
+    }
 
-    class VertexWithNormalAndWorldPos {
-     public:
-      VertexWithNormalAndWorldPos operator-(VertexWithNormalAndWorldPos const& rhs) const {
-        return {model_pos - rhs.model_pos, n - rhs.n, worldPos - rhs.worldPos};
-      }
+    VertexWithNormalAndWorldPos operator+(
+        VertexWithNormalAndWorldPos const& rhs) const {
+      return {model_pos + rhs.model_pos, n + rhs.n, worldPos + rhs.worldPos};
+    }
 
-      VertexWithNormalAndWorldPos operator+(VertexWithNormalAndWorldPos const& rhs) const {
-        return {model_pos + rhs.model_pos, n + rhs.n, worldPos + rhs.worldPos};
-      }
+    auto operator*(VertexWithNormalAndWorldPos const& rhs) const {
+      return model_pos * rhs.model_pos;
+    }
 
-      auto operator*(VertexWithNormalAndWorldPos const& rhs) const {
-        return model_pos * rhs.model_pos;
-      }
+    VertexWithNormalAndWorldPos operator%(
+        VertexWithNormalAndWorldPos const& rhs) const {
+      return {model_pos % rhs.model_pos, n, worldPos};
+    }
 
-      VertexWithNormalAndWorldPos operator%(VertexWithNormalAndWorldPos const& rhs) const {
-        return {model_pos % rhs.model_pos, n, worldPos};
-      }
+    auto operator+=(VertexWithNormalAndWorldPos const& rhs) {
+      model_pos += rhs.model_pos;
+      n += rhs.n;
+      worldPos += rhs.worldPos;
+      return *this;
+    }
 
-      auto operator+=(VertexWithNormalAndWorldPos const& rhs) {
-        model_pos += rhs.model_pos;
-        n += rhs.n;
-        worldPos += rhs.worldPos;
-        return *this;
-      }
+    VertexWithNormalAndWorldPos operator*(float factor) const {
+      return {model_pos * factor, n * factor, worldPos * factor};
+    }
 
-      VertexWithNormalAndWorldPos operator*(float factor) const {
-        return {model_pos * factor, n * factor, worldPos * factor};
-      }
+    VertexWithNormalAndWorldPos operator/(float factor) const {
+      return {model_pos / factor, n / factor, worldPos / factor};
+    }
 
-      VertexWithNormalAndWorldPos operator/(float factor) const {
-        return {model_pos / factor, n / factor, worldPos / factor};
-      }
+    auto operator*=(float factor) {
+      model_pos *= factor;
+      n *= factor;
+      worldPos *= factor;
+      return *this;
+    }
 
-      auto operator*=(float factor) {
-        model_pos *= factor;
-        n *= factor;
-        worldPos *= factor;
-        return *this;
-      }
+    Vec4 model_pos{};
+    Vec3 n{};
+    Vec3 worldPos{};
+  };
 
-      Vec4 model_pos{};
-      Vec3 n{};
-      Vec3 worldPos{};
-    };
-
-    using OutVertex = VertexWithNormalAndWorldPos;
-
-    OutVertex operator()(InVertex const& v) {
+  class VertexShader : public BaseVertexShader<Vertex, VertexWithNormalAndWorldPos> {
+   public:
+    OutVertex operator()(InVertex const& v) override {
       return {v * worldViewProj, Vec4{v.n, 0.f} * worldView, v * worldView};
     }
-
-    void BindWorldTransformation(Mat4 const& new_transformation) {
-      world = new_transformation;
-      worldView = world * view;
-      worldViewProj = worldView * proj;
-    }
-
-    void BindView(Mat4 const& new_view) {
-      view = new_view;
-      worldView = world * view;
-      worldViewProj = worldView * proj;
-    }
-
-    void BindProjection(Mat4 const& new_projection) {
-      proj = new_projection;
-      worldViewProj = worldView * proj;
-    }
-
-    Mat4 const& GetProjection() const {
-      return proj;
-    }
-
-   private:
-
-    Mat4 world{Mat4::Identity()};
-    Mat4 view{Mat4::Identity()};
-    Mat4 proj{Mat4::Identity()};
-    Mat4 worldView{Mat4::Identity()};
-    Mat4 worldViewProj{Mat4::Identity()};
   };
   using GeometryShader = DefaultGeometryShader<VertexShader::OutVertex>;
   class PixelShader {

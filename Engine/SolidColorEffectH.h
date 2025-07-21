@@ -2,6 +2,7 @@
 
 #include "Mat4.h"
 #include "DefaultGeometryShader.h"
+#include "BaseVertexShader.h"
 #include "Colors.h"
 
 class SolidColorEffectH {
@@ -10,56 +11,36 @@ class SolidColorEffectH {
   { ps.c = c; }
 
   using Vertex = Vec4;
-
-  class VertexShader {
+  class Vertex4 {
    public:
-    using InVertex = Vertex;
-    class Vertex4 {
-     public:
-      Vertex4& operator*=(float const& rhs) {
-        model_pos *= rhs;
-        return *this;
-      }
-      Vertex4 operator-(Vertex4 const& rhs) const {
-        return {model_pos - rhs.model_pos};
-      }
-      Vertex4 operator+(Vertex4 const& rhs) const {
-        return {model_pos + rhs.model_pos};
-      }
-      Vertex4 operator*(float const& rhs) const {
-        return {Vertex4{*this} *= rhs};
-      }
-      Vertex4 operator/(float const& rhs) const {
-        return {Vertex4{*this} *= 1.f / rhs};
-      }
-      Vertex4& operator+=(Vertex4 const& rhs) {
-        model_pos += rhs.model_pos;
-        return *this;
-      }
-      Vec4 model_pos{};
-    };
-    using OutVertex = Vertex4;
+    Vertex4& operator*=(float const& rhs) {
+      model_pos *= rhs;
+      return *this;
+    }
+    Vertex4 operator-(Vertex4 const& rhs) const {
+      return {model_pos - rhs.model_pos};
+    }
+    Vertex4 operator+(Vertex4 const& rhs) const {
+      return {model_pos + rhs.model_pos};
+    }
+    Vertex4 operator*(float const& rhs) const {
+      return {Vertex4{*this} *= rhs};
+    }
+    Vertex4 operator/(float const& rhs) const {
+      return {Vertex4{*this} *= 1.f / rhs};
+    }
+    Vertex4& operator+=(Vertex4 const& rhs) {
+      model_pos += rhs.model_pos;
+      return *this;
+    }
+    Vec4 model_pos{};
+  };
 
+  class VertexShader : public BaseVertexShader<Vertex, Vertex4> {
+   public:
     OutVertex operator()(InVertex const& v) {
       return {v * worldViewProj};
     }
-
-    void BindWorldViewTransformation(Mat4 const& new_transformation) {
-      worldView = new_transformation;
-      worldViewProj = worldView * proj;
-    }
-
-    void BindProjection(Mat4 const& new_projection) {
-      proj = new_projection;
-      worldViewProj = worldView * proj;
-    }
-
-    Mat4 const& GetProjection() const { return proj; }
-
-   private:
-    Mat4 worldView{Mat4::Identity()};
-    Mat4 proj{Mat4::Identity()};
-    Mat4 worldViewProj{Mat4::Identity()};
   };
   using GeometryShader = DefaultGeometryShader<VertexShader::OutVertex>;
   class PixelShader {

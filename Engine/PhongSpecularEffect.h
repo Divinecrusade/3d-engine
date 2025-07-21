@@ -127,7 +127,7 @@ class PhongSpecularEffect {
       return c;
     }
 
-    void MoveLight(Vec4 delta_pos) { light_pos += delta_pos; }
+    void SetLightPosition(Vec4 pos) { light_pos = pos; }
 
    private:
     Vec3 diffuse{1.f, 1.f, 1.f};

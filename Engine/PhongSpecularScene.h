@@ -25,7 +25,7 @@ class PhongSpecularScene : public IScene {
   {
     pip_model.effect.vs.BindProjection(projection);
     pip_point_light_dummy.effect.vs.BindProjection(projection);
-    pip_model.effect.ps.MoveLight(light_pos);
+    pip_model.effect.vs.BindWorldTransformation(Mat4::RotationY(PI) * Mat4::Translation(object_pos));
   }
 
   void Update(Keyboard& kbd, float dt) {
@@ -49,10 +49,10 @@ class PhongSpecularScene : public IScene {
     }
 
     auto const view_offset{-camera_pos};
-    pip_model.effect.vs.BindWorldTransformation(
-        Mat4::RotationY(PI) * Mat4::Translation(object_pos));
+
     pip_model.effect.vs.BindView(Mat4::Translation(view_offset));
-    //pip_model.effect.ps.MoveLight(view_offset);
+    pip_model.effect.ps.SetLightPosition(view_offset + camera_pos);
+    
     pip_point_light_dummy.effect.vs.BindWorldViewTransformation(
         Mat4::Translation(light_pos) * 
         Mat4::Translation(view_offset));

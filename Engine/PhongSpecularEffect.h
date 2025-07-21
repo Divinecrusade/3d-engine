@@ -138,8 +138,8 @@ class PhongSpecularEffect {
     float quadradic_attenuation{2.619f};
     float constant_attenuation{0.382f};
 
-    float specular_power_factor{2.f};
-    float specular_range_factor{0.3f};
+    float specular_power_factor{5.f};
+    float specular_range_factor{0.05f};
 
     Vec4 light_pos{};
   };

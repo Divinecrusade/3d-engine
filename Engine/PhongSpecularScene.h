@@ -47,8 +47,8 @@ class PhongSpecularScene : public IScene {
 
           auto const delta_pos{e.GetPos() - mouse_pos};
           camera_rot_inv = camera_rot_inv *
-                       Mat4::RotationX(w_angle_delta * -float(delta_pos.y)) *
-                       Mat4::RotationY(h_angle_delta * -float(delta_pos.x));
+                       Mat4::RotationX(w_angle_delta * float(delta_pos.y)) *
+                       Mat4::RotationY(h_angle_delta * float(delta_pos.x));
           mouse_pos = e.GetPos();
           break;
       }
@@ -76,7 +76,7 @@ class PhongSpecularScene : public IScene {
     auto const view_offset{-camera_pos};
     pip_model.effect.vs.BindView(Mat4::Translation(view_offset) *
                                  camera_rot_inv);
-    pip_model.effect.ps.SetLightPosition(light_pos + view_offset);
+    pip_model.effect.ps.SetLightPosition(light_pos + Vec4{view_offset} * camera_rot_inv);
     
     pip_point_light_dummy.effect.vs.BindWorldViewTransformation( 
         Mat4::Translation(light_pos) * 

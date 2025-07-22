@@ -2,101 +2,100 @@
 
 #include "IndexedTriangleList.hpp"
 
-class Plain
-{
-public:
+class Plain {
+ public:
+  template <class Vertex>
+  static IndexedTriangleList<Vertex> GetNonSkinned(std::size_t divisions_x,
+                                                   std::size_t divisions_y,
+                                                   float width = 1.f,
+                                                   float height = 1.f) {
+    auto const vertices_x_count{divisions_x + 1};
+    auto const vertices_y_count{divisions_y + 1};
+    std::vector<Vertex> vertices(vertices_x_count * vertices_y_count);
 
-    template<class Vertex>
-    static IndexedTriangleList<Vertex> GetNonSkinned(std::size_t triangles_in_row, float size = 1.f)
-    {
-        std::vector<Vertex> model{ };
-        std::vector<std::size_t> indices{ };
-        std::size_t const triangles_total{ triangles_in_row * triangles_in_row * 2ull };
-        std::size_t const vertices_total{ 3ull * triangles_total };
-        model.reserve(vertices_total);
-        indices.reserve(vertices_total);
 
-        float const cathetus_length{ size / triangles_in_row };
-        float y{ size / 2.f };
-        constexpr float z{ 0.f };
+    float const side_x{width / 2.f};
+    float const side_y{height / 2.f};
+    float const division_size_x{width / float(divisions_x)};
+    float const division_size_y{height / float(divisions_y)};
+    Vec3 const bottom_left{-side_x, -side_y, 0.f};
 
-        for (std::size_t i{ 0ull }; i != triangles_in_row; ++i, y -= cathetus_length)
-        {
-            float x{ -size / 2.f };
-            for (std::size_t j{ 0ull }; j != triangles_in_row; ++j, x += cathetus_length)
-            {
-                indices.emplace_back(model.size());
-                model.emplace_back(Vec3{ x, y, z }); // left-top | size-6
-                indices.emplace_back(model.size());
-                model.emplace_back(Vec3{ x + cathetus_length, y, z }); // right-top | size-5
-                indices.emplace_back(model.size());
-                model.emplace_back(Vec3{ x, y - cathetus_length, z }); // left-bottom | size-4
-
-                indices.emplace_back(model.size());
-                model.emplace_back(Vec3{ x + cathetus_length, y, z }); // right-top | size-3
-                indices.emplace_back(model.size());
-                model.emplace_back(Vec3{ x + cathetus_length, y - cathetus_length, z }); // right-bottom | size-2
-                indices.emplace_back(model.size());
-                model.emplace_back(Vec3{ x, y - cathetus_length, z }); // left-bottom | size-1
-
-                indices.emplace_back(model.size() - 6ull); // left-top
-                indices.emplace_back(model.size() - 4ull); // left-bottom
-                indices.emplace_back(model.size() - 5ull); // right-top
-
-                indices.emplace_back(model.size() - 3ull); // right-top
-                indices.emplace_back(model.size() - 1ull); // left-bottom
-                indices.emplace_back(model.size() - 2ull); // right-bottom
-            }
-        }
-
-        return
-            IndexedTriangleList<Vertex> {
-                std::move(model),
-                std::move(indices)
-            };
-    }
-
-    template <class Vertex>
-    static IndexedTriangleList<Vertex> GetNonSkinnedWithNormals(
-        std::size_t triangles_in_row, float size = 1.f) {
-      auto plain{GetNonSkinned<Vertex>(triangles_in_row, size)};
-      for (auto& vertex : plain.vertices) {
-        vertex.n = Vec3{0.f, 0.f, 1.f};
+    for (auto y{0ull}, i{0ull}; y != vertices_y_count; ++y) {
+      float const y_pos{float(y) * division_size_y};
+      for (auto x{0ull}; x != vertices_x_count; ++x, ++i) {
+        vertices[i].model_pos =
+            bottom_left + Vec3{float(x) * division_size_x, y_pos, 0.f};
       }
-      return plain;
     }
 
+    std::vector<std::size_t> indices{};
+    indices.reserve(divisions_x * divisions_y * divisions_x * divisions_y *
+                    6ull);
+    auto const vxy2i = [vertices_x_count](std::size_t x, std::size_t y) {
+      return y * vertices_x_count + x;
+    };
+    for (std::size_t y{0ull}; y != divisions_y; ++y) {
+      for (std::size_t x{0ull}; x != divisions_x; ++x) {
+        auto const left_bottom{vxy2i(x, y)};
+        auto const right_bottom{vxy2i(x + 1ull, y)};
+        auto const left_top{vxy2i(x, y + 1ull)};
+        auto const right_top{vxy2i(x + 1ull, y + 1ull)};
 
-    template<class Vertex>
-    static IndexedTriangleList<Vertex> GetSkinned(std::size_t triangles_in_row, float size = 1.f)
-    {
-        auto plain{ GetNonSkinned<Vertex>(triangles_in_row, size) };
+        indices.push_back(left_bottom);
+        indices.push_back(left_top);
+        indices.push_back(right_bottom);
 
-        Vec2 texture_pos{ 0.f, 0.f };
-        float const cathetus_length{ 1.f / triangles_in_row };
+        indices.push_back(right_bottom);
+        indices.push_back(left_top);
+        indices.push_back(right_top);
+      }
+    }
 
-        auto it{ plain.vertices.begin() };
-        for (std::size_t i{ 0ull }; i != triangles_in_row; ++i, texture_pos.y += cathetus_length)
-        {
-            texture_pos.x = 0.f;
-            for (std::size_t j{ 0ull }; j != triangles_in_row; ++j, texture_pos.x += cathetus_length)
-            {
-                it->texture_pos = texture_pos;
-                ++it;
-                it->texture_pos = Vec2{ texture_pos.x + cathetus_length, texture_pos.y };
-                ++it;
-                it->texture_pos = Vec2{ texture_pos.x, texture_pos.y + cathetus_length };
-                ++it;
+    return IndexedTriangleList<Vertex>{std::move(vertices), std::move(indices)};
+  }
 
-                it->texture_pos = Vec2{ texture_pos.x + cathetus_length, texture_pos.y };
-                ++it;
-                it->texture_pos = Vec2{ texture_pos.x + cathetus_length, texture_pos.y + cathetus_length };
-                ++it;
-                it->texture_pos = Vec2{ texture_pos.x, texture_pos.y + cathetus_length };
-                ++it;
-            }
-        }
+  template <class Vertex>
+  static IndexedTriangleList<Vertex> GetNonSkinnedWithNormals(
+      std::size_t divisions_x, 
+      std::size_t divisions_y, 
+      float width,
+      float height) {
+    auto plain{GetNonSkinned<Vertex>(divisions_x, divisions_y, width, height)};
+    for (auto& vertex : plain.vertices) {
+      vertex.n = Vec3{0.f, 0.f, 1.f};
+    }
+    return plain;
+  }
+
+  template <class Vertex>
+  static IndexedTriangleList<Vertex> GetSkinnedWithNormals(std::size_t divisions_x,
+                                                std::size_t divisions_y,
+                                                float width = 1.f,
+                                                float height = 1.f,
+                                                float texture_scale = 1.f) {
+    auto plain{GetNonSkinnedWithNormals<Vertex>(divisions_x, 
+                                                divisions_y, 
+                                                width,
+                                                height)};
+
     
-        return std::move(plain);
+    auto const vertices_x_count{divisions_x + 1};
+    auto const vertices_y_count{divisions_y + 1};
+
+    float const division_size_x{width / float(divisions_x)};
+    float const division_size_y{height / float(divisions_y)};
+
+    Vec2 const bottom_left_texture{0.f, 1.f};
+
+    for (auto y{0ull}, i{0ull}; y != vertices_y_count; ++y) {
+      float const y_texture_pos{-float(y) * division_size_y / texture_scale};
+      for (auto x{0ull}; x != vertices_x_count; ++x, ++i) {
+        plain.vertices[i].texture_pos =
+            bottom_left_texture +
+            Vec2{float(x) * division_size_x, y_texture_pos};
+      }
     }
+
+    return plain;
+  }
 };

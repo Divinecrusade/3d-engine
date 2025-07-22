@@ -25,6 +25,7 @@
 #include <vector>
 #include "ChiliMath.h"
 #include "PhongSpecularScene.h"
+#include "TestScene.h"
 
 class Game
 {

@@ -27,7 +27,8 @@ Game::Game( MainWindow& wnd )
 	wnd( wnd ),
 	gfx( wnd )
 {
-  scenes.emplace_back(std::make_unique<PhongSpecularScene>(gfx, "suzanne.obj"));
+  //scenes.emplace_back(std::make_unique<PhongSpecularScene>(gfx, "suzanne.obj"));
+  scenes.emplace_back(std::make_unique<TestScene>(gfx));
 
 	scene = scenes.begin();
 }
@@ -57,7 +58,7 @@ void Game::UpdateModel()
 			wnd.Kill();
 		}
 	}
-	(*scene)->Update(wnd.kbd, dt, wnd.mouse);
+	(*scene)->Update(wnd.kbd, wnd.mouse, dt);
 }
 
 void Game::ComposeFrame()

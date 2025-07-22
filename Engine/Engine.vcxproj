@@ -192,7 +192,9 @@
     <ClInclude Include="Subspan-inl.h" />
     <ClInclude Include="Subspan.h" />
     <ClInclude Include="Surface.h" />
+    <ClInclude Include="TestScene.h" />
     <ClInclude Include="TexCubeScene.h" />
+    <ClInclude Include="TextureLightEffect.h" />
     <ClInclude Include="TextureWaveShadingEffect.h" />
     <ClInclude Include="tiny_obj_loader.h" />
     <ClInclude Include="Vec2.h" />

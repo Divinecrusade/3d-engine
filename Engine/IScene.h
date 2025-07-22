@@ -6,6 +6,6 @@ __interface IScene
 {
 public:
 
-    virtual void Update(Keyboard& kbd, float dt, Mouse& mouse) = 0;
+    virtual void Update(Keyboard& kbd, Mouse& mouse, float dt) = 0;
     virtual void Draw() = 0;
 };

@@ -28,7 +28,7 @@ class PhongSpecularScene : public IScene {
     pip_point_light_dummy.effect.vs.BindProjection(projection);
   }
 
-  void Update(Keyboard& kbd, float dt, Mouse& mouse) {
+  void Update(Keyboard& kbd, Mouse& mouse, float dt) {
     while (!mouse.IsEmpty()) {
       auto const e{mouse.Read()};
       switch (e.GetType()) {

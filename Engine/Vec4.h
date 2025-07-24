@@ -13,6 +13,9 @@ class _Vec4 : public _Vec3<T> {
   explicit operator _Vec4<T2>() const {
     return {(T2)x, (T2)y, (T2)z, (T2)w};
   }
+  operator _Vec3<T>() const {
+    return {x, y, z};
+  }
   _Vec4 operator-() const { return _Vec4(-x, -y, -z, -w); }
   _Vec4& operator=(const _Vec4& rhs) {
     x = rhs.x;

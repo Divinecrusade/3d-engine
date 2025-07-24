@@ -76,8 +76,7 @@ class TestScene : public IScene {
   void Draw() {
     pipe_static_planes.BeginFrame();
 
-    pipe_static_planes.effect.vs.SetLightPosition(
-        light_pos * cur_view);
+    pipe_static_planes.effect.vs.SetLightPosition(light_pos * cur_view);
     pipe_static_planes.effect.ps.BindTexture(FLOOR_TEXTURE);
     pipe_static_planes.effect.vs.BindWorldView(FLOOR_WORLD_POS * cur_view);
     pipe_static_planes.Draw(floor_object);
@@ -128,7 +127,7 @@ class TestScene : public IScene {
   static constexpr float screen_ratio = 4.f / 3.f;
   static constexpr float hFOV = wFOV / screen_ratio;
   static constexpr float _near = 0.2f;
-  static constexpr float _far = 9.f;
+  static constexpr float _far = 10.f;
   Mat4 const PROJECTION{Mat4::PerspectiveProjectionFromFOV(wFOV, screen_ratio, _near, _far)};
 
   static constexpr float FLOOR_WIDTH = 6.f;
@@ -163,7 +162,7 @@ class TestScene : public IScene {
   Vei2 mouse_pos{};
   bool mouse_engaged{false};
 
-  static constexpr float camera_speed = 0.5f;
+  static constexpr float camera_speed = 0.8f;
   Vec4 camera_pos{0.f, 1.6f, -FLOOR_HEIGHT / 2.f};
 
   Vec4 light_pos{0.f, 0.7f, 0.f};

@@ -96,7 +96,7 @@ class TextureLightEffect {
           constant_attenuation{constant_attenuation} {}
 
     OutVertex operator()(InVertex const& v) {
-      auto world_pos{v.model_pos * worldView};
+      auto const world_pos{v.model_pos * worldView};
       auto const to_light{light_pos - world_pos};
       auto const distance_to_light{to_light.Len()};
       auto const to_light_n{to_light / distance_to_light};
@@ -105,7 +105,7 @@ class TextureLightEffect {
           (quadradic_attenuation * distance_to_light * distance_to_light +
            linear_attenuation * distance_to_light + constant_attenuation)};
 
-      Vec3 const diffused{diffuse * attenuation * std::max(0.f, Vec4{v.n} * worldView * to_light_n)};
+      Vec3 const diffused{diffuse * attenuation * std::max(0.f, static_cast<Vec3>(Vec4{-v.n, 0.f} * worldView) * to_light_n)};
       return {v.model_pos * worldViewProj,
               v.texture_pos,
               diffused + ambient};
@@ -164,8 +164,8 @@ class TextureLightEffect {
   TextureLightEffect(Vec3 diffuse = {1.f, 1.f, 1.f},
                      Vec3 ambient = {0.1f, 0.1f, 0.1f},
                      float linear_attenuation = 0.5f,
-                     float quadradic_attenuation = 0.01f,
-                     float constant_attenuation = 0.02f)
+                     float quadradic_attenuation = 0.2f,
+                     float constant_attenuation = 0.4f)
       : vs{std::move(diffuse),
            std::move(ambient),
            linear_attenuation,

@@ -136,7 +136,7 @@ class TextureLightEffect {
     }
 
     Color operator()(InVertex const& v) const {
-      assert(!texture);
+      assert(texture);
       auto const texture_width{texture->GetWidth()};
       auto const texture_height{texture->GetHeight()};
       unsigned int const x{

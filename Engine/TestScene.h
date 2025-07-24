@@ -5,6 +5,7 @@
 #include "Pipeline.h"
 #include "TextureLightEffect.h"
 #include "SolidColorEffectH.h"
+#include "PhongSpecularEffect.h"
 #include "Plain.h"
 #include "Sphere.h"
 #include "Mouse.h"
@@ -21,9 +22,12 @@ class TestScene : public IScene {
         wall_object_long{Plain::GetSkinnedWithNormals<TextureLightEffect::TextureBindedVertex>(WALL_TESSALATION, WALL_TESSALATION, WALL_WIDTH_LONG, WALL_HEIGHT)},
         wall_object_short{Plain::GetSkinnedWithNormals<TextureLightEffect::TextureBindedVertex>(WALL_TESSALATION, WALL_TESSALATION, WALL_WIDTH_SHORT, WALL_HEIGHT)},
         pipe_bulb{gfx, SolidColorEffectH{Colors::White}, zbuffer},
-        bulb_object{Sphere::GetTriangles<SolidColorEffectH::Vertex>(BULB_RADIUS)}{ 
+        bulb_object{Sphere::GetTriangles<SolidColorEffectH::Vertex>(BULB_RADIUS)},
+        pipe_suzanne(gfx, PhongSpecularEffect{}, zbuffer),
+        suzanne_object{IndexedTriangleList<PhongSpecularEffect::Vertex>::LoadWithNormals(SUZANNE_TEXTURE_URL)}{ 
     pipe_static_planes.effect.vs.BindProjection(PROJECTION);
     pipe_bulb.effect.vs.BindProjection(PROJECTION);
+    pipe_suzanne.effect.vs.BindProjection(PROJECTION);
   }
 
   void Update(Keyboard& kbd, Mouse& mouse, float dt) {
@@ -71,6 +75,9 @@ class TestScene : public IScene {
     }
     auto const view_offset{-camera_pos};
     cur_view = Mat4::Translation(view_offset) * camera_rot_inv;
+
+    suzanne_spin_y_theta += SUZANNE_SPIN_SPEED * dt;
+    suzanne_spin_y_theta = wrap_angle(suzanne_spin_y_theta);
   }
 
   void Draw() {
@@ -98,12 +105,17 @@ class TestScene : public IScene {
 
     pipe_bulb.effect.vs.BindWorldView(Mat4::Translation(light_pos) * cur_view);
     pipe_bulb.Draw(bulb_object);
+
+    pipe_suzanne.effect.ps.SetLightPosition(light_pos * cur_view);
+    pipe_suzanne.effect.vs.BindWorldView(Mat4::RotationY(suzanne_spin_y_theta) * Mat4::Translation(SUZANNE_DEFAULT_POS) * cur_view);
+    pipe_suzanne.Draw(suzanne_object);
   }
 
  private:
   static constexpr wchar_t const* FLOOR_TEXTURE_URL{L"Images\\floor.png"};
   static constexpr wchar_t const* WALL_TEXTURE_URL{L"Images\\stonewall.png"};
   static constexpr wchar_t const* CEILING_TEXTURE_URL{L"Images\\ceiling.png"};
+  static constexpr char const* SUZANNE_TEXTURE_URL{"suzanne.obj"};
 
   Surface const FLOOR_TEXTURE;
   Surface const WALL_TEXTURE;
@@ -119,6 +131,13 @@ class TestScene : public IScene {
 
   Pipeline<SolidColorEffectH> pipe_bulb;
   IndexedTriangleList<SolidColorEffectH::Vertex> bulb_object;
+
+  Pipeline<PhongSpecularEffect> pipe_suzanne;
+  IndexedTriangleList<PhongSpecularEffect::Vertex> suzanne_object;
+
+  Vec4 const SUZANNE_DEFAULT_POS{1.5f, 1.25f, 2.5f};
+  float suzanne_spin_y_theta{0.f};
+  static constexpr float SUZANNE_SPIN_SPEED{PI / 4.f};
 
   static constexpr float BULB_RADIUS = 0.25f;
 

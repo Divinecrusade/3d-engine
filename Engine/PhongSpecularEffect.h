@@ -88,12 +88,12 @@ class PhongSpecularEffect {
     }
 
    private:
-    static constexpr float linear_attenuation{1.0f};
-    static constexpr float quadradic_attenuation{2.619f};
-    static constexpr float constant_attenuation{0.382f};
-
-    static constexpr float specular_power_factor{5.f};
-    static constexpr float specular_range_factor{0.05f};
+    static constexpr float linear_attenuation{0.4f};
+    static constexpr float quadradic_attenuation{0.319f};
+    static constexpr float constant_attenuation{0.282f};
+    
+    static constexpr float specular_power_factor{0.7f};
+    static constexpr float specular_range_factor{0.2f};
   };
 
  public:

@@ -105,7 +105,7 @@ class TextureLightEffect {
           (quadradic_attenuation * distance_to_light * distance_to_light +
            linear_attenuation * distance_to_light + constant_attenuation)};
 
-      Vec3 const diffused{diffuse * attenuation * std::max(0.f, Vec3{Vec4{v.n} * worldView}.GetNormalized() * to_light_n)};
+      Vec3 const diffused{diffuse * attenuation * std::max(0.f, Vec4{v.n} * worldView * to_light_n)};
       return {v.model_pos * worldViewProj,
               v.texture_pos,
               diffused + ambient};
@@ -146,7 +146,6 @@ class TextureLightEffect {
 
       Color const texture_c{
           texture->GetPixel(x % texture_width, y % texture_height)};
-      return texture_c;
 
       Vec3 material{(float)texture_c.GetR() / 255.f,
                     (float)texture_c.GetG() / 255.f,
@@ -164,9 +163,9 @@ class TextureLightEffect {
  public:
   TextureLightEffect(Vec3 diffuse = {1.f, 1.f, 1.f},
                      Vec3 ambient = {0.1f, 0.1f, 0.1f},
-                     float linear_attenuation = 1.6f,
-                     float quadradic_attenuation = 1.1f,
-                     float constant_attenuation = 0.3f)
+                     float linear_attenuation = 0.5f,
+                     float quadradic_attenuation = 0.01f,
+                     float constant_attenuation = 0.02f)
       : vs{std::move(diffuse),
            std::move(ambient),
            linear_attenuation,

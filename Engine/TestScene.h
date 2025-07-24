@@ -4,7 +4,9 @@
 #include "IScene.h"
 #include "Pipeline.h"
 #include "TextureLightEffect.h"
+#include "SolidColorEffectH.h"
 #include "Plain.h"
+#include "Sphere.h"
 #include "Mouse.h"
 
 class TestScene : public IScene {
@@ -17,8 +19,11 @@ class TestScene : public IScene {
         pipe_static_planes{gfx, TextureLightEffect{}, zbuffer},
         floor_object{Plain::GetSkinnedWithNormals<TextureLightEffect::TextureBindedVertex>(FLOOR_TESSALATION, FLOOR_TESSALATION, FLOOR_WIDTH, FLOOR_HEIGHT)},
         wall_object_long{Plain::GetSkinnedWithNormals<TextureLightEffect::TextureBindedVertex>(WALL_TESSALATION, WALL_TESSALATION, WALL_WIDTH_LONG, WALL_HEIGHT)},
-        wall_object_short{Plain::GetSkinnedWithNormals<TextureLightEffect::TextureBindedVertex>(WALL_TESSALATION, WALL_TESSALATION, WALL_WIDTH_SHORT, WALL_HEIGHT)}{ 
+        wall_object_short{Plain::GetSkinnedWithNormals<TextureLightEffect::TextureBindedVertex>(WALL_TESSALATION, WALL_TESSALATION, WALL_WIDTH_SHORT, WALL_HEIGHT)},
+        pipe_bulb{gfx, SolidColorEffectH{Colors::White}, zbuffer},
+        bulb_object{Sphere::GetTriangles<SolidColorEffectH::Vertex>(BULB_RADIUS)}{ 
     pipe_static_planes.effect.vs.BindProjection(PROJECTION);
+    pipe_bulb.effect.vs.BindProjection(PROJECTION);
   }
 
   void Update(Keyboard& kbd, Mouse& mouse, float dt) {
@@ -71,6 +76,8 @@ class TestScene : public IScene {
   void Draw() {
     pipe_static_planes.BeginFrame();
 
+    pipe_static_planes.effect.vs.SetLightPosition(
+        light_pos * cur_view);
     pipe_static_planes.effect.ps.BindTexture(FLOOR_TEXTURE);
     pipe_static_planes.effect.vs.BindWorldView(FLOOR_WORLD_POS * cur_view);
     pipe_static_planes.Draw(floor_object);
@@ -89,6 +96,9 @@ class TestScene : public IScene {
     pipe_static_planes.effect.ps.BindTexture(CEILING_TEXTURE);
     pipe_static_planes.effect.vs.BindWorldView(CEILING_WORLD_POS * cur_view);
     pipe_static_planes.Draw(floor_object);
+
+    pipe_bulb.effect.vs.BindWorldView(Mat4::Translation(light_pos) * cur_view);
+    pipe_bulb.Draw(bulb_object);
   }
 
  private:
@@ -107,6 +117,11 @@ class TestScene : public IScene {
   IndexedTriangleList<TextureLightEffect::TextureBindedVertex> floor_object;
   IndexedTriangleList<TextureLightEffect::TextureBindedVertex> wall_object_long;
   IndexedTriangleList<TextureLightEffect::TextureBindedVertex> wall_object_short;
+
+  Pipeline<SolidColorEffectH> pipe_bulb;
+  IndexedTriangleList<SolidColorEffectH::Vertex> bulb_object;
+
+  static constexpr float BULB_RADIUS = 0.25f;
 
   static constexpr float dTheta = PI;
   static constexpr float wFOV = 90.f;
@@ -149,7 +164,7 @@ class TestScene : public IScene {
   bool mouse_engaged{false};
 
   static constexpr float camera_speed = 0.5f;
-  Vec3 camera_pos{0.f, 1.6f, -FLOOR_HEIGHT / 2.f};
+  Vec4 camera_pos{0.f, 1.6f, -FLOOR_HEIGHT / 2.f};
 
-  Vec3 light_pos{0.f, 0.f, 3.5f};
+  Vec4 light_pos{0.f, 0.7f, 0.f};
 };

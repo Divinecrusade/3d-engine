@@ -127,20 +127,25 @@ class TextureLightEffect {
 
   class PixelShader {
    public:
-    PixelShader(Surface&& texture) : texture{std::forward<Surface>(texture)} {}
+    PixelShader() {}
 
     using InVertex = GeometryShader::OutVertex;
 
+    void BindTexture(Surface const& new_texture) {
+      texture = &new_texture;
+    }
+
     Color operator()(InVertex const& v) const {
-      auto const texture_width{texture.GetWidth()};
-      auto const texture_height{texture.GetHeight()};
+      assert(!texture);
+      auto const texture_width{texture->GetWidth()};
+      auto const texture_height{texture->GetHeight()};
       unsigned int const x{
           (unsigned)(v.texture_pos.x * (float)texture_width + 0.5f)};
       unsigned int const y{
           (unsigned)(v.texture_pos.y * (float)texture_height + 0.5f)};
 
       Color const texture_c{
-          texture.GetPixel(x % texture_width, y % texture_height)};
+          texture->GetPixel(x % texture_width, y % texture_height)};
       return texture_c;
 
       Vec3 material{(float)texture_c.GetR() / 255.f,
@@ -153,22 +158,20 @@ class TextureLightEffect {
     }
 
    private:
-    Surface texture;
+    Surface const* texture{nullptr};
   };
 
  public:
-  TextureLightEffect(std::wstring const& texture_url,
-                     Vec3 diffuse = {1.f, 1.f, 1.f},
+  TextureLightEffect(Vec3 diffuse = {1.f, 1.f, 1.f},
                      Vec3 ambient = {0.1f, 0.1f, 0.1f},
-                     float linear_attenuation = 2.6f,
-                     float quadradic_attenuation = 3.f,
-                     float constant_attenuation = 1.3f)
+                     float linear_attenuation = 1.6f,
+                     float quadradic_attenuation = 1.1f,
+                     float constant_attenuation = 0.3f)
       : vs{std::move(diffuse),
            std::move(ambient),
            linear_attenuation,
            quadradic_attenuation,
-           constant_attenuation},
-        ps{Surface::FromFile(texture_url)} 
+           constant_attenuation}
     {}
 
   VertexShader vs;

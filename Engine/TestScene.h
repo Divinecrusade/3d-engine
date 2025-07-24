@@ -10,40 +10,78 @@
 class TestScene : public IScene {
  public:
   TestScene(Graphics& gfx)
-      : floor_texture{Surface::FromFile(std::wstring{FLOOR_TEXTURE_URL})},
+      : FLOOR_TEXTURE{Surface::FromFile(std::wstring{FLOOR_TEXTURE_URL})},
+        WALL_TEXTURE{Surface::FromFile(std::wstring{WALL_TEXTURE_URL})},
+        CEILING_TEXTURE{Surface::FromFile(std::wstring{CEILING_TEXTURE_URL})},
         zbuffer{std::make_shared<std::unique_ptr<float[]>>(std::make_unique<float[]>(gfx.ScreenWidth * gfx.ScreenHeight))},
         pipe_static_planes{gfx, TextureLightEffect{}, zbuffer},
         floor_object{Plain::GetSkinnedWithNormals<TextureLightEffect::TextureBindedVertex>(FLOOR_TESSALATION, FLOOR_TESSALATION, FLOOR_WIDTH, FLOOR_HEIGHT)} { 
     pipe_static_planes.effect.vs.BindProjection(PROJECTION);
-    cur_view = DEFAULT_VIEW;
   }
 
   void Update(Keyboard& kbd, Mouse& mouse, float dt) {
+    while (!mouse.IsEmpty()) {
+      auto const e{mouse.Read()};
+      switch (e.GetType()) {
+        case Mouse::Event::Type::LPress:
+          mouse_engaged = true;
+          mouse_pos = e.GetPos();
+          break;
+
+        case Mouse::Event::Type::LRelease:
+          mouse_engaged = false;
+          break;
+
+        case Mouse::Event::Type::Move:
+          if (!mouse_engaged) break;
+
+          auto const delta_pos{e.GetPos() - mouse_pos};
+          camera_rot_inv = camera_rot_inv *
+                           Mat4::RotationX(w_angle_delta * float(delta_pos.y)) *
+                           Mat4::RotationY(h_angle_delta * float(delta_pos.x));
+          mouse_pos = e.GetPos();
+          break;
+      }
+    }
+
     if (kbd.KeyIsPressed('W')) {
-      thetaX += dt * dtheta;
-      OutputDebugString(std::to_wstring(thetaX * 180 / PI).data());
-      OutputDebugString(L"\n");
+      camera_pos += Vec4{0.f, 0.f, 1.f} * !camera_rot_inv * dt * camera_speed;
     }
     if (kbd.KeyIsPressed('S')) {
-      thetaX -= dt * dtheta;
-      OutputDebugString(std::to_wstring(thetaX * 180 / PI).data());
-      OutputDebugString(L"\n");
+      camera_pos -= Vec4{0.f, 0.f, 1.f} * !camera_rot_inv * dt * camera_speed;
     }
-    pipe_static_planes.effect.vs.SetLightPosition(light_pos);
+    if (kbd.KeyIsPressed('A')) {
+      camera_pos -= Vec4{1.f, 0.f, 0.f} * !camera_rot_inv * dt * camera_speed;
+    }
+    if (kbd.KeyIsPressed('D')) {
+      camera_pos += Vec4{1.f, 0.f, 0.f} * !camera_rot_inv * dt * camera_speed;
+    }
+    if (kbd.KeyIsPressed('Z')) {
+      camera_pos = Vec4{0.f, 1.f, 0.f} * !camera_rot_inv * dt * camera_speed;
+    }
+    if (kbd.KeyIsPressed('X')) {
+      camera_pos = Vec4{0.f, 1.f, 0.f} * !camera_rot_inv * dt * camera_speed;
+    }
+    auto const view_offset{-camera_pos};
+    cur_view = Mat4::Translation(view_offset) * camera_rot_inv;
   }
 
   void Draw() {
     pipe_static_planes.BeginFrame();
 
-    pipe_static_planes.effect.ps.BindTexture(floor_texture);
-    pipe_static_planes.effect.vs.BindWorldView(FLOOR_POS * cur_view);
+    pipe_static_planes.effect.ps.BindTexture(FLOOR_TEXTURE);
+    pipe_static_planes.effect.vs.BindWorldView(FLOOR_WORLD_POS * cur_view);
     pipe_static_planes.Draw(floor_object);
   }
 
  private:
   static constexpr wchar_t const* FLOOR_TEXTURE_URL{L"Images\\floor.png"};
+  static constexpr wchar_t const* WALL_TEXTURE_URL{L"Images\\stonewall.png"};
+  static constexpr wchar_t const* CEILING_TEXTURE_URL{L"Images\\ceiling.png"};
 
-  Surface const floor_texture;
+  Surface const FLOOR_TEXTURE;
+  Surface const WALL_TEXTURE;
+  Surface const CEILING_TEXTURE;
 
   std::shared_ptr<std::unique_ptr<float[]>> zbuffer;
   Pipeline<TextureLightEffect> pipe_static_planes;
@@ -54,18 +92,25 @@ class TestScene : public IScene {
   static constexpr float wFOV = 90.f;
   static constexpr float screen_ratio = 4.f / 3.f;
   static constexpr float hFOV = wFOV / screen_ratio;
-  static constexpr float _near = 1.f;
+  static constexpr float _near = 0.2f;
   static constexpr float _far = 8.f;
   Mat4 const PROJECTION{Mat4::PerspectiveProjectionFromFOV(wFOV, screen_ratio, _near, _far)};
 
-  Mat4 const DEFAULT_VIEW{Mat4::Identity() * Mat4::Translation({0.f, 2.f, 0.f}) * Mat4::RotationX(PI / 3)};
+  static constexpr float FLOOR_WIDTH = 8.f;
+  static constexpr float FLOOR_HEIGHT = 6.f;
+  static constexpr std::size_t FLOOR_TESSALATION = 10ull;
+  Mat4 const FLOOR_WORLD_POS{Mat4::Identity() * Mat4::RotationX(PI / 2.f)};
+
   Mat4 cur_view{Mat4::Identity()};
 
-  static constexpr float FLOOR_WIDTH = 8.f;
-  static constexpr float FLOOR_HEIGHT = FLOOR_WIDTH * 4.f / 3.f;
-  static constexpr std::size_t FLOOR_TESSALATION = 10ull;
-  Mat4 const FLOOR_POS{Mat4::Identity() * Mat4::Translation({0.f, 0.f, 4.f})};
+  static constexpr float h_angle_delta{hFOV / Graphics::ScreenHeight * PI /
+                                       180.f};
+  static constexpr float w_angle_delta{wFOV / Graphics::ScreenWidth * PI /
+                                       180.f};
+  Mat4 camera_rot_inv{Mat4::Identity() * !Mat4::RotationX(PI / 4.f)};
+  Vei2 mouse_pos{};
+  bool mouse_engaged{false};
 
-  float dtheta = PI / 4.f;
-  float thetaX = 0.f;
+  static constexpr float camera_speed = 0.5f;
+  Vec3 camera_pos{0.f, 1.6f, -FLOOR_HEIGHT / 2.f};
 };

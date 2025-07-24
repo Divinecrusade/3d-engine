@@ -13,9 +13,9 @@ class TestScene : public IScene {
       : zbuffer{std::make_shared<std::unique_ptr<float[]>>(std::make_unique<float[]>(gfx.ScreenWidth * gfx.ScreenHeight))},
         pipe_floor{gfx, TextureLightEffect{L"Images/floor.png"}, zbuffer},
         floor_object{Plain::GetSkinnedWithNormals<TextureLightEffect::TextureBindedVertex>(
-            4, 4.f, 20.f, 40.f, 1.f)} { 
+            4, 4.f, 5.f, 5.f, 2.f)} { 
     pipe_floor.effect.vs.BindProjection(projection);
-    pipe_floor.effect.ps.SetLightPosition(Vec3{0.f, 0.f, 3.5f});
+    //pipe_floor.effect.ps.SetLightPosition(Vec3{0.f, 0.f, 3.5f});
   }
 
   void Update(Keyboard& kbd, Mouse& mouse, float dt) {
@@ -29,7 +29,7 @@ class TestScene : public IScene {
       OutputDebugString(std::to_wstring(thetaX * 180 / PI).data());
       OutputDebugString(L"\n");
     }
-    pipe_floor.effect.vs.BindWorldView(Mat4::Translation({0.f, -0.5f, 4.f}) * Mat4::RotationX(thetaX), Mat4::Identity());
+    pipe_floor.effect.vs.BindWorldView(Mat4::RotationX(thetaX) * Mat4::Translation({0.f, -1.f, 4.f}));
   }
 
   void Draw() {

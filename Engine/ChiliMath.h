@@ -45,7 +45,7 @@ inline T wrap_angle( T theta )
 }
 
 template<typename T>
-inline T interpolate(T from, T to, float alpha)
+inline T interpolate(T const& from, T const& to, float alpha)
 {
 	return from + (to - from) * alpha;
 }

@@ -73,12 +73,12 @@ class PhongSpecularScene : public IScene {
     }
 
     auto const view_offset{-camera_pos};
-    pip_model.effect.vs.BindWorldView(worldForObject, 
+    pip_model.effect.vs.BindWorldView(worldForObject *  
         Mat4::Translation(view_offset) * camera_rot_inv);
     pip_model.effect.ps.SetLightPosition(light_pos + Vec4{view_offset} * camera_rot_inv);
     
     pip_point_light_dummy.effect.vs.BindWorldView( 
-        Mat4::Translation(light_pos), 
+        Mat4::Translation(light_pos) * 
         Mat4::Translation(view_offset) *
         camera_rot_inv);
   }

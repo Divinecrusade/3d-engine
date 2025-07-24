@@ -9,8 +9,8 @@ class BaseVertexShader {
 
   virtual OutVertex operator()(InVertex const&) = 0;
 
-  void BindWorldView(Mat4 const& new_world, Mat4 const& new_worldView) {
-    worldView = new_world * new_worldView;
+  void BindWorldView(Mat4 const& new_worldView) {
+    worldView = new_worldView;
     worldViewProj = worldView * proj;
   }
 

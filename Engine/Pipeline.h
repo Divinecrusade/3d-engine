@@ -65,7 +65,7 @@ private:
 
     void AssembleTriangles(std::vector<VSV>& vertices, std::vector<std::size_t> const& indices)
     {
-        auto const eye{Vec4{} * effect.vs.GetProjection()};
+        auto const eye{Vec4{0.f, 0.f, 0.f, 1.f} * effect.vs.GetProjection()};
         for (std::size_t i{ 0u }; i < indices.size(); i += 3u)
         {
             if 
@@ -120,11 +120,11 @@ private:
         auto v0A{interpolate(v0, v1, alphaA)};
         auto v0B{interpolate(v0, v2, alphaB)};
         PostProccessTriangle(Triangle{v0A, v1, v2});
-        PostProccessTriangle(Triangle{v0B, v1, v2});
+        PostProccessTriangle(Triangle{v0B, v0A, v2});
       }};
       auto const Clip2{[this](GSV& v0, GSV& v1, GSV& v2) {
         auto const alpha0{(-v0.model_pos.z) / (v2.model_pos.z - v0.model_pos.z)};
-        auto const alpha1{(-v0.model_pos.z) / (v2.model_pos.z - v1.model_pos.z)};
+        auto const alpha1{(-v1.model_pos.z) / (v2.model_pos.z - v1.model_pos.z)};
         v0 = interpolate(v0, v2, alpha0);
         v1 = interpolate(v1, v2, alpha1);
         PostProccessTriangle(Triangle{v0, v1, v2});
@@ -181,93 +181,84 @@ private:
         auto& p1{ object[1u] };
         auto& p2{ object[2u] };
 
-        if (p0.model_pos.y < p1.model_pos.y) std::swap(p0, p1);
-        if (p2.model_pos.y < p1.model_pos.y) std::swap(p2, p1);
-        if (p0.model_pos.y > p2.model_pos.y) std::swap(p0, p2);
+        if (p1.model_pos.y < p0.model_pos.y) std::swap(p0, p1);
+        if (p2.model_pos.y < p1.model_pos.y) std::swap(p1, p2);
+        if (p1.model_pos.y < p0.model_pos.y) std::swap(p0, p1);
 
         if (std::fabs(p0.model_pos.y - p1.model_pos.y) < 1e-7f)
         {
-            if (p0.model_pos.x > p1.model_pos.x) std::swap(p0, p1);
-            DrawFlatTopTriangle(p2, p0, p1);
+            if (p1.model_pos.x < p0.model_pos.x) std::swap(p0, p1);
+            DrawFlatTopTriangle(p0, p1, p2);
         }
-        else if (std::fabs(p0.model_pos.y - p2.model_pos.y) < 1e-7f)
+        else if (std::fabs(p1.model_pos.y - p2.model_pos.y) < 1e-7f)
         {
-            if (p0.model_pos.x > p2.model_pos.x) std::swap(p0, p2);
-            DrawFlatBottomTriangle(p1, p0, p2);
+            if (p2.model_pos.x < p1.model_pos.x) std::swap(p1, p2);
+            DrawFlatBottomTriangle(p0, p1, p2);
         }
         else
         {
-            float const alpha{ (p0.model_pos.y - p1.model_pos.y) / (p2.model_pos.y - p1.model_pos.y) };
-            auto const pi{  interpolate(p1, p2, alpha) };
+            float const alpha{ (p1.model_pos.y - p0.model_pos.y) / (p2.model_pos.y - p0.model_pos.y) };
+            auto const pi{  interpolate(p0, p2, alpha) };
 
-            if (pi.model_pos.x < p0.model_pos.x)
+            if (p1.model_pos.x < pi.model_pos.x)
             {
-                DrawFlatBottomTriangle(p1, pi, p0);
-                DrawFlatTopTriangle(p2, pi, p0);
+                DrawFlatBottomTriangle(p0, p1, pi);
+                DrawFlatTopTriangle(p1, pi, p2);
             }
             else
             {
-                DrawFlatBottomTriangle(p1, p0, pi);
-                DrawFlatTopTriangle(p2, p0, pi);
+                DrawFlatBottomTriangle(p0, pi, p1);
+                DrawFlatTopTriangle(pi, p1, p2);
             }
         }
     }
 
     void DrawFlatTopTriangle(GSV const& p0, GSV const& p1, GSV const& p2)
     {
-        float const delta_y{ p0.model_pos.y - p1.model_pos.y };
+        float const delta_y{ p2.model_pos.y - p0.model_pos.y };
 
-        auto const left_slope_step{ (p0 - p1) / delta_y };
-        auto const right_slope_step{ (p0 - p2) / delta_y };
+        auto const left_slope_step{ (p2 - p0) / delta_y };
+        auto const right_slope_step{ (p2 - p1) / delta_y };
 
-        DrawFlatTriangle(p1, p2, left_slope_step, right_slope_step, p0);
+        DrawFlatTriangle(p0, p1, p2, left_slope_step, right_slope_step, p1);
     }
 
     void DrawFlatBottomTriangle(GSV const& p0, GSV const& p1, GSV const& p2)
     {
-        float const delta_y{ p1.model_pos.y - p0.model_pos.y };
+        float const delta_y{ p2.model_pos.y - p0.model_pos.y };
 
         auto const left_slope_step{ (p1 - p0) / delta_y };
         auto const right_slope_step{ (p2 - p0) / delta_y };
 
-        DrawFlatTriangle(p0, p0, left_slope_step, right_slope_step, p1);
+        DrawFlatTriangle(p0, p1, p2, left_slope_step, right_slope_step, p0);
     }
 
-    void DrawFlatTriangle(GSV left_slope, GSV right_slope, const GSV& left_slope_step, const GSV& right_slope_step, const GSV& to)
+    void DrawFlatTriangle(GSV const& p0, GSV const& p1, GSV const& p2, const GSV& dv0, const GSV& dv1, GSV right)
     {
-        float const y_start{ std::max(std::floor(left_slope.model_pos.y + 0.5f), 0.f) };
-        float const y_end{ std::min(std::floor(to.model_pos.y + 0.5f), Graphics::ScreenHeight - 1.f) };
+        auto left{p0};
 
-        for (float y{ y_start }; y < y_end; ++y)
-        {
-            float dy{ y + 0.5f - left_slope.model_pos.y };
-            GSV l{ left_slope + left_slope_step * dy };
-            GSV r{ right_slope + right_slope_step * dy };
+        int const y_start{ std::max((int)std::ceil(p0.model_pos.y - 0.5f), 0) };
+        int const y_end{ std::min((int)std::ceil(p2.model_pos.y - 0.5f), (int)Graphics::ScreenHeight - 1) };
 
-            if (l.model_pos.x > r.model_pos.x) std::swap(l, r);
+        left += dv0 * (float(y_start) + 0.5f - p0.model_pos.y);
+        right += dv1 * (float(y_start) + 0.5f - p0.model_pos.y);
+        
+        for (int y{y_start}; y < y_end; ++y, left += dv0, right += dv1) {
+          int const x_start{std::max((int)std::ceil(left.model_pos.x - 0.5f), 0)};
+          int const x_end{std::min((int)std::ceil(right.model_pos.x - 0.5f), (int)Graphics::ScreenWidth - 1)};
 
-            float const x_start{ std::max(std::floor(l.model_pos.x + 0.5f), 0.f) };
-            float const x_end{ std::min(std::floor(r.model_pos.x + 0.5f), Graphics::ScreenWidth - 1.f) };
+          auto iLine{left};
+          auto const dx{right.model_pos.x - left.model_pos.x};
+          auto const diLine{(right - left) / dx};
 
-            float const dx{ x_start + 0.5f - l.model_pos.x };
+          iLine += diLine * (float(x_start) + 0.5f - left.model_pos.x);
 
-            float span = r.model_pos.x - l.model_pos.x;
-            if (span <= 0.0f) continue;
-
-            GSV const step{ (r - l) / span };
-            GSV iLine{ l + step * dx };
-
-            for (float x{ x_start }; x < x_end; ++x, iLine += step)
-            {
-                if (UpdateZBuffer({static_cast<unsigned int>(x),
-                                   static_cast<unsigned int>(y)},
-                                   iLine.model_pos.z))
-                {
-                    auto const recovered_w{1 / iLine.model_pos.w};
-                    gfx.PutPixel(static_cast<int>(x), static_cast<int>(y),
-                                 effect.ps(iLine * recovered_w));
-                }
+          for (int x{x_start}; x < x_end; ++x, iLine += diLine) {
+            if (UpdateZBuffer({(unsigned)x, (unsigned)y}, iLine.model_pos.z)) {
+              float const recovered_w{1.f / iLine.model_pos.w};
+              gfx.PutPixel(x, y, effect.ps(iLine * recovered_w));
             }
+          }
         }
     }
 

@@ -13,23 +13,26 @@ class _Vec4 : public _Vec3<T> {
   explicit operator _Vec4<T2>() const {
     return {(T2)x, (T2)y, (T2)z, (T2)w};
   }
-  _Vec4 operator-() const { return _Vec4(-x, -y, -z); }
+  _Vec4 operator-() const { return _Vec4(-x, -y, -z, -w); }
   _Vec4& operator=(const _Vec4& rhs) {
     x = rhs.x;
     y = rhs.y;
     z = rhs.z;
+    w = rhs.w;
     return *this;
   }
   _Vec4& operator+=(const _Vec4& rhs) {
     x += rhs.x;
     y += rhs.y;
     z += rhs.z;
+    w += rhs.w;
     return *this;
   }
   _Vec4& operator-=(const _Vec4& rhs) {
     x -= rhs.x;
     y -= rhs.y;
     z -= rhs.z;
+    w -= rhs.w;
     return *this;
   }
   T operator*(const _Vec4& rhs) const {
@@ -45,6 +48,7 @@ class _Vec4 : public _Vec3<T> {
     x *= rhs;
     y *= rhs;
     z *= rhs;
+    w *= rhs;
     return *this;
   }
   _Vec4 operator*(const T& rhs) const { return _Vec4(*this) *= rhs; }
@@ -52,16 +56,17 @@ class _Vec4 : public _Vec3<T> {
     x /= rhs;
     y /= rhs;
     z /= rhs;
+    w /= rhs;
     return *this;
   }
   _Vec4 operator/(const T& rhs) const { return _Vec4(*this) /= rhs; }
   bool operator==(const _Vec4& rhs) const {
-    return x == rhs.x && y == rhs.y && z == rhs.z;
+    return x == rhs.x && y == rhs.y && z == rhs.z && w == rhs.w;
   }
   bool operator!=(const _Vec4& rhs) const { return !(*this == rhs); }
 
  public:
-  T w;
+  T w{1};
 };
 
 typedef _Vec4<float> Vec4;

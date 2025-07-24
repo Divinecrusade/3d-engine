@@ -240,11 +240,11 @@
     <ClInclude Include="BasePhongEffect.h">
       <Filter>Header Files\effects</Filter>
     </ClInclude>
-    <ClInclude Include="TextureLightEffect.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="TestScene.h">
       <Filter>Header Files\scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="TextureLightEffect.h">
+      <Filter>Header Files\effects</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

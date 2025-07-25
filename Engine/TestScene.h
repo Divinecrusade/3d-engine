@@ -78,6 +78,9 @@ class TestScene : public IScene {
 
     suzanne_spin_y_theta += SUZANNE_SPIN_SPEED * dt;
     suzanne_spin_y_theta = wrap_angle(suzanne_spin_y_theta);
+
+    light_theta_pos = wrap_angle(light_theta_pos + LIGHT_SOURCE_SPEED * dt);
+    light_pos.y = MID_Y_POS_LIGHT + std::sinf(light_theta_pos) * DELTA_Y_POS_LIGHT;
   }
 
   void Draw() {
@@ -184,5 +187,11 @@ class TestScene : public IScene {
   static constexpr float camera_speed = 0.8f;
   Vec4 camera_pos{0.f, 1.6f, -FLOOR_HEIGHT / 2.f};
 
-  Vec4 light_pos{0.f, 0.7f, 0.f};
+  static constexpr float MIN_Y_POS_LIGHT = 0.2f;
+  static constexpr float MAX_Y_POS_LIGHT = 4.2f;
+  static constexpr float MID_Y_POS_LIGHT = (MIN_Y_POS_LIGHT + MAX_Y_POS_LIGHT) / 2.f;
+  static constexpr float DELTA_Y_POS_LIGHT = (MAX_Y_POS_LIGHT - MIN_Y_POS_LIGHT) / 2.f;
+  float light_theta_pos = 0.f;
+  static constexpr float LIGHT_SOURCE_SPEED = PI / 2.f;
+  Vec4 light_pos{0.f, 0.f, 0.f};
 };

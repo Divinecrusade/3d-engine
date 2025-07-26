@@ -121,7 +121,7 @@ class TestScene : public IScene {
     pipe_suzanne.effect.vs.BindWorldView(Mat4::RotationY(suzanne_spin_y_theta) * Mat4::Translation(SUZANNE_DEFAULT_POS) * cur_view);
     pipe_suzanne.Draw(suzanne_object);
 
-    pipe_wave.effect.vs.SetLightPosition(light_pos * cur_view);
+    pipe_wave.effect.ps.SetLightPosition(light_pos * cur_view);
     pipe_wave.effect.vs.BindWorldView(WAVE_WORLD_POS * cur_view);
     pipe_wave.Draw(wave_object);
   }

@@ -75,10 +75,10 @@ class TestScene : public IScene {
     }
 
     if (kbd.KeyIsPressed('Z')) {
-      zoom_factor += zoom_factor_delta * dt;
+      zoom_factor = std::fmin(max_zoom_factor, zoom_factor + zoom_factor_delta * dt);
     }
     if (kbd.KeyIsPressed('X')) {
-      zoom_factor -= zoom_factor_delta * dt;
+      zoom_factor = std::max(min_zoom_factor, zoom_factor - zoom_factor_delta * dt);
     }
 
     auto const view_offset{-camera_pos};
@@ -170,7 +170,7 @@ class TestScene : public IScene {
   static constexpr float screen_ratio = 4.f / 3.f;
   static constexpr float hFOV = wFOV / screen_ratio;
   static constexpr float _near = 0.2f;
-  static constexpr float _far = 10.f;
+  static constexpr float _far = 20.f;
   Mat4 const PROJECTION{Mat4::PerspectiveProjectionFromFOV(wFOV, screen_ratio, _near, _far)};
 
   static constexpr float FLOOR_WIDTH = 6.f;
@@ -213,6 +213,8 @@ class TestScene : public IScene {
   static constexpr float camera_speed{0.8f};
   Vec4 camera_pos{0.f, 1.6f, -FLOOR_HEIGHT / 2.f};
   static constexpr float zoom_factor_delta{2.f};
+  static constexpr float min_zoom_factor{0.3f};
+  static constexpr float max_zoom_factor{3.f};
   float zoom_factor{1.f};
 
   static constexpr float MIN_Y_POS_LIGHT{0.2f};

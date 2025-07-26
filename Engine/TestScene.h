@@ -74,13 +74,6 @@ class TestScene : public IScene {
       camera_pos += Vec4{1.f, 0.f, 0.f} * !camera_rot_inv * dt * camera_speed;
     }
 
-    if (kbd.KeyIsPressed('Z')) {
-      zoom_factor = std::fmin(max_zoom_factor, zoom_factor + zoom_factor_delta * dt);
-    }
-    if (kbd.KeyIsPressed('X')) {
-      zoom_factor = std::max(min_zoom_factor, zoom_factor - zoom_factor_delta * dt);
-    }
-
     auto const view_offset{-camera_pos};
     cur_view = Mat4::Translation(view_offset) *
                camera_rot_inv;
@@ -100,14 +93,14 @@ class TestScene : public IScene {
 
     pipe_static_planes.effect.vs.SetLightPosition(light_pos * cur_view);
     pipe_static_planes.effect.ps.BindTexture(FLOOR_TEXTURE);
-    pipe_static_planes.effect.vs.BindWorldView(FLOOR_WORLD_POS * Mat4::Scaling(zoom_factor) * cur_view);
+    pipe_static_planes.effect.vs.BindWorldView(FLOOR_WORLD_POS * cur_view);
     pipe_static_planes.Draw(floor_object);
     
     pipe_static_planes.effect.ps.BindTexture(WALL_TEXTURE);
     for (auto const& wall : WALLS_WORLD_POS) {
       auto const& pos = wall.first;
       auto const& type = wall.second;
-      pipe_static_planes.effect.vs.BindWorldView(pos * Mat4::Scaling(zoom_factor) * cur_view);
+      pipe_static_planes.effect.vs.BindWorldView(pos * cur_view);
       switch (type) {
         case WALL_TYPE::LONG: pipe_static_planes.Draw(wall_object_long); break;
         case WALL_TYPE::SHORT: pipe_static_planes.Draw(wall_object_short); break;
@@ -115,18 +108,18 @@ class TestScene : public IScene {
     }
 
     pipe_static_planes.effect.ps.BindTexture(CEILING_TEXTURE);
-    pipe_static_planes.effect.vs.BindWorldView(CEILING_WORLD_POS * Mat4::Scaling(zoom_factor) * cur_view);
+    pipe_static_planes.effect.vs.BindWorldView(CEILING_WORLD_POS * cur_view);
     pipe_static_planes.Draw(floor_object);
 
-    pipe_bulb.effect.vs.BindWorldView(Mat4::Translation(light_pos) * Mat4::Scaling(zoom_factor) * cur_view);
+    pipe_bulb.effect.vs.BindWorldView(Mat4::Translation(light_pos) * cur_view);
     pipe_bulb.Draw(bulb_object);
 
     pipe_suzanne.effect.ps.SetLightPosition(light_pos * cur_view);
-    pipe_suzanne.effect.vs.BindWorldView(Mat4::RotationY(suzanne_spin_y_theta) * Mat4::Translation(SUZANNE_DEFAULT_POS) * Mat4::Scaling(zoom_factor) * cur_view);
+    pipe_suzanne.effect.vs.BindWorldView(Mat4::RotationY(suzanne_spin_y_theta) * Mat4::Translation(SUZANNE_DEFAULT_POS) * cur_view);
     pipe_suzanne.Draw(suzanne_object);
 
     pipe_wave.effect.ps.SetLightPosition(light_pos * cur_view);
-    pipe_wave.effect.vs.BindWorldView(WAVE_WORLD_POS * Mat4::Scaling(zoom_factor) * cur_view);
+    pipe_wave.effect.vs.BindWorldView(WAVE_WORLD_POS * cur_view);
     pipe_wave.Draw(wave_object);
   }
 
@@ -170,7 +163,7 @@ class TestScene : public IScene {
   static constexpr float screen_ratio = 4.f / 3.f;
   static constexpr float hFOV = wFOV / screen_ratio;
   static constexpr float _near = 0.2f;
-  static constexpr float _far = 20.f;
+  static constexpr float _far = 24.f;
   Mat4 const PROJECTION{Mat4::PerspectiveProjectionFromFOV(wFOV, screen_ratio, _near, _far)};
 
   static constexpr float FLOOR_WIDTH = 6.f;
@@ -210,12 +203,8 @@ class TestScene : public IScene {
   Vei2 mouse_pos{};
   bool mouse_engaged{false};
 
-  static constexpr float camera_speed{0.8f};
+  static constexpr float camera_speed{1.5f};
   Vec4 camera_pos{0.f, 1.6f, -FLOOR_HEIGHT / 2.f};
-  static constexpr float zoom_factor_delta{2.f};
-  static constexpr float min_zoom_factor{0.3f};
-  static constexpr float max_zoom_factor{3.f};
-  float zoom_factor{1.f};
 
   static constexpr float MIN_Y_POS_LIGHT{0.2f};
   static constexpr float MAX_Y_POS_LIGHT{4.2f};

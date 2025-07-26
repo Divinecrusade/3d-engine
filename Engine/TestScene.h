@@ -73,14 +73,17 @@ class TestScene : public IScene {
     if (kbd.KeyIsPressed('D')) {
       camera_pos += Vec4{1.f, 0.f, 0.f} * !camera_rot_inv * dt * camera_speed;
     }
+
     if (kbd.KeyIsPressed('Z')) {
-      camera_pos = Vec4{0.f, 1.f, 0.f} * !camera_rot_inv * dt * camera_speed;
+      zoom_factor += zoom_factor_delta * dt;
     }
     if (kbd.KeyIsPressed('X')) {
-      camera_pos = Vec4{0.f, 1.f, 0.f} * !camera_rot_inv * dt * camera_speed;
+      zoom_factor -= zoom_factor_delta * dt;
     }
+
     auto const view_offset{-camera_pos};
-    cur_view = Mat4::Translation(view_offset) * camera_rot_inv;
+    cur_view = Mat4::Scaling(zoom_factor) * Mat4::Translation(view_offset) *
+               camera_rot_inv;
 
     suzanne_spin_y_theta += SUZANNE_SPIN_SPEED * dt;
     suzanne_spin_y_theta = wrap_angle(suzanne_spin_y_theta);
@@ -209,6 +212,8 @@ class TestScene : public IScene {
 
   static constexpr float camera_speed{0.8f};
   Vec4 camera_pos{0.f, 1.6f, -FLOOR_HEIGHT / 2.f};
+  static constexpr float zoom_factor_delta{2.f};
+  float zoom_factor{1.f};
 
   static constexpr float MIN_Y_POS_LIGHT{0.2f};
   static constexpr float MAX_Y_POS_LIGHT{4.2f};

@@ -4,7 +4,7 @@
 #include "Pipeline.h"
 #include "Sphere.h"
 #include "PhongSpecularEffect.h"
-#include "SolidColorEffectH.h"
+#include "SolidColorEffect.h"
 #include "ChiliMath.h"
 
 class PhongSpecularScene : public IScene {
@@ -22,7 +22,7 @@ class PhongSpecularScene : public IScene {
         pip_point_light_dummy{gfx, {Colors::White}, zbuffer},
         pip_model{gfx, PhongSpecularEffect{}, zbuffer},
         model{std::move(model)},
-        point_light_dummy{Sphere::GetTriangles<SolidColorEffectH::Vertex>(0.1f)}
+        point_light_dummy{Sphere::GetTriangles<SolidColorEffect::Vertex>(0.1f)}
   {
     pip_model.effect.vs.BindProjection(projection);
     pip_point_light_dummy.effect.vs.BindProjection(projection);
@@ -92,9 +92,9 @@ class PhongSpecularScene : public IScene {
  private:
   std::shared_ptr<std::unique_ptr<float[]>> zbuffer;
   Pipeline<PhongSpecularEffect> pip_model;
-  Pipeline<SolidColorEffectH> pip_point_light_dummy;
+  Pipeline<SolidColorEffect> pip_point_light_dummy;
   IndexedTriangleList<PhongSpecularEffect::Vertex> model;
-  IndexedTriangleList<SolidColorEffectH::Vertex> point_light_dummy;
+  IndexedTriangleList<SolidColorEffect::Vertex> point_light_dummy;
   static constexpr float dTheta = PI;
   static constexpr float wFOV = 90.f;
   static constexpr float screen_ratio = 4.f / 3.f;

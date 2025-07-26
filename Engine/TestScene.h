@@ -5,7 +5,7 @@
 #include "Pipeline.h"
 #include "PipelineDebug.h"
 #include "TextureLightEffect.h"
-#include "SolidColorEffectH.h"
+#include "SolidColorEffect.h"
 #include "PhongSpecularEffect.h"
 #include "NewWaveEffect.h"
 #include "Plain.h"
@@ -24,8 +24,8 @@ class TestScene : public IScene {
         floor_object{Plain::GetSkinnedWithNormals<TextureLightEffect::TextureBindedVertex>(FLOOR_TESSALATION, FLOOR_TESSALATION, FLOOR_WIDTH, FLOOR_HEIGHT)},
         wall_object_long{Plain::GetSkinnedWithNormals<TextureLightEffect::TextureBindedVertex>(WALL_TESSALATION, WALL_TESSALATION, WALL_WIDTH_LONG, WALL_HEIGHT)},
         wall_object_short{Plain::GetSkinnedWithNormals<TextureLightEffect::TextureBindedVertex>(WALL_TESSALATION, WALL_TESSALATION, WALL_WIDTH_SHORT, WALL_HEIGHT)},
-        pipe_bulb{gfx, SolidColorEffectH{Colors::White}, zbuffer},
-        bulb_object{Sphere::GetTriangles<SolidColorEffectH::Vertex>(BULB_RADIUS)},
+        pipe_bulb{gfx, SolidColorEffect{Colors::White}, zbuffer},
+        bulb_object{Sphere::GetTriangles<SolidColorEffect::Vertex>(BULB_RADIUS)},
         pipe_suzanne(gfx, PhongSpecularEffect{}, zbuffer),
         suzanne_object{IndexedTriangleList<PhongSpecularEffect::Vertex>::LoadWithNormals(SUZANNE_MODEL_URL)},
         pipe_wave{gfx, NewWaveEffect{}, zbuffer},
@@ -150,8 +150,8 @@ class TestScene : public IScene {
   IndexedTriangleList<TextureLightEffect::TextureBindedVertex> wall_object_long;
   IndexedTriangleList<TextureLightEffect::TextureBindedVertex> wall_object_short;
 
-  Pipeline<SolidColorEffectH> pipe_bulb;
-  IndexedTriangleList<SolidColorEffectH::Vertex> bulb_object;
+  Pipeline<SolidColorEffect> pipe_bulb;
+  IndexedTriangleList<SolidColorEffect::Vertex> bulb_object;
 
   Pipeline<PhongSpecularEffect> pipe_suzanne;
   IndexedTriangleList<PhongSpecularEffect::Vertex> suzanne_object;

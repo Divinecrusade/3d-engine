@@ -3,7 +3,6 @@
 #include "Graphics.h"
 #include "IndexedTriangleList.hpp"
 #include "ChiliMath.h"
-#include "ClampEffect.h"
 
 #include <array>
 #include <memory>

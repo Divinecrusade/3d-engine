@@ -6,6 +6,7 @@
 #include "TextureLightEffect.h"
 #include "SolidColorEffectH.h"
 #include "PhongSpecularEffect.h"
+#include "NewWaveEffect.h"
 #include "Plain.h"
 #include "Sphere.h"
 #include "Mouse.h"
@@ -16,6 +17,7 @@ class TestScene : public IScene {
       : FLOOR_TEXTURE{Surface::FromFile(std::wstring{FLOOR_TEXTURE_URL})},
         WALL_TEXTURE{Surface::FromFile(std::wstring{WALL_TEXTURE_URL})},
         CEILING_TEXTURE{Surface::FromFile(std::wstring{CEILING_TEXTURE_URL})},
+        WAVE_TEXTURE{Surface::FromFile(std::wstring{WAVE_TEXTURE_URL})},
         zbuffer{std::make_shared<std::unique_ptr<float[]>>(std::make_unique<float[]>(gfx.ScreenWidth * gfx.ScreenHeight))},
         pipe_static_planes{gfx, TextureLightEffect{}, zbuffer},
         floor_object{Plain::GetSkinnedWithNormals<TextureLightEffect::TextureBindedVertex>(FLOOR_TESSALATION, FLOOR_TESSALATION, FLOOR_WIDTH, FLOOR_HEIGHT)},
@@ -24,10 +26,13 @@ class TestScene : public IScene {
         pipe_bulb{gfx, SolidColorEffectH{Colors::White}, zbuffer},
         bulb_object{Sphere::GetTriangles<SolidColorEffectH::Vertex>(BULB_RADIUS)},
         pipe_suzanne(gfx, PhongSpecularEffect{}, zbuffer),
-        suzanne_object{IndexedTriangleList<PhongSpecularEffect::Vertex>::LoadWithNormals(SUZANNE_TEXTURE_URL)}{ 
+        suzanne_object{IndexedTriangleList<PhongSpecularEffect::Vertex>::LoadWithNormals(SUZANNE_MODEL_URL)},
+        pipe_wave{gfx, NewWaveEffect{}, zbuffer},
+        wave_object{Plain::GetSkinnedWithNormals<NewWaveEffect::Vertex>(WAVE_TESSALATION, WAVE_TESSALATION, WAVE_WIDTH, WAVE_HEIGHT)} { 
     pipe_static_planes.effect.vs.BindProjection(PROJECTION);
     pipe_bulb.effect.vs.BindProjection(PROJECTION);
     pipe_suzanne.effect.vs.BindProjection(PROJECTION);
+    pipe_wave.effect.vs.BindProjection(PROJECTION);
   }
 
   void Update(Keyboard& kbd, Mouse& mouse, float dt) {
@@ -81,6 +86,9 @@ class TestScene : public IScene {
 
     light_theta_pos = wrap_angle(light_theta_pos + LIGHT_SOURCE_SPEED * dt);
     light_pos.y = MID_Y_POS_LIGHT + std::sinf(light_theta_pos) * DELTA_Y_POS_LIGHT;
+
+    pipe_wave.effect.vs.UpdateTime(dt);
+    pipe_wave.effect.ps.BindTexture(WAVE_TEXTURE);
   }
 
   void Draw() {
@@ -112,17 +120,23 @@ class TestScene : public IScene {
     pipe_suzanne.effect.ps.SetLightPosition(light_pos * cur_view);
     pipe_suzanne.effect.vs.BindWorldView(Mat4::RotationY(suzanne_spin_y_theta) * Mat4::Translation(SUZANNE_DEFAULT_POS) * cur_view);
     pipe_suzanne.Draw(suzanne_object);
+
+    pipe_wave.effect.vs.SetLightPosition(light_pos * cur_view);
+    pipe_wave.effect.vs.BindWorldView(WAVE_WORLD_POS * cur_view);
+    pipe_wave.Draw(wave_object);
   }
 
  private:
   static constexpr wchar_t const* FLOOR_TEXTURE_URL{L"Images\\floor.png"};
   static constexpr wchar_t const* WALL_TEXTURE_URL{L"Images\\stonewall.png"};
   static constexpr wchar_t const* CEILING_TEXTURE_URL{L"Images\\ceiling.png"};
-  static constexpr char const* SUZANNE_TEXTURE_URL{"suzanne.obj"};
+  static constexpr char const* SUZANNE_MODEL_URL{"suzanne.obj"};
+  static constexpr wchar_t const* WAVE_TEXTURE_URL{L"Images\\sauron-bhole-100x100.png"};
 
   Surface const FLOOR_TEXTURE;
   Surface const WALL_TEXTURE;
   Surface const CEILING_TEXTURE;
+  Surface const WAVE_TEXTURE;
 
   static constexpr std::size_t WALLS_COUNT{4ull};
 
@@ -137,6 +151,9 @@ class TestScene : public IScene {
 
   Pipeline<PhongSpecularEffect> pipe_suzanne;
   IndexedTriangleList<PhongSpecularEffect::Vertex> suzanne_object;
+
+  Pipeline<NewWaveEffect> pipe_wave;
+  IndexedTriangleList<NewWaveEffect::Vertex> wave_object;
 
   Vec4 const SUZANNE_DEFAULT_POS{1.5f, 1.25f, 2.5f};
   float suzanne_spin_y_theta{0.f};
@@ -173,6 +190,11 @@ class TestScene : public IScene {
 
   Mat4 const CEILING_WORLD_POS{Mat4::Identity() * Mat4::RotationX(3.f * (PI / 2.f)) * Mat4::Translation({0.f, WALL_HEIGHT, 0.f})};
 
+  static constexpr std::size_t WAVE_TESSALATION{14ull};
+  static constexpr float WAVE_WIDTH{1.f};
+  static constexpr float WAVE_HEIGHT{WAVE_WIDTH};
+
+  Mat4 const WAVE_WORLD_POS{Mat4::Scaling(2.f) * Mat4::RotationX(PI / 2.f) * Mat4::Translation({-WAVE_WIDTH - 0.2f, 0.3f, -1.2f})};
 
   Mat4 cur_view{Mat4::Identity()};
 
@@ -184,14 +206,14 @@ class TestScene : public IScene {
   Vei2 mouse_pos{};
   bool mouse_engaged{false};
 
-  static constexpr float camera_speed = 0.8f;
+  static constexpr float camera_speed{0.8f};
   Vec4 camera_pos{0.f, 1.6f, -FLOOR_HEIGHT / 2.f};
 
-  static constexpr float MIN_Y_POS_LIGHT = 0.2f;
-  static constexpr float MAX_Y_POS_LIGHT = 4.2f;
-  static constexpr float MID_Y_POS_LIGHT = (MIN_Y_POS_LIGHT + MAX_Y_POS_LIGHT) / 2.f;
-  static constexpr float DELTA_Y_POS_LIGHT = (MAX_Y_POS_LIGHT - MIN_Y_POS_LIGHT) / 2.f;
-  float light_theta_pos = 0.f;
-  static constexpr float LIGHT_SOURCE_SPEED = PI / 2.f;
+  static constexpr float MIN_Y_POS_LIGHT{0.2f};
+  static constexpr float MAX_Y_POS_LIGHT{4.2f};
+  static constexpr float MID_Y_POS_LIGHT{(MIN_Y_POS_LIGHT + MAX_Y_POS_LIGHT) / 2.f};
+  static constexpr float DELTA_Y_POS_LIGHT{(MAX_Y_POS_LIGHT - MIN_Y_POS_LIGHT) / 2.f};
+  float light_theta_pos{0.f};
+  static constexpr float LIGHT_SOURCE_SPEED{PI / 2.f};
   Vec4 light_pos{0.f, 0.f, 0.f};
 };

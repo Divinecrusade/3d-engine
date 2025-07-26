@@ -246,6 +246,9 @@
     <ClInclude Include="TextureLightEffect.h">
       <Filter>Header Files\effects</Filter>
     </ClInclude>
+    <ClInclude Include="NewWaveEffect.h">
+      <Filter>Header Files\effects</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DXErr.cpp">

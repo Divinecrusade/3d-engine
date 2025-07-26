@@ -82,7 +82,7 @@ class TestScene : public IScene {
     }
 
     auto const view_offset{-camera_pos};
-    cur_view = Mat4::Scaling(zoom_factor) * Mat4::Translation(view_offset) *
+    cur_view = Mat4::Translation(view_offset) *
                camera_rot_inv;
 
     suzanne_spin_y_theta += SUZANNE_SPIN_SPEED * dt;
@@ -100,14 +100,14 @@ class TestScene : public IScene {
 
     pipe_static_planes.effect.vs.SetLightPosition(light_pos * cur_view);
     pipe_static_planes.effect.ps.BindTexture(FLOOR_TEXTURE);
-    pipe_static_planes.effect.vs.BindWorldView(FLOOR_WORLD_POS * cur_view);
+    pipe_static_planes.effect.vs.BindWorldView(FLOOR_WORLD_POS * Mat4::Scaling(zoom_factor) * cur_view);
     pipe_static_planes.Draw(floor_object);
     
     pipe_static_planes.effect.ps.BindTexture(WALL_TEXTURE);
     for (auto const& wall : WALLS_WORLD_POS) {
       auto const& pos = wall.first;
       auto const& type = wall.second;
-      pipe_static_planes.effect.vs.BindWorldView(pos * cur_view);
+      pipe_static_planes.effect.vs.BindWorldView(pos * Mat4::Scaling(zoom_factor) * cur_view);
       switch (type) {
         case WALL_TYPE::LONG: pipe_static_planes.Draw(wall_object_long); break;
         case WALL_TYPE::SHORT: pipe_static_planes.Draw(wall_object_short); break;
@@ -115,18 +115,18 @@ class TestScene : public IScene {
     }
 
     pipe_static_planes.effect.ps.BindTexture(CEILING_TEXTURE);
-    pipe_static_planes.effect.vs.BindWorldView(CEILING_WORLD_POS * cur_view);
+    pipe_static_planes.effect.vs.BindWorldView(CEILING_WORLD_POS * Mat4::Scaling(zoom_factor) * cur_view);
     pipe_static_planes.Draw(floor_object);
 
-    pipe_bulb.effect.vs.BindWorldView(Mat4::Translation(light_pos) * cur_view);
+    pipe_bulb.effect.vs.BindWorldView(Mat4::Translation(light_pos) * Mat4::Scaling(zoom_factor) * cur_view);
     pipe_bulb.Draw(bulb_object);
 
     pipe_suzanne.effect.ps.SetLightPosition(light_pos * cur_view);
-    pipe_suzanne.effect.vs.BindWorldView(Mat4::RotationY(suzanne_spin_y_theta) * Mat4::Translation(SUZANNE_DEFAULT_POS) * cur_view);
+    pipe_suzanne.effect.vs.BindWorldView(Mat4::RotationY(suzanne_spin_y_theta) * Mat4::Translation(SUZANNE_DEFAULT_POS) * Mat4::Scaling(zoom_factor) * cur_view);
     pipe_suzanne.Draw(suzanne_object);
 
     pipe_wave.effect.ps.SetLightPosition(light_pos * cur_view);
-    pipe_wave.effect.vs.BindWorldView(WAVE_WORLD_POS * cur_view);
+    pipe_wave.effect.vs.BindWorldView(WAVE_WORLD_POS * Mat4::Scaling(zoom_factor) * cur_view);
     pipe_wave.Draw(wave_object);
   }
 

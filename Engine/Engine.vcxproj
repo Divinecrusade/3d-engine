@@ -167,6 +167,7 @@
     <ClInclude Include="NewWaveEffect.h" />
     <ClInclude Include="PhongSpecularEffect.h" />
     <ClInclude Include="PhongSpecularScene.h" />
+    <ClInclude Include="PipelineDebug.h" />
     <ClInclude Include="PointLightPhongObjectScene.h" />
     <ClInclude Include="PhongShadingEffect.h" />
     <ClInclude Include="Pipeline.h" />

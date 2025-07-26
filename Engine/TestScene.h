@@ -3,6 +3,7 @@
 #include "ChiliMath.h"
 #include "IScene.h"
 #include "Pipeline.h"
+#include "PipelineDebug.h"
 #include "TextureLightEffect.h"
 #include "SolidColorEffectH.h"
 #include "PhongSpecularEffect.h"
@@ -152,7 +153,7 @@ class TestScene : public IScene {
   Pipeline<PhongSpecularEffect> pipe_suzanne;
   IndexedTriangleList<PhongSpecularEffect::Vertex> suzanne_object;
 
-  Pipeline<NewWaveEffect> pipe_wave;
+  PipelineDebug<NewWaveEffect> pipe_wave;
   IndexedTriangleList<NewWaveEffect::Vertex> wave_object;
 
   Vec4 const SUZANNE_DEFAULT_POS{1.5f, 1.25f, 2.5f};

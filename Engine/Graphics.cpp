@@ -382,6 +382,52 @@ void Graphics::DrawLine( float x1,float y1,float x2,float y2,Color c )
 	}
 }
 
+void Graphics::DrawLineAndUpdateZBuffer(
+    Vec3 v0, Vec3 v1, Color c,
+    std::function<bool(int, int, float)> update_zbuffer) {
+  float dx = v1.x - v0.x;
+  float dy = v1.y - v0.y;
+
+  if (dy == 0.0f && dx == 0.0f) {
+  } else if (abs(dy) > abs(dx)) {
+    if (dy < 0.0f) {
+      std::swap(v0, v1);
+      dy = -dy;
+    }
+
+    const auto dv = (v1 - v0) / dy;
+    for (auto v = v0; v.y < v1.y; v += dv) {
+      const auto x = int(v.x);
+      const auto y = int(v.y);
+      if (x < 0 || x >= Graphics::ScreenWidth || y < 0 ||
+          y >= Graphics::ScreenHeight) {
+        continue;
+      }
+      if (update_zbuffer(x, y, v.z)) {
+        PutPixel(x, y, c);
+      }
+    }
+  } else {
+    if (dx < 0.0f) {
+      std::swap(v0, v1);
+      dx = -dx;
+    }
+
+    const auto dv = (v1 - v0) / dx;
+    for (auto v = v0; v.x < v1.x; v += dv) {
+      const auto x = int(v.x);
+      const auto y = int(v.y);
+      if (x < 0 || x >= Graphics::ScreenWidth || y < 0 ||
+          y >= Graphics::ScreenHeight) {
+        continue;
+      }
+      if (update_zbuffer(x, y, v.z)) {
+        PutPixel(x, y, c);
+      }
+    }
+  }
+}
+
 void Graphics::DrawTriangle(Vec2 p0, Vec2 p1, Vec2 p2, Color c)
 {
 	if (p0.y < p1.y) std::swap(p0, p1);

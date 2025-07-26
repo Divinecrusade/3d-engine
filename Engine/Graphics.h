@@ -63,6 +63,7 @@ public:
 		DrawLine( p1.x,p1.y,p2.x,p2.y,c );
 	}
 	void DrawLine( float x1,float y1,float x2,float y2,Color c );
+	void DrawLineAndUpdateZBuffer(Vec3 v0, Vec3 v1, Color c, std::function<bool(int, int, float)> update_zbuffer);
 	void PutPixel( int x,int y,int r,int g,int b )
 	{
 		PutPixel( x,y,{ unsigned char( r ),unsigned char( g ),unsigned char( b ) } );

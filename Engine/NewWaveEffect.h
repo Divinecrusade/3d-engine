@@ -57,6 +57,7 @@ class NewWaveEffect {
     Vec3 n{};
     Vec3 worldPos{};
     Vec2 texture_pos{};
+    Vec4 nend{};
   };
 
   class VertexShader : public BaseVertexShader<Vertex, TextureBindedVertexWithWorldPos> {
@@ -72,8 +73,11 @@ class NewWaveEffect {
       Vec4 const shifted_pos{v.model_pos.x, v.model_pos.y, v.model_pos.z + dz};
       Vec4 shifted_n{-wave_shift_factor * wave_amplitude_factor * sinx, 0.f, -1.f, 0.f};
       shifted_n.Normalize();
+      auto const nend{shifted_pos + shifted_n * 0.02f};
 
-      return {shifted_pos * worldViewProj, static_cast<Vec3>(shifted_n * worldView), v.model_pos * worldView, v.texture_pos};
+      return {shifted_pos * worldViewProj,
+              static_cast<Vec3>(shifted_n * worldView), v.model_pos * worldView,
+              v.texture_pos, nend * worldViewProj};
     }
 
     void UpdateTime(float delta_time) {
